@@ -7,7 +7,7 @@ public class TurnTests {
 	@Test
 	void isWhiteTurn() {
 		Game game = new Game();
-		assertEquals(game.getTurn(), Player.WHITE);
+		assertEquals(game.getTurn(), PlayerColor.WHITE);
 	}
 
 }

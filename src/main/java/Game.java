@@ -1,13 +1,13 @@
 public class Game {
 
-	private Player turn;
+	private PlayerColor turn;
 
 	public Game() {
 
 	}
 
-	public Player getTurn() {
-		return Player.WHITE;
+	public PlayerColor getTurn() {
+		return PlayerColor.WHITE;
 	}
 
 }
