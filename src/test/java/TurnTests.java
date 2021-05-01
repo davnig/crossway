@@ -10,4 +10,10 @@ public class TurnTests {
 		assertEquals(game.getTurn(), PlayerColor.WHITE);
 	}
 
+	@Test
+	void isIntersectionEmpty(){
+		Intersection intersection = new Intersection(1,1,IntersectionState.EMPTY);
+		assertEquals(intersection.getState(),IntersectionState.EMPTY);
+	}
+
 }
