@@ -3,6 +3,8 @@ import java.util.List;
 
 public class Board {
 
+    final int MAX_ROW = 19;
+    final int MAX_COLUMN = 19;
     List<Intersection> intersections;
 
 
@@ -20,8 +22,8 @@ public class Board {
 
         this.intersections = new ArrayList<>();
 
-        for (int row = 1; row <= 19; row++)
-            for (int column = 1; column <= 19; column++)
+        for (int row = 1; row <= MAX_ROW; row++)
+            for (int column = 1; column <= MAX_COLUMN; column++)
                 this.intersections.add(new Intersection(row, column, IntersectionState.EMPTY));
 
     }
