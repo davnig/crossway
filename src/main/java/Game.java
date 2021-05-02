@@ -1,3 +1,6 @@
+import lombok.Data;
+
+@Data
 public class Game {
 
 	private PlayerColor turn;
@@ -6,8 +9,12 @@ public class Game {
 
 	}
 
-	public PlayerColor getTurn() {
-		return PlayerColor.WHITE;
+	private boolean isWhiteTurn() {
+		return this.getTurn() == PlayerColor.WHITE;
+	}
+
+	private boolean isBlackTurn() {
+		return this.getTurn() == PlayerColor.BLACK;
 	}
 
 }
