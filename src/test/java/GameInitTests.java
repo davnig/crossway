@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class GameInitTests {
 
     @Test
-    void newBoardShouldBeEmpty() {
+    void whenGameStartsBoardShouldBeEmpty() {
         Board board = new Board();
         assertTrue(board.isEmpty());
     }
