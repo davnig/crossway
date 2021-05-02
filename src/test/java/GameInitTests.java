@@ -10,4 +10,9 @@ public class GameInitTests {
         assertTrue(board.isEmpty());
     }
 
+    @Test
+    void whenGameStartsTurnShouldBeBlack() {
+        Game game = new Game();
+        assertTrue(game.isBlackTurn());
+    }
 }

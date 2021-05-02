@@ -6,14 +6,18 @@ public class Game {
 	private PlayerColor turn;
 
 	public Game() {
-
+		this.initFirstTurn();
 	}
 
-	private boolean isWhiteTurn() {
+	private void initFirstTurn() {
+		setTurn(PlayerColor.BLACK);
+	}
+
+	public boolean isWhiteTurn() {
 		return this.getTurn() == PlayerColor.WHITE;
 	}
 
-	private boolean isBlackTurn() {
+	public boolean isBlackTurn() {
 		return this.getTurn() == PlayerColor.BLACK;
 	}
 
