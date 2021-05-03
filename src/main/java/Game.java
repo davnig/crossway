@@ -4,7 +4,7 @@ import lombok.Data;
 public class Game {
 
 	private Board board;
-	private PlayerColor turn;
+	private PlayerColor turnColor;
 
 
 	Game() {
@@ -17,15 +17,18 @@ public class Game {
 	}
 
 	boolean isWhiteTurn() {
-		return this.getTurn() == PlayerColor.WHITE;
+		return this.getTurnColor() == PlayerColor.WHITE;
 	}
 
 	boolean isBlackTurn() {
-		return this.getTurn() == PlayerColor.BLACK;
+		return this.getTurnColor() == PlayerColor.BLACK;
 	}
 
 	private void initFirstTurn() {
-		setTurn(PlayerColor.BLACK);
+		setTurnColor(PlayerColor.BLACK);
 	}
 
+	public void placeStoneAt(int row, int column) {
+		board.getIntersectionAt(row, column).setStone(turnColor);
+	}
 }

@@ -2,6 +2,7 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class Board {
@@ -21,8 +22,16 @@ public class Board {
 
         for (int row = 1; row <= MAX_ROW; row++)
             for (int column = 1; column <= MAX_COLUMN; column++)
-                this.intersections.add(new Intersection(row, column, IntersectionState.EMPTY));
+                this.intersections.add(new Intersection(row, column, PlayerColor.NONE));
 
     }
 
+    Intersection getIntersectionAt(int row, int column) {
+
+        return this.intersections.stream()
+                .filter(intersection -> intersection.getRow() == row && intersection.getColumn() == column)
+                .collect(Collectors.toList())
+                .get(0);
+
+    }
 }

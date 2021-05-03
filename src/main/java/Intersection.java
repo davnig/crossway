@@ -7,6 +7,6 @@ public class Intersection {
 
     int row;
     int column;
-    IntersectionState state;
+    PlayerColor stone;
 
 }
