@@ -1,24 +1,21 @@
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 public class Board {
 
-    final int MAX_ROW = 19;
-    final int MAX_COLUMN = 19;
-    List<Intersection> intersections;
+    private final int MAX_ROW = 19;
+    private final int MAX_COLUMN = 19;
+    private List<Intersection> intersections;
 
 
-    public Board() {
+    Board() {
         initIntersections();
     }
 
-
-    public boolean isEmpty() {
-        return intersections.stream()
-                .allMatch(intersection -> intersection.state.equals(IntersectionState.EMPTY));
-    }
-
-    void initIntersections() {
+    private void initIntersections() {
 
         this.intersections = new ArrayList<>();
 

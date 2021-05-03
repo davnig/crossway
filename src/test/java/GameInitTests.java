@@ -6,13 +6,17 @@ public class GameInitTests {
 
     @Test
     void whenGameStartsBoardShouldBeEmpty() {
-        Board board = new Board();
-        assertTrue(board.isEmpty());
+        Game game = new Game();
+        game.start();
+        assertTrue(game.getBoard().getIntersections().stream()
+                .allMatch(intersection -> intersection.state.equals(IntersectionState.EMPTY)));
     }
 
     @Test
     void whenGameStartsTurnShouldBeBlack() {
         Game game = new Game();
+        game.start();
         assertTrue(game.isBlackTurn());
     }
+
 }
