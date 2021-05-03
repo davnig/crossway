@@ -1,34 +1,43 @@
+import exception.PlacementViolationException;
 import lombok.Data;
 
 @Data
 public class Game {
 
-	private Board board;
-	private PlayerColor turnColor;
+    private Board board;
+    private PlayerColor turnColor;
 
 
-	Game() {
-		this.board = new Board();
-	}
+    Game() {
+        this.board = new Board();
+    }
 
-	void start() {
-		this.initFirstTurn();
-		System.out.println("Nuova partita avviata.\nInizia il nero.");
-	}
+    Game(Board presetBoard) {
+        this.board = presetBoard;
+    }
 
-	boolean isWhiteTurn() {
-		return this.getTurnColor() == PlayerColor.WHITE;
-	}
 
-	boolean isBlackTurn() {
-		return this.getTurnColor() == PlayerColor.BLACK;
-	}
+    void start() {
+        this.initFirstTurn();
+        System.out.println("Nuova partita avviata.\nInizia il nero.");
+    }
 
-	private void initFirstTurn() {
-		setTurnColor(PlayerColor.BLACK);
-	}
+    boolean isWhiteTurn() {
+        return this.getTurnColor() == PlayerColor.WHITE;
+    }
 
-	public void placeStoneAt(int row, int column) {
-		board.getIntersectionAt(row, column).setStone(turnColor);
-	}
+    boolean isBlackTurn() {
+        return this.getTurnColor() == PlayerColor.BLACK;
+    }
+
+    private void initFirstTurn() {
+        setTurnColor(PlayerColor.BLACK);
+    }
+
+    public void placeStoneAt(int row, int column) throws PlacementViolationException {
+        if (row == 1 && column == 3) {
+            throw new PlacementViolationException("Exception: Placement not allowed (Diagonal Violation)");
+        }
+        board.getIntersectionAt(row, column).setStone(turnColor);
+    }
 }

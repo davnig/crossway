@@ -1,3 +1,4 @@
+import exception.PlacementViolationException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,7 +22,7 @@ public class GameInitTests {
     }
 
     @Test
-    void whenStoneIsPositionedBoardShouldNotBeEmpty() {
+    void whenStoneIsPositionedBoardShouldNotBeEmpty() throws PlacementViolationException {
         Game game = new Game();
         game.start();
         game.placeStoneAt(1, 1);
