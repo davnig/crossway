@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TurnTests {
 
+
 	@Test
 	void isIntersectionEmpty() {
 		Intersection intersection = new Intersection(1, 1, PlayerColor.NONE);
@@ -13,7 +14,7 @@ public class TurnTests {
 	}
 
 	@Test
-	void whenPlayerPlacesStoneAndDiagonalViolationShouldOutputError() {
+	void whenPlayerPlacesStoneAtPosition13AndDiagonalViolationShouldOutputError() {
 		Board presetBoard = new Board();
 
 		presetBoard.getIntersectionAt(1, 2).setStone(PlayerColor.BLACK);
@@ -25,5 +26,19 @@ public class TurnTests {
 
 		assertThrows(PlacementViolationException.class, () -> game.placeStoneAt(1, 3));
 	}
+	@Test
+	void whenPlayerPlacesStoneAtPosition24AndDiagonalViolationShouldOutputError() {
+		Board presetBoard = new Board();
+
+		presetBoard.getIntersectionAt(1, 4).setStone(PlayerColor.BLACK);
+		presetBoard.getIntersectionAt(2, 3).setStone(PlayerColor.BLACK);
+		presetBoard.getIntersectionAt(1, 3).setStone(PlayerColor.WHITE);
+
+		Game game = new Game(presetBoard);
+		game.setTurnColor(PlayerColor.WHITE);
+
+		assertThrows(PlacementViolationException.class, () -> game.placeStoneAt(2, 4));
+	}
+
 
 }
