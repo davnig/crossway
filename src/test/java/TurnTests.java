@@ -58,4 +58,18 @@ public class TurnTests {
         assertThrows(PlacementViolationException.class, () -> game.placeStoneAt(3, 3));
     }
 
+    //test south-east violation
+    @Test
+    void whenPlayerPlacesStoneAtPosition24AndSEDiagonalViolationShouldOutputError() {
+        Board presetBoard = new Board();
+
+        presetBoard.getIntersectionAt(2, 5).setStone(PlayerColor.BLACK);
+        presetBoard.getIntersectionAt(3, 4).setStone(PlayerColor.BLACK);
+        presetBoard.getIntersectionAt(3, 5).setStone(PlayerColor.WHITE);
+
+        Game game = new Game(presetBoard);
+        game.setTurnColor(PlayerColor.WHITE);
+
+        assertThrows(PlacementViolationException.class, () -> game.placeStoneAt(2, 4));
+    }
 }
