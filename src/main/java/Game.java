@@ -42,24 +42,28 @@ public class Game {
          *Has white stone on 2,2
          */
         if (this.turnColor == PlayerColor.WHITE) {
-            Intersection N, S, E, W;
-            S = new Intersection(0, 0, PlayerColor.NONE);
-            W = new Intersection(0, 0, PlayerColor.NONE);
-            //To avoid IndexOutOfBounds Exception
-            if (row != 1)/*
-                N = board.getIntersectionAt(row - 1, column);*/
-                if (row != 19)
-                    S = board.getIntersectionAt(row + 1, column);
-            if (column != 1)
-                W = board.getIntersectionAt(row, column - 1);/*
-            if (column != 19)
-                E = board.getIntersectionAt(row, column + 1);*/
+            Intersection n, s = null, e, w = null;
 
-            if (W.getStone() == PlayerColor.BLACK && S.getStone() == PlayerColor.BLACK) {
+            //To avoid IndexOutOfBounds Exception
+            if (row != 1) {
+                n = board.getIntersectionAt(row - 1, column);
+            }
+            if (row != 19) {
+                s = board.getIntersectionAt(row + 1, column);
+            }
+            if (column != 1) {
+                w = board.getIntersectionAt(row, column - 1);
+            }
+            if (column != 19) {
+                e = board.getIntersectionAt(row, column + 1);
+            }
+
+            if (w.getStone() == PlayerColor.BLACK && s.getStone() == PlayerColor.BLACK) {
                 if (board.getIntersectionAt(row + 1, column - 1).getStone() == this.turnColor)
                     throw new PlacementViolationException("Exception: Placement not allowed (Diagonal Violation)");
             }
+        } else {
+            board.getIntersectionAt(row, column).setStone(turnColor);
         }
-        board.getIntersectionAt(row, column).setStone(turnColor);
     }
 }
