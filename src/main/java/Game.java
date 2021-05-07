@@ -10,7 +10,6 @@ public class Game {
     private Turn currentTurn;
     private Player player1, player2;
 
-
     Game() {
         this.board = new Board();
         this.player1 = new Player(PlayerID.ONE, PlayerColor.NONE);
@@ -69,12 +68,6 @@ public class Game {
         this.player2.setColor(playerONEOldColor);
     }
 
-    public void switchTurnAndColorWithPieRule() {
-        switchTurn();
-        switchColors();
-        incrementTurnNumber();
-    }
-
     public Player getPlayerNotInTurn() {
         if (this.currentTurn.getCurrentPlayer().equals(player1))
             return player2;
@@ -104,6 +97,11 @@ public class Game {
         this.player1.setColor(PlayerColor.BLACK);
     }
 
+    public void switchTurnAndColorWithPieRule() {
+        switchTurn();
+        switchColors();
+        incrementTurnNumber();
+    }
 
     private void pieRule(boolean whiteWantsToChangeColor) {
         if (whiteWantsToChangeColor) {
