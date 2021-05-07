@@ -41,19 +41,19 @@ public class Board {
 
     boolean isLastMoveDiagonalViolation(int row, int column, PlayerColor turnColor, PlayerColor oppositeColor) {
 
-        if (isFirstRowPosition(row))
+        if (isFirstRow(row))
             return isSouthEastDiagonalViolation(row, column, turnColor, oppositeColor) ||
                     isSouthWestDiagonalViolation(row, column, turnColor, oppositeColor);
 
-        if (isLastRowPosition(row))
+        if (isLastRow(row))
             return isNorthEastDiagonalViolation(row, column, turnColor, oppositeColor) ||
                     isNorthWestDiagonalViolation(row, column, turnColor, oppositeColor);
 
-        if (isFirstColumnPosition(column))
+        if (isFirstColumn(column))
             return isNorthEastDiagonalViolation(row, column, turnColor, oppositeColor) ||
                     isSouthEastDiagonalViolation(row, column, turnColor, oppositeColor);
 
-        if (isLastColumnPosition(column))
+        if (isLastColumn(column))
             return isNorthWestDiagonalViolation(row, column, turnColor, oppositeColor) ||
                     isSouthWestDiagonalViolation(row, column, turnColor, oppositeColor);
 
@@ -98,19 +98,19 @@ public class Board {
 
     }
 
-    private boolean isLastColumnPosition(int column) {
+    private boolean isLastColumn(int column) {
         return column == MAX_COLUMN;
     }
 
-    private boolean isFirstColumnPosition(int column) {
+    private boolean isFirstColumn(int column) {
         return column == 1;
     }
 
-    private boolean isLastRowPosition(int row) {
+    private boolean isLastRow(int row) {
         return row == getMAX_ROW();
     }
 
-    private boolean isFirstRowPosition(int row) {
+    private boolean isFirstRow(int row) {
         return row == 1;
     }
 }
