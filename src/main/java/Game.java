@@ -100,7 +100,6 @@ public class Game {
     public void switchTurnAndColorWithPieRule() {
         switchTurn();
         switchColors();
-        incrementTurnNumber();
     }
 
     private void pieRule(boolean whiteWantsToChangeColor) {
