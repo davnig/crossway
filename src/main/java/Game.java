@@ -35,11 +35,14 @@ public class Game {
         System.out.println("New game started.\nIt's black turn.");
     }
 
-    public String playTurn() {
+    public void playTurn(int row, int column) throws PlacementViolationException {
         if (this.currentTurn.getCurrentTurn() == 2) {
-            return pieRule();
+            //boolean whiteDecisionOnPieRule = true;
+            pieRule(true);
+            return;
         }
-        return "It's just another turn.";
+        placeStoneAt(row, column);
+        switchTurn();
     }
 
     public void placeStoneAt(int row, int column) throws PlacementViolationException {
@@ -49,8 +52,25 @@ public class Game {
         this.board.getIntersectionAt(row, column).setStone(getCurrentPlayerColor());
     }
 
+    private void incrementTurnNumber() {
+        this.currentTurn.setCurrentTurn(currentTurn.getCurrentTurn() + 1);
+    }
+
     public void switchTurn() {
         this.currentTurn.setCurrentPlayer(getPlayerNotInTurn());
+        incrementTurnNumber();
+    }
+
+    public void switchColors() {
+        PlayerColor playerONEOldColor = this.player1.getColor();
+        this.player1.setColor(this.player2.getColor());
+        this.player2.setColor(playerONEOldColor);
+    }
+
+    public void switchTurnAndColorWithPieRule() {
+        switchTurn();
+        switchColors();
+        incrementTurnNumber();
     }
 
     public Player getPlayerNotInTurn() {
@@ -83,10 +103,10 @@ public class Game {
     }
 
 
-    private String pieRule() {
-        //here you should ask a player whether or not he/she wants to switch colors
-        //implementation depends on future choices, now returns a string just to see if game responds
-        return "Pie Rule!";
+    private void pieRule(boolean whiteWantsToChangeColor) {
+        if (whiteWantsToChangeColor) {
+            switchTurnAndColorWithPieRule();
+        }
     }
 }
 
