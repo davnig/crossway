@@ -1,7 +1,9 @@
 import exception.PlacementViolationException;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TurnTests {
@@ -73,5 +75,25 @@ public class TurnTests {
 
         assertThrows(PlacementViolationException.class, () -> game.placeStoneAt(2, 4));
 
+    }
+
+    @Test
+    void whenIsSecondTurnGameShouldAskForPieRule() {
+        Board presetBoard = new Board();
+        presetBoard.getIntersectionAt(1, 4).setStone(PlayerColor.BLACK);
+
+        Game game = new Game(presetBoard, 2);
+
+        assertEquals("Pie Rule!", game.playTurn());
+    }
+
+    @Test
+    void whenIsNotSecondTurnGameShouldNotAskForPieRule() {
+        Board presetBoard = new Board();
+        presetBoard.getIntersectionAt(1, 4).setStone(PlayerColor.BLACK);
+        presetBoard.getIntersectionAt(2, 4).setStone(PlayerColor.WHITE);
+        Game game = new Game(presetBoard, 3);
+
+        assertEquals("It's just another turn.", game.playTurn());
     }
 }
