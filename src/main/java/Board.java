@@ -39,6 +39,10 @@ public class Board {
         return getIntersectionAt(row, column).getStone();
     }
 
+    boolean isPlacementOutOfBoardBoundaries(int row, int column) {
+        return row > getMAX_ROW() || column > getMAX_COLUMN() || row < 1 || column < 1;
+    }
+
     boolean isLastMoveDiagonalViolation(int row, int column, PlayerColor turnColor, PlayerColor oppositeColor) {
 
         if (isFirstRow(row))
@@ -113,4 +117,5 @@ public class Board {
     private boolean isFirstRow(int row) {
         return row == 1;
     }
+
 }

@@ -12,6 +12,7 @@ public class TurnTests {
     void whenPlayerPlacesStoneAtPosition13AndSWDiagonalViolationShouldOutputError(PlayerColor player1, PlayerColor player2) {
 
         Board presetBoard = new Board();
+
         presetBoard.getIntersectionAt(1, 2).setStone(player1);
         presetBoard.getIntersectionAt(2, 3).setStone(player1);
         presetBoard.getIntersectionAt(2, 2).setStone(player2);
@@ -29,6 +30,7 @@ public class TurnTests {
     void whenPlayerPlacesStoneAtPosition24AndNWDiagonalViolationShouldOutputError(PlayerColor player1, PlayerColor player2) {
 
         Board presetBoard = new Board();
+
         presetBoard.getIntersectionAt(1, 4).setStone(player1);
         presetBoard.getIntersectionAt(2, 3).setStone(player1);
         presetBoard.getIntersectionAt(1, 3).setStone(player2);
@@ -46,6 +48,7 @@ public class TurnTests {
     void whenPlayerPlacesStoneAtPosition33AndNEDiagonalViolationShouldOutputError(PlayerColor player1, PlayerColor player2) {
 
         Board presetBoard = new Board();
+
         presetBoard.getIntersectionAt(3, 4).setStone(player1);
         presetBoard.getIntersectionAt(2, 3).setStone(player1);
         presetBoard.getIntersectionAt(2, 4).setStone(player2);
@@ -73,5 +76,15 @@ public class TurnTests {
 
         assertThrows(PlacementViolationException.class, () -> game.placeStoneAt(2, 4));
 
+    }
+
+    @ParameterizedTest
+    @CsvSource({"-1, -1", "30, 30", "-1, 30", "30, -1"})
+    void whenPlayerPlacesStoneOutsideOfBoardShouldOutputError(int row, int column) {
+
+        Board board = new Board();
+        Game game = new Game(board);
+
+        assertThrows(PlacementViolationException.class, () -> game.placeStoneAt(row, column));
     }
 }

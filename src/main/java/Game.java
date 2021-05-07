@@ -24,6 +24,9 @@ public class Game {
 
     public void placeStoneAt(int row, int column) throws PlacementViolationException {
 
+        if (board.isPlacementOutOfBoardBoundaries(row, column))
+            throw new PlacementViolationException("Placement not allowed: out of board violation");
+
         if (board.isLastMoveDiagonalViolation(row, column, turnColor, getOppositePlayerColor()))
             throw new PlacementViolationException("Placement not allowed: diagonal violation");
 
