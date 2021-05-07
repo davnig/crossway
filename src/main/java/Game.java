@@ -22,6 +22,19 @@ public class Game {
         System.out.println("Nuova partita avviata.\nInizia il nero.");
     }
 
+    public void placeStoneAt(int row, int column) throws PlacementViolationException {
+
+        if (board.isLastMoveDiagonalViolation(row, column, turnColor, getOppositePlayerColor()))
+            throw new PlacementViolationException("Placement not allowed: diagonal violation");
+
+        board.getIntersectionAt(row, column).setStone(turnColor);
+
+    }
+
+    public void switchTurn() {
+        this.turnColor = getOppositePlayerColor();
+    }
+
     boolean isWhiteTurn() {
         return this.getTurnColor() == PlayerColor.WHITE;
     }
@@ -34,20 +47,8 @@ public class Game {
         setTurnColor(PlayerColor.BLACK);
     }
 
-    public void placeStoneAt(int row, int column) throws PlacementViolationException {
-
-        if (board.isLastMoveDiagonalViolation(row, column, turnColor, getOppositePlayerColor()))
-            throw new PlacementViolationException("Placement not allowed: diagonal violation");
-
-        board.getIntersectionAt(row, column).setStone(turnColor);
-
-    }
-
     private PlayerColor getOppositePlayerColor() {
-        if (isWhiteTurn())
-            return PlayerColor.BLACK;
-
-        return PlayerColor.WHITE;
+        return isWhiteTurn() ? PlayerColor.BLACK : PlayerColor.WHITE;
     }
 
 }
