@@ -32,7 +32,7 @@ public class Game {
 
     void start() {
         this.initFirstTurn();
-        System.out.println("Nuova partita avviata.\nInizia il nero.");
+        System.out.println("New game started.\nIt's black turn.");
     }
 
     public String playTurn() {
