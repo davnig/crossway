@@ -1,5 +1,7 @@
 import exception.PlacementViolationException;
 import lombok.Data;
+import playerProperty.PlayerColor;
+import playerProperty.PlayerID;
 
 @Data
 public class Game {

@@ -1,4 +1,5 @@
 import lombok.Data;
+import playerProperty.PlayerColor;
 
 import java.util.ArrayList;
 import java.util.List;

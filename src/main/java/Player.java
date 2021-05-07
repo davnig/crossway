@@ -1,5 +1,7 @@
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import playerProperty.PlayerColor;
+import playerProperty.PlayerID;
 
 @Data
 @AllArgsConstructor
