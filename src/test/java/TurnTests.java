@@ -24,8 +24,7 @@ public class TurnTests {
         Player playerTWO = new Player(PlayerID.TWO, player2);
         Turn turn = new Turn(4, playerTWO);
 
-        Game game = new Game(presetBoard);
-        game.setCurrentTurn(turn);
+        Game game = new Game(presetBoard, turn);
 
         assertThrows(PlacementViolationException.class, () -> game.placeStoneAt(1, 3));
 
@@ -44,8 +43,7 @@ public class TurnTests {
         Player playerTWO = new Player(PlayerID.TWO, player2);
         Turn turn = new Turn(4, playerTWO);
 
-        Game game = new Game(presetBoard);
-        game.setCurrentTurn(turn);
+        Game game = new Game(presetBoard, turn);
 
         assertThrows(PlacementViolationException.class, () -> game.placeStoneAt(2, 4));
 
@@ -64,8 +62,7 @@ public class TurnTests {
         Player playerTWO = new Player(PlayerID.TWO, player2);
         Turn turn = new Turn(4, playerTWO);
 
-        Game game = new Game(presetBoard);
-        game.setCurrentTurn(turn);
+        Game game = new Game(presetBoard, turn);
 
         assertThrows(PlacementViolationException.class, () -> game.placeStoneAt(3, 3));
 
@@ -85,8 +82,7 @@ public class TurnTests {
         Player playerTWO = new Player(PlayerID.TWO, player2);
         Turn turn = new Turn(4, playerTWO);
 
-        Game game = new Game(presetBoard);
-        game.setCurrentTurn(turn);
+        Game game = new Game(presetBoard, turn);
 
         assertThrows(PlacementViolationException.class, () -> game.placeStoneAt(2, 4));
 
