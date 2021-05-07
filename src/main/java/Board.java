@@ -42,80 +42,59 @@ public class Board {
     boolean isLastMoveDiagonalViolation(int row, int column, PlayerColor turnColor, PlayerColor oppositeColor) {
 
         if (isFirstRowPosition(row))
-            return isSouthDiagonalViolation(row, column, turnColor, oppositeColor);
+            return isSouthEastDiagonalViolation(row, column, turnColor, oppositeColor) ||
+                    isSouthWestDiagonalViolation(row, column, turnColor, oppositeColor);
 
         if (isLastRowPosition(row))
-            return isNorthDiagonalViolation(row, column, turnColor, oppositeColor);
+            return isNorthEastDiagonalViolation(row, column, turnColor, oppositeColor) ||
+                    isNorthWestDiagonalViolation(row, column, turnColor, oppositeColor);
 
         if (isFirstColumnPosition(column))
-            return isEastDiagonalViolation(row, column, turnColor, oppositeColor);
+            return isNorthEastDiagonalViolation(row, column, turnColor, oppositeColor) ||
+                    isSouthEastDiagonalViolation(row, column, turnColor, oppositeColor);
 
         if (isLastColumnPosition(column))
-            return isWestDiagonalViolation(row, column, turnColor, oppositeColor);
+            return isNorthWestDiagonalViolation(row, column, turnColor, oppositeColor) ||
+                    isSouthWestDiagonalViolation(row, column, turnColor, oppositeColor);
 
         return
-                isNorthDiagonalViolation(row, column, turnColor, oppositeColor) ||
-                        isSouthDiagonalViolation(row, column, turnColor, oppositeColor) ||
-                        isWestDiagonalViolation(row, column, turnColor, oppositeColor) ||
-                        isEastDiagonalViolation(row, column, turnColor, oppositeColor);
-
-
-    }
-
-
-    private boolean isWestDiagonalViolation(int row, int column, PlayerColor turnColor, PlayerColor oppositeColor) {
-
-        if (getStoneColorAt(row, column + 1) != oppositeColor)
-            return false;
-
-        if (getStoneColorAt(row - 1, column) == oppositeColor
-                && getStoneColorAt(row - 1, column + 1) == turnColor)
-            return true;
-
-        return getStoneColorAt(row + 1, column) == oppositeColor
-                && getStoneColorAt(row + 1, column + 1) == turnColor;
+                isNorthEastDiagonalViolation(row, column, turnColor, oppositeColor) ||
+                        isSouthEastDiagonalViolation(row, column, turnColor, oppositeColor) ||
+                        isSouthWestDiagonalViolation(row, column, turnColor, oppositeColor) ||
+                        isNorthWestDiagonalViolation(row, column, turnColor, oppositeColor);
 
     }
 
-    private boolean isEastDiagonalViolation(int row, int column, PlayerColor turnColor, PlayerColor oppositeColor) {
 
-        if (getStoneColorAt(row, column - 1) != oppositeColor)
-            return false;
+    private boolean isSouthWestDiagonalViolation(int row, int column, PlayerColor turnColor, PlayerColor oppositeColor) {
 
-        if (getStoneColorAt(row - 1, column) == oppositeColor
-                && getStoneColorAt(row - 1, column - 1) == turnColor)
-            return true;
-
-        return getStoneColorAt(row + 1, column) == oppositeColor
-                && getStoneColorAt(row + 1, column - 1) == turnColor;
+        return getStoneColorAt(row + 1, column) == oppositeColor &&
+                getStoneColorAt(row, column - 1) == oppositeColor &&
+                getStoneColorAt(row + 1, column - 1) == turnColor;
 
     }
 
-    private boolean isNorthDiagonalViolation(int row, int column, PlayerColor turnColor, PlayerColor oppositeColor) {
+    private boolean isNorthWestDiagonalViolation(int row, int column, PlayerColor turnColor, PlayerColor oppositeColor) {
 
-        if (getStoneColorAt(row - 1, column) != oppositeColor)
-            return false;
-
-        if (getStoneColorAt(row, column - 1) == oppositeColor
-                && getStoneColorAt(row - 1, column - 1) == turnColor)
-            return true;
-
-        return getStoneColorAt(row, column + 1) == oppositeColor
-                && getStoneColorAt(row - 1, column + 1) == turnColor;
+        return getStoneColorAt(row - 1, column) == oppositeColor &&
+                getStoneColorAt(row, column - 1) == oppositeColor &&
+                getStoneColorAt(row - 1, column - 1) == turnColor;
 
     }
 
-    private boolean isSouthDiagonalViolation(int row, int column, PlayerColor turnColor, PlayerColor oppositeColor) {
+    private boolean isNorthEastDiagonalViolation(int row, int column, PlayerColor turnColor, PlayerColor oppositeColor) {
 
-        if (getStoneColorAt(row + 1, column) != oppositeColor)
-            return false;
+        return getStoneColorAt(row - 1, column) == oppositeColor &&
+                getStoneColorAt(row, column + 1) == oppositeColor &&
+                getStoneColorAt(row - 1, column + 1) == turnColor;
 
-        if (getStoneColorAt(row, column - 1) == oppositeColor
-                && getStoneColorAt(row + 1, column - 1) == turnColor)
-            return true;
+    }
 
-        return getStoneColorAt(row, column + 1) == oppositeColor
-                && getStoneColorAt(row + 1, column + 1) == turnColor;
+    private boolean isSouthEastDiagonalViolation(int row, int column, PlayerColor turnColor, PlayerColor oppositeColor) {
+
+        return getStoneColorAt(row + 1, column) == oppositeColor &&
+                getStoneColorAt(row, column + 1) == oppositeColor &&
+                getStoneColorAt(row + 1, column + 1) == turnColor;
 
     }
 
