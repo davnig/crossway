@@ -110,6 +110,29 @@ public class TurnTests {
     }
 
     @Test
+    void whenTurnEndsShouldSwitchCurrentPlayer() throws PlacementViolationException {
+
+        Game game = new Game();
+        game.start();
+        game.setScanner(getRedirectedScannerForSimulatedUserInput("2,1"));
+        game.playTurn();
+
+        assertEquals(game.getCurrentPlayerColor(), PlayerColor.WHITE);
+    }
+
+    @Test
+    void whenTurnEndsShouldIncrementTurnNumber() throws PlacementViolationException {
+
+        Game game = new Game();
+        game.start();
+        game.setScanner(getRedirectedScannerForSimulatedUserInput("1,1"));
+        game.playTurn();
+
+        assertEquals(game.getTurn().getTurnNumber(), 2);
+
+    }
+
+    @Test
     void whenPlayTurnShouldConvertUserInputToStonePlacement() throws PlacementViolationException {
 
         String userInput;
