@@ -98,17 +98,11 @@ public class TurnTests {
         presetBoard.getIntersectionAt(1, 4).setStone(PlayerColor.BLACK);
 
         Game game = new Game(presetBoard);
-
-        game.getPlayer1().setColor(PlayerColor.BLACK);
-        game.getPlayer2().setColor(PlayerColor.WHITE);
-
         Turn turn = new Turn(2, game.getPlayer2());
-        game.setCurrentTurn(turn);
 
-        String userInput = "2,2";
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(userInput.getBytes());
-        System.setIn(byteArrayInputStream);
-        game.setScanner(new Scanner(System.in));
+        game.setTurn(turn);
+
+        game.setScanner(getRedirectedScannerForSimulatedUserInput("2,2"));
         game.playTurn();
 
         assertEquals(game.getPlayer1().getColor(), PlayerColor.WHITE);
@@ -116,7 +110,7 @@ public class TurnTests {
     }
 
     @Test
-    void whenPlayTurnAndUserInputsPositionAsStringShouldPlaceStone() throws PlacementViolationException {
+    void whenPlayTurnShouldConvertUserInputToStonePlacement() throws PlacementViolationException {
 
         String userInput;
         ByteArrayInputStream byteArrayInputStream;
@@ -124,14 +118,14 @@ public class TurnTests {
         Game game = new Game();
         game.start();
 
-        game.setScanner(getRedirectedScanner("2,3"));
+        game.setScanner(getRedirectedScannerForSimulatedUserInput("2,3"));
         game.playTurn();
 
         assertEquals(game.getBoard().getStoneColorAt(2, 3), PlayerColor.BLACK);
 
     }
 
-    Scanner getRedirectedScanner(String input) {
+    Scanner getRedirectedScannerForSimulatedUserInput(String input) {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(input.getBytes());
         System.setIn(byteArrayInputStream);
         return new Scanner(System.in);

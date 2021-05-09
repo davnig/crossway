@@ -9,32 +9,29 @@ import java.util.Scanner;
 public class Game {
 
     private Board board;
-    private Turn currentTurn;
+    private Turn turn;
     private Player player1, player2;
     private Scanner scanner;
 
     Game() {
         this.scanner = new Scanner(System.in);
         this.board = new Board();
-        this.player1 = new Player(PlayerID.ONE, PlayerColor.NONE);
-        this.player2 = new Player(PlayerID.TWO, PlayerColor.NONE);
-        this.currentTurn = new Turn();
+        this.initPlayers();
+        this.turn = new Turn();
     }
 
     Game(Board presetBoard) {
         this.scanner = new Scanner(System.in);
         this.board = presetBoard;
-        this.player1 = new Player(PlayerID.ONE, PlayerColor.NONE);
-        this.player2 = new Player(PlayerID.TWO, PlayerColor.NONE);
-        this.currentTurn = new Turn();
+        this.initPlayers();
+        this.turn = new Turn();
     }
 
     Game(Board presetBoard, Turn turn) {
         this.scanner = new Scanner(System.in);
         this.board = presetBoard;
-        this.player1 = new Player(PlayerID.ONE, PlayerColor.NONE);
-        this.player2 = new Player(PlayerID.TWO, PlayerColor.NONE);
-        this.currentTurn = turn;
+        this.initPlayers();
+        this.turn = turn;
     }
 
     void start() {
@@ -43,24 +40,18 @@ public class Game {
     }
 
     public void playTurn() throws PlacementViolationException {
-        if (this.currentTurn.getCurrentTurn() == 2) {
+        if (this.turn.getTurnNumber() == 2) {
             //boolean whiteDecisionOnPieRule = true;
             pieRule(true);
             return;
         }
+
         String input = scanner.nextLine();
-        int row = getIntRowFromStringInput(input);
-        int column = getIntColumnFromStringInput(input);
+        int row = getIntRowFromPlayerInput(input);
+        int column = getIntColumnFromPlayerInput(input);
+
         placeStoneAt(row, column);
-        switchTurn();
-    }
-
-    private int getIntColumnFromStringInput(String input) {
-        return Integer.parseInt(input.substring(input.indexOf(",") + 1));
-    }
-
-    private int getIntRowFromStringInput(String input) {
-        return Integer.parseInt(input.substring(0, input.indexOf(",")));
+        endTurn();
     }
 
     public void placeStoneAt(int row, int column) throws PlacementViolationException {
@@ -70,34 +61,57 @@ public class Game {
         this.board.getIntersectionAt(row, column).setStone(getCurrentPlayerColor());
     }
 
-    private void incrementTurnNumber() {
-        this.currentTurn.setCurrentTurn(currentTurn.getCurrentTurn() + 1);
+    public PlayerColor getCurrentPlayerColor() {
+        return this.turn.getCurrentPlayer().getColor();
     }
 
-    public void switchTurn() {
-        this.currentTurn.setCurrentPlayer(getPlayerNotInTurn());
-        incrementTurnNumber();
+    public void switchTurnAndColorWithPieRule() {
+        endTurn();
+        switchColors();
     }
 
-    public void switchColors() {
+
+    private void endTurn() {
+        turn.setCurrentPlayer(getPlayerNotInTurn());
+        turn.incrementTurnNumber();
+    }
+
+    private void switchColors() {
         PlayerColor playerONEOldColor = this.player1.getColor();
         this.player1.setColor(this.player2.getColor());
         this.player2.setColor(playerONEOldColor);
     }
 
-    public Player getPlayerNotInTurn() {
-        if (this.currentTurn.getCurrentPlayer().equals(player1))
-            return player2;
-        else
-            return player1;
-    }
-
-    public PlayerColor getCurrentPlayerColor() {
-        return this.currentTurn.getCurrentPlayer().getColor();
+    private Player getPlayerNotInTurn() {
+        return this.turn.getCurrentPlayer().equals(player1) ? player2 : player1;
     }
 
     private PlayerColor getOppositePlayerColor() {
         return isWhiteTurn() ? PlayerColor.BLACK : PlayerColor.WHITE;
+    }
+
+    private void initFirstTurn() {
+        this.turn.setTurnNumber(1);
+        this.turn.setCurrentPlayer(player1);
+    }
+
+    private void initPlayers() {
+        this.player1 = new Player(PlayerID.ONE, PlayerColor.BLACK);
+        this.player2 = new Player(PlayerID.TWO, PlayerColor.WHITE);
+    }
+
+    private int getIntColumnFromPlayerInput(String input) {
+        return Integer.parseInt(input.substring(input.indexOf(",") + 1));
+    }
+
+    private int getIntRowFromPlayerInput(String input) {
+        return Integer.parseInt(input.substring(0, input.indexOf(",")));
+    }
+
+    private void pieRule(boolean whiteWantsToChangeColor) {
+        if (whiteWantsToChangeColor) {
+            switchTurnAndColorWithPieRule();
+        }
     }
 
     boolean isWhiteTurn() {
@@ -108,21 +122,5 @@ public class Game {
         return getCurrentPlayerColor() == PlayerColor.BLACK;
     }
 
-    private void initFirstTurn() {
-        this.currentTurn.setCurrentTurn(1);
-        this.currentTurn.setCurrentPlayer(player1);
-        this.player1.setColor(PlayerColor.BLACK);
-    }
-
-    public void switchTurnAndColorWithPieRule() {
-        switchTurn();
-        switchColors();
-    }
-
-    private void pieRule(boolean whiteWantsToChangeColor) {
-        if (whiteWantsToChangeColor) {
-            switchTurnAndColorWithPieRule();
-        }
-    }
 }
 
