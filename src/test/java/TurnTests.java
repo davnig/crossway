@@ -6,6 +6,9 @@ import org.junit.jupiter.params.provider.CsvSource;
 import playerProperty.PlayerColor;
 import playerProperty.PlayerID;
 
+import java.io.ByteArrayInputStream;
+import java.util.Scanner;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -102,9 +105,36 @@ public class TurnTests {
         Turn turn = new Turn(2, game.getPlayer2());
         game.setCurrentTurn(turn);
 
-        game.playTurn(2, 2);
+        String userInput = "2,2";
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(userInput.getBytes());
+        System.setIn(byteArrayInputStream);
+        game.setScanner(new Scanner(System.in));
+        game.playTurn();
 
         assertEquals(game.getPlayer1().getColor(), PlayerColor.WHITE);
         assertEquals(game.getPlayer2().getColor(), PlayerColor.BLACK);
     }
+
+    @Test
+    void whenPlayTurnAndUserInputsPositionAsStringShouldPlaceStone() throws PlacementViolationException {
+
+        String userInput;
+        ByteArrayInputStream byteArrayInputStream;
+
+        Game game = new Game();
+        game.start();
+
+        game.setScanner(getRedirectedScanner("2,3"));
+        game.playTurn();
+
+        assertEquals(game.getBoard().getStoneColorAt(2, 3), PlayerColor.BLACK);
+
+    }
+
+    Scanner getRedirectedScanner(String input) {
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(input.getBytes());
+        System.setIn(byteArrayInputStream);
+        return new Scanner(System.in);
+    }
+
 }

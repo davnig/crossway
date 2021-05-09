@@ -3,14 +3,18 @@ import lombok.Data;
 import playerProperty.PlayerColor;
 import playerProperty.PlayerID;
 
+import java.util.Scanner;
+
 @Data
 public class Game {
 
     private Board board;
     private Turn currentTurn;
     private Player player1, player2;
+    private Scanner scanner;
 
     Game() {
+        this.scanner = new Scanner(System.in);
         this.board = new Board();
         this.player1 = new Player(PlayerID.ONE, PlayerColor.NONE);
         this.player2 = new Player(PlayerID.TWO, PlayerColor.NONE);
@@ -18,6 +22,7 @@ public class Game {
     }
 
     Game(Board presetBoard) {
+        this.scanner = new Scanner(System.in);
         this.board = presetBoard;
         this.player1 = new Player(PlayerID.ONE, PlayerColor.NONE);
         this.player2 = new Player(PlayerID.TWO, PlayerColor.NONE);
@@ -25,6 +30,7 @@ public class Game {
     }
 
     Game(Board presetBoard, Turn turn) {
+        this.scanner = new Scanner(System.in);
         this.board = presetBoard;
         this.player1 = new Player(PlayerID.ONE, PlayerColor.NONE);
         this.player2 = new Player(PlayerID.TWO, PlayerColor.NONE);
@@ -36,14 +42,25 @@ public class Game {
         System.out.println("New game started.\nIt's black turn.");
     }
 
-    public void playTurn(int row, int column) throws PlacementViolationException {
+    public void playTurn() throws PlacementViolationException {
         if (this.currentTurn.getCurrentTurn() == 2) {
             //boolean whiteDecisionOnPieRule = true;
             pieRule(true);
             return;
         }
+        String input = scanner.nextLine();
+        int row = getIntRowFromStringInput(input);
+        int column = getIntColumnFromStringInput(input);
         placeStoneAt(row, column);
         switchTurn();
+    }
+
+    private int getIntColumnFromStringInput(String input) {
+        return Integer.parseInt(input.substring(input.indexOf(",") + 1));
+    }
+
+    private int getIntRowFromStringInput(String input) {
+        return Integer.parseInt(input.substring(0, input.indexOf(",")));
     }
 
     public void placeStoneAt(int row, int column) throws PlacementViolationException {
