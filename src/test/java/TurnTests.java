@@ -103,7 +103,6 @@ public class TurnTests {
 
         game.setTurn(turn);
 
-
         game.setScanner(getRedirectedScannerForSimulatedUserInput("Y"));
         game.playTurn();
 
@@ -122,11 +121,30 @@ public class TurnTests {
 
         game.setTurn(turn);
 
-        game.setScanner(getRedirectedScannerForSimulatedUserInput("N"));
+        game.setScanner(getRedirectedScannerForSimulatedUserInput("N" + System.getProperty("line.separator")
+                + "6,6" + System.getProperty("line.separator")));
         game.playTurn();
 
-        assertEquals(game.getPlayer1().getColor(), PlayerColor.BLACK);
-        assertEquals(game.getPlayer2().getColor(), PlayerColor.WHITE);
+        assertEquals(PlayerColor.BLACK, game.getPlayer1().getColor());
+        assertEquals(PlayerColor.WHITE, game.getPlayer2().getColor());
+    }
+
+    @SneakyThrows
+    @Test
+    void whenIsSecondTurnAndPieRuleNOTAcceptedWhiteShouldMakeItsMove() {
+        Board presetBoard = new Board();
+        presetBoard.getIntersectionAt(1, 4).setStone(PlayerColor.BLACK);
+
+        Game game = new Game(presetBoard);
+        Turn turn = new Turn(2, game.getPlayer2());
+
+        game.setTurn(turn);
+
+        game.setScanner(getRedirectedScannerForSimulatedUserInput("N" + System.getProperty("line.separator")
+                + "6,6" + System.getProperty("line.separator")));
+        game.playTurn();
+
+        assertEquals(PlayerColor.WHITE, presetBoard.getStoneColorAt(6, 6));
     }
 
     @SneakyThrows
