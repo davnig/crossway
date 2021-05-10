@@ -1,3 +1,4 @@
+import exception.InvalidUserInputException;
 import exception.PlacementViolationException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -102,15 +103,51 @@ public class TurnTests {
 
         game.setTurn(turn);
 
-        game.setScanner(getRedirectedScannerForSimulatedUserInput("2,2"));
+
+        game.setScanner(getRedirectedScannerForSimulatedUserInput("Y"));
         game.playTurn();
 
         assertEquals(game.getPlayer1().getColor(), PlayerColor.WHITE);
         assertEquals(game.getPlayer2().getColor(), PlayerColor.BLACK);
     }
 
+    @SneakyThrows
     @Test
-    void whenTurnEndsShouldSwitchCurrentPlayer() throws PlacementViolationException {
+    void whenIsSecondTurnAndPieRuleNOTAcceptedPlayersShouldNOTSwitchColors() {
+        Board presetBoard = new Board();
+        presetBoard.getIntersectionAt(1, 4).setStone(PlayerColor.BLACK);
+
+        Game game = new Game(presetBoard);
+        Turn turn = new Turn(2, game.getPlayer2());
+
+        game.setTurn(turn);
+
+        game.setScanner(getRedirectedScannerForSimulatedUserInput("N"));
+        game.playTurn();
+
+        assertEquals(game.getPlayer1().getColor(), PlayerColor.BLACK);
+        assertEquals(game.getPlayer2().getColor(), PlayerColor.WHITE);
+    }
+
+    @SneakyThrows
+    @ParameterizedTest
+    @CsvSource({"yes,no,asd,12-.,-,.-.-.,213,wedfokn"})
+    void whenIsSecondTurnAndPlayerInsertWrongInputForPieRulePlayTurnShouldThrowError(String playerResponseToPieRule) {
+        Board presetBoard = new Board();
+        presetBoard.getIntersectionAt(1, 4).setStone(PlayerColor.BLACK);
+
+        Game game = new Game(presetBoard);
+        Turn turn = new Turn(2, game.getPlayer2());
+
+        game.setTurn(turn);
+        game.setScanner(getRedirectedScannerForSimulatedUserInput(playerResponseToPieRule));
+
+        assertThrows(InvalidUserInputException.class, game::playTurn);
+
+    }
+
+    @Test
+    void whenTurnEndsShouldSwitchCurrentPlayer() throws PlacementViolationException, InvalidUserInputException {
 
         Game game = new Game();
         game.start();
@@ -121,7 +158,7 @@ public class TurnTests {
     }
 
     @Test
-    void whenTurnEndsShouldIncrementTurnNumber() throws PlacementViolationException {
+    void whenTurnEndsShouldIncrementTurnNumber() throws PlacementViolationException, InvalidUserInputException {
 
         Game game = new Game();
         game.start();
@@ -133,7 +170,7 @@ public class TurnTests {
     }
 
     @Test
-    void whenPlayTurnShouldConvertUserInputToStonePlacement() throws PlacementViolationException {
+    void whenPlayTurnShouldConvertUserInputToStonePlacement() throws PlacementViolationException, InvalidUserInputException {
 
         String userInput;
         ByteArrayInputStream byteArrayInputStream;
