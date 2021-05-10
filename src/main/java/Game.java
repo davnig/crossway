@@ -1,3 +1,4 @@
+import exception.InvalidUserInputException;
 import exception.PlacementViolationException;
 import lombok.Data;
 import playerProperty.PlayerColor;
@@ -39,10 +40,20 @@ public class Game {
         System.out.println("New game started.\nIt's black turn.");
     }
 
-    public void playTurn() throws PlacementViolationException {
+    public void playTurn() throws PlacementViolationException, InvalidUserInputException {
+
         if (this.turn.getTurnNumber() == 2) {
-            //boolean whiteDecisionOnPieRule = true;
-            pieRule(true);
+            System.out.println("Do you Want to switch colors? Y -yes N-No");
+            String whiteResponse = scanner.nextLine();
+            boolean whiteDecisionOnPieRule;
+            if (whiteResponse.equalsIgnoreCase("Y")) {
+                whiteDecisionOnPieRule = true;
+            } else if (whiteResponse.equalsIgnoreCase("N")) {
+                whiteDecisionOnPieRule = false;
+            } else {
+                throw new InvalidUserInputException("Input not allowed, insert either Y or N");
+            }
+            pieRule(whiteDecisionOnPieRule);
             return;
         }
 
