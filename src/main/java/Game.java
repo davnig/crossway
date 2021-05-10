@@ -44,17 +44,10 @@ public class Game {
 
         if (this.turn.getTurnNumber() == 2) {
             System.out.println("Do you Want to switch colors? Y -yes N-No");
-            String whiteResponse = scanner.nextLine();
-            boolean whiteDecisionOnPieRule;
-            if (whiteResponse.equalsIgnoreCase("Y")) {
-                whiteDecisionOnPieRule = true;
-            } else if (whiteResponse.equalsIgnoreCase("N")) {
-                whiteDecisionOnPieRule = false;
-            } else {
-                throw new InvalidUserInputException("Input not allowed, insert either Y or N");
+            String whiteResponseToPieRule = scanner.nextLine();
+            if (pieRule(whiteResponseToPieRule)) {
+                return;
             }
-            pieRule(whiteDecisionOnPieRule);
-            return;
         }
 
         String input = scanner.nextLine();
@@ -119,9 +112,14 @@ public class Game {
         return Integer.parseInt(input.substring(0, input.indexOf(",")));
     }
 
-    private void pieRule(boolean whiteWantsToChangeColor) {
-        if (whiteWantsToChangeColor) {
+    private boolean pieRule(String whiteResponse) throws InvalidUserInputException {
+        if (whiteResponse.equalsIgnoreCase("Y")) {
             switchTurnAndColorWithPieRule();
+            return true;
+        } else if (whiteResponse.equalsIgnoreCase("N")) {
+            return false;
+        } else {
+            throw new InvalidUserInputException("Input not allowed, insert either Y or N");
         }
     }
 
