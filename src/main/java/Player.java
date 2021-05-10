@@ -1,13 +1,13 @@
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import playerProperty.PlayerColor;
+import playerProperty.PlayerID;
 
 @Data
 @AllArgsConstructor
-public class Intersection {
+public class Player {
 
-    int row;
-    int column;
-    PlayerColor stone;
+    private PlayerID id;
+    private PlayerColor color;
 
 }
