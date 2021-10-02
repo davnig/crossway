@@ -19,14 +19,14 @@ public class MatchInitTests {
     void whenGameStartsTurnShouldBeBlack() {
         Match match = new Match();
         match.start();
-        assertTrue(match.isBlackTurn());
+        assertEquals(PlayerColor.BLACK, match.getTurn().getCurrentPlayer());
     }
 
     @Test
     void whenStoneIsPositionedBoardShouldNotBeEmpty() throws PlacementViolationException {
         Match match = new Match();
         match.start();
-        match.placeStoneAt(1, 1);
+        match.validatePositionAndPlaceStone(1, 1);
         assertEquals(match.getBoard().getBoardState().get(new Intersection(1, 1)), PlayerColor.BLACK);
     }
 
@@ -43,5 +43,8 @@ public class MatchInitTests {
         match.start();
         assertTrue(match.checkWinCondition(PlayerColor.WHITE));
     }
+
+    // white orizzontale
+    // black verticale
 
 }

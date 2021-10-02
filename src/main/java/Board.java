@@ -7,8 +7,10 @@ import java.util.Map;
 @Data
 public class Board {
 
-    private final int MAX_ROW = 19;
-    private final int MAX_COLUMN = 19;
+    private final int FIRST_ROW = 1;
+    private final int FIRST_COLUMN = 1;
+    private final int LAST_ROW = 19;
+    private final int LAST_COLUMN = 19;
     private Map<Intersection, PlayerColor> boardState;
 
 
@@ -18,8 +20,8 @@ public class Board {
 
     private void initIntersections() {
         this.boardState = new HashMap<>();
-        for (int row = 1; row <= MAX_ROW; row++)
-            for (int column = 1; column <= MAX_COLUMN; column++)
+        for (int row = 1; row <= LAST_ROW; row++)
+            for (int column = 1; column <= LAST_COLUMN; column++)
                 this.boardState.put(new Intersection(row, column), PlayerColor.NONE);
     }
 
@@ -27,69 +29,28 @@ public class Board {
         return boardState.get(new Intersection(row, column));
     }
 
+    public void placeStone(int row, int column, PlayerColor playerColor) {
+        boardState.put(new Intersection(row, column), playerColor);
+    }
+
     boolean isPlacementOutOfBoardBoundaries(int row, int column) {
-        return row > getMAX_ROW() || column > getMAX_COLUMN() || row < 1 || column < 1;
+        return row > LAST_ROW || column > LAST_COLUMN || row < FIRST_ROW || column < FIRST_COLUMN;
     }
 
-    boolean isLastMoveDiagonalViolation(int row, int column, PlayerColor turnColor, PlayerColor oppositeColor) {
-        if (isFirstRow(row))
-            return isSouthEastDiagonalViolation(row, column, turnColor, oppositeColor) ||
-                    isSouthWestDiagonalViolation(row, column, turnColor, oppositeColor);
-        if (isLastRow(row))
-            return isNorthEastDiagonalViolation(row, column, turnColor, oppositeColor) ||
-                    isNorthWestDiagonalViolation(row, column, turnColor, oppositeColor);
-        if (isFirstColumn(column))
-            return isNorthEastDiagonalViolation(row, column, turnColor, oppositeColor) ||
-                    isSouthEastDiagonalViolation(row, column, turnColor, oppositeColor);
-        if (isLastColumn(column))
-            return isNorthWestDiagonalViolation(row, column, turnColor, oppositeColor) ||
-                    isSouthWestDiagonalViolation(row, column, turnColor, oppositeColor);
-        return
-                isNorthEastDiagonalViolation(row, column, turnColor, oppositeColor) ||
-                        isSouthEastDiagonalViolation(row, column, turnColor, oppositeColor) ||
-                        isSouthWestDiagonalViolation(row, column, turnColor, oppositeColor) ||
-                        isNorthWestDiagonalViolation(row, column, turnColor, oppositeColor);
+    public boolean isLastColumn(int column) {
+        return column == LAST_COLUMN;
     }
 
-
-    private boolean isSouthWestDiagonalViolation(int row, int column, PlayerColor turnColor, PlayerColor oppositeColor) {
-        return getStoneColorAt(row + 1, column) == oppositeColor &&
-                getStoneColorAt(row, column - 1) == oppositeColor &&
-                getStoneColorAt(row + 1, column - 1) == turnColor;
+    public boolean isFirstColumn(int column) {
+        return column == FIRST_COLUMN;
     }
 
-    private boolean isNorthWestDiagonalViolation(int row, int column, PlayerColor turnColor, PlayerColor oppositeColor) {
-        return getStoneColorAt(row - 1, column) == oppositeColor &&
-                getStoneColorAt(row, column - 1) == oppositeColor &&
-                getStoneColorAt(row - 1, column - 1) == turnColor;
+    public boolean isLastRow(int row) {
+        return row == LAST_ROW;
     }
 
-    private boolean isNorthEastDiagonalViolation(int row, int column, PlayerColor turnColor, PlayerColor oppositeColor) {
-        return getStoneColorAt(row - 1, column) == oppositeColor &&
-                getStoneColorAt(row, column + 1) == oppositeColor &&
-                getStoneColorAt(row - 1, column + 1) == turnColor;
-    }
-
-    private boolean isSouthEastDiagonalViolation(int row, int column, PlayerColor turnColor, PlayerColor oppositeColor) {
-        return getStoneColorAt(row + 1, column) == oppositeColor &&
-                getStoneColorAt(row, column + 1) == oppositeColor &&
-                getStoneColorAt(row + 1, column + 1) == turnColor;
-    }
-
-    private boolean isLastColumn(int column) {
-        return column == MAX_COLUMN;
-    }
-
-    private boolean isFirstColumn(int column) {
-        return column == 1;
-    }
-
-    private boolean isLastRow(int row) {
-        return row == getMAX_ROW();
-    }
-
-    private boolean isFirstRow(int row) {
-        return row == 1;
+    public boolean isFirstRow(int row) {
+        return row == FIRST_ROW;
     }
 
 }
