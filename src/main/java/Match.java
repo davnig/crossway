@@ -150,7 +150,16 @@ public class Match {
 	}
 
 	private int getEmptierColumnBetweenFirstAndLast() {
-		return 1;
+		PlayerColor currentPlayerColor = turn.getCurrentPlayer().getColor();
+		int firstColumnCount = (int) board.getBoardState().entrySet().stream()
+						.filter(entry -> entry.getKey().column == 1 &&
+										entry.getValue() == currentPlayerColor)
+						.count();
+		int lastColumnCount = (int) board.getBoardState().entrySet().stream()
+						.filter(entry -> entry.getKey().column == board.getMAX_COLUMN() &&
+										entry.getValue() == currentPlayerColor)
+						.count();
+		return firstColumnCount > lastColumnCount ? 1 : board.getMAX_COLUMN();
 	}
 
 	private boolean checkBlackWinCondition() {
