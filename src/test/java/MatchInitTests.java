@@ -31,9 +31,17 @@ public class MatchInitTests {
     }
 
     @Test
-    void whenPlayerReachOtherSideOfTheBoardShouldWonTheMatch() {
+    void whenBlackPlayerReachOtherSideOfTheBoardShouldWinTheMatch() {
         Match match = new Match();
         match.start();
-        assertTrue(match.checkWinCondition());
+        assertTrue(match.checkWinCondition(PlayerColor.BLACK));
     }
+
+    @Test
+    void whenWhitePlayerReachOtherSideOfTheBoardShouldWinTheMatch() {
+        Match match = new Match();
+        match.start();
+        assertTrue(match.checkWinCondition(PlayerColor.WHITE));
+    }
+
 }

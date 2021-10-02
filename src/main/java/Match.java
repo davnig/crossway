@@ -130,9 +130,45 @@ public class Match {
         return getCurrentPlayerColor() == PlayerColor.BLACK;
     }
 
-    boolean checkWinCondition() {
-        return true;
-    }
+	boolean checkWinCondition(PlayerColor playerColor) {
+		if (playerColor == PlayerColor.BLACK) {
+			checkBlackWinCondition();
+		} else {
+			checkWhiteWinCondition();
+		}
+		return true;
+	}
+
+	private boolean checkWhiteWinCondition() {
+		int columnToCheck = getEmptierColumnBetweenFirstAndLast();
+		for (int row = 1; row < board.getMAX_ROW(); row++) {
+			if (recursionMethod(row, columnToCheck)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private int getEmptierColumnBetweenFirstAndLast() {
+		return 1;
+	}
+
+	private boolean checkBlackWinCondition() {
+		int rowToCheck = getEmptierRowBetweenFirstAndLast();
+		for (int column = 1; column < board.getMAX_COLUMN(); column++) {
+			if (recursionMethod(rowToCheck, column))
+				return true;
+		}
+		return false;
+	}
+
+	private int getEmptierRowBetweenFirstAndLast() {
+		return 1;
+	}
+
+	private boolean recursionMethod(int row, int column) {
+		return true;
+	}
 
 }
 
