@@ -19,79 +19,56 @@ public class TurnTests {
     @ParameterizedTest
     @CsvSource({"BLACK,WHITE", "WHITE,BLACK"})
     void whenPlayerPlacesStoneAtPosition13AndSWDiagonalViolationShouldOutputError(PlayerColor player1, PlayerColor player2) {
-
         Board presetBoard = new Board();
-
         presetBoard.getBoardState().put(new Intersection(1, 2), player1);
         presetBoard.getBoardState().put(new Intersection(2, 3), player1);
         presetBoard.getBoardState().put(new Intersection(2, 2), player2);
-
         Player playerTWO = new Player(PlayerID.TWO, player2);
         Turn turn = new Turn(4, playerTWO);
-
-        Game game = new Game(presetBoard, turn);
-
-        assertThrows(PlacementViolationException.class, () -> game.placeStoneAt(1, 3));
-
+        Match match = new Match(presetBoard, turn);
+        assertThrows(PlacementViolationException.class, () -> match.placeStoneAt(1, 3));
     }
 
     //test north-west violation
     @ParameterizedTest
     @CsvSource({"BLACK,WHITE", "WHITE,BLACK"})
     void whenPlayerPlacesStoneAtPosition24AndNWDiagonalViolationShouldOutputError(PlayerColor player1, PlayerColor player2) {
-
         Board presetBoard = new Board();
-
         presetBoard.getBoardState().put(new Intersection(1, 4), player1);
         presetBoard.getBoardState().put(new Intersection(2, 3), player1);
         presetBoard.getBoardState().put(new Intersection(1, 3), player2);
-
         Player playerTWO = new Player(PlayerID.TWO, player2);
         Turn turn = new Turn(4, playerTWO);
-
-        Game game = new Game(presetBoard, turn);
-
-        assertThrows(PlacementViolationException.class, () -> game.placeStoneAt(2, 4));
-
+        Match match = new Match(presetBoard, turn);
+        assertThrows(PlacementViolationException.class, () -> match.placeStoneAt(2, 4));
     }
 
     //test north-east violation
     @ParameterizedTest
     @CsvSource({"BLACK,WHITE", "WHITE,BLACK"})
     void whenPlayerPlacesStoneAtPosition33AndNEDiagonalViolationShouldOutputError(PlayerColor player1, PlayerColor player2) {
-
         Board presetBoard = new Board();
-
         presetBoard.getBoardState().put(new Intersection(3, 4), player1);
         presetBoard.getBoardState().put(new Intersection(2, 3), player1);
         presetBoard.getBoardState().put(new Intersection(2, 4), player2);
-
         Player playerTWO = new Player(PlayerID.TWO, player2);
         Turn turn = new Turn(4, playerTWO);
-
-        Game game = new Game(presetBoard, turn);
-
-        assertThrows(PlacementViolationException.class, () -> game.placeStoneAt(3, 3));
-
+        Match match = new Match(presetBoard, turn);
+        assertThrows(PlacementViolationException.class, () -> match.placeStoneAt(3, 3));
     }
 
     //test south-east violation
     @ParameterizedTest
     @CsvSource({"BLACK,WHITE", "WHITE,BLACK"})
     void whenPlayerPlacesStoneAtPosition24AndSEDiagonalViolationShouldOutputError(PlayerColor player1, PlayerColor player2) {
-
         Board presetBoard = new Board();
         presetBoard.getBoardState().put(new Intersection(2, 5), player1);
         presetBoard.getBoardState().put(new Intersection(3, 4), player1);
         presetBoard.getBoardState().put(new Intersection(3, 5), player2);
-
         Player playerTWO = new Player(PlayerID.TWO, player2);
         Turn turn = new Turn(4, playerTWO);
-
-        Game game = new Game(presetBoard, turn);
-
-        assertThrows(PlacementViolationException.class, () -> game.placeStoneAt(2, 4));
-
+        Match match = new Match(presetBoard, turn);
+        assertThrows(PlacementViolationException.class, () -> match.placeStoneAt(2, 4));
     }
 
     @SneakyThrows
@@ -99,17 +76,13 @@ public class TurnTests {
     void whenIsSecondTurnAndPieRuleAcceptedPlayersShouldSwitchColors() {
         Board presetBoard = new Board();
         presetBoard.getBoardState().put(new Intersection(1, 4), PlayerColor.BLACK);
-
-        Game game = new Game(presetBoard);
-        Turn turn = new Turn(2, game.getPlayer2());
-
-        game.setTurn(turn);
-
-        game.setScanner(getRedirectedScannerForSimulatedUserInput("Y"));
-        game.playTurn();
-
-        assertEquals(game.getPlayer1().getColor(), PlayerColor.WHITE);
-        assertEquals(game.getPlayer2().getColor(), PlayerColor.BLACK);
+        Match match = new Match(presetBoard);
+        Turn turn = new Turn(2, match.getPlayer2());
+        match.setTurn(turn);
+        match.setScanner(getRedirectedScannerForSimulatedUserInput("Y"));
+        match.playTurn();
+        assertEquals(match.getPlayer1().getColor(), PlayerColor.WHITE);
+        assertEquals(match.getPlayer2().getColor(), PlayerColor.BLACK);
     }
 
     @SneakyThrows
@@ -117,18 +90,14 @@ public class TurnTests {
     void whenIsSecondTurnAndPieRuleNOTAcceptedPlayersShouldNOTSwitchColors() {
         Board presetBoard = new Board();
         presetBoard.getBoardState().put(new Intersection(1, 4), PlayerColor.BLACK);
-
-        Game game = new Game(presetBoard);
-        Turn turn = new Turn(2, game.getPlayer2());
-
-        game.setTurn(turn);
-
-        game.setScanner(getRedirectedScannerForSimulatedUserInput("N" + System.getProperty("line.separator")
+        Match match = new Match(presetBoard);
+        Turn turn = new Turn(2, match.getPlayer2());
+        match.setTurn(turn);
+        match.setScanner(getRedirectedScannerForSimulatedUserInput("N" + System.getProperty("line.separator")
                 + "6,6" + System.getProperty("line.separator")));
-        game.playTurn();
-
-        assertEquals(PlayerColor.BLACK, game.getPlayer1().getColor());
-        assertEquals(PlayerColor.WHITE, game.getPlayer2().getColor());
+        match.playTurn();
+        assertEquals(PlayerColor.BLACK, match.getPlayer1().getColor());
+        assertEquals(PlayerColor.WHITE, match.getPlayer2().getColor());
     }
 
     @SneakyThrows
@@ -136,16 +105,12 @@ public class TurnTests {
     void whenIsSecondTurnAndPieRuleNOTAcceptedWhiteShouldMakeItsMove() {
         Board presetBoard = new Board();
         presetBoard.getBoardState().put(new Intersection(1, 4), PlayerColor.BLACK);
-
-        Game game = new Game(presetBoard);
-        Turn turn = new Turn(2, game.getPlayer2());
-
-        game.setTurn(turn);
-
-        game.setScanner(getRedirectedScannerForSimulatedUserInput("N" + System.getProperty("line.separator")
+        Match match = new Match(presetBoard);
+        Turn turn = new Turn(2, match.getPlayer2());
+        match.setTurn(turn);
+        match.setScanner(getRedirectedScannerForSimulatedUserInput("N" + System.getProperty("line.separator")
                 + "6,6" + System.getProperty("line.separator")));
-        game.playTurn();
-
+        match.playTurn();
         assertEquals(PlayerColor.WHITE, presetBoard.getStoneColorAt(6, 6));
     }
 
@@ -155,54 +120,40 @@ public class TurnTests {
     void whenIsSecondTurnAndPlayerInsertWrongInputForPieRulePlayTurnShouldThrowError(String playerResponseToPieRule) {
         Board presetBoard = new Board();
         presetBoard.getBoardState().put(new Intersection(1, 4), PlayerColor.BLACK);
-
-        Game game = new Game(presetBoard);
-        Turn turn = new Turn(2, game.getPlayer2());
-
-        game.setTurn(turn);
-        game.setScanner(getRedirectedScannerForSimulatedUserInput(playerResponseToPieRule));
-
-        assertThrows(InvalidUserInputException.class, game::playTurn);
-
+        Match match = new Match(presetBoard);
+        Turn turn = new Turn(2, match.getPlayer2());
+        match.setTurn(turn);
+        match.setScanner(getRedirectedScannerForSimulatedUserInput(playerResponseToPieRule));
+        assertThrows(InvalidUserInputException.class, match::playTurn);
     }
 
     @Test
     void whenTurnEndsShouldSwitchCurrentPlayer() throws PlacementViolationException, InvalidUserInputException {
-
-        Game game = new Game();
-        game.start();
-        game.setScanner(getRedirectedScannerForSimulatedUserInput("2,1"));
-        game.playTurn();
-
-        assertEquals(game.getCurrentPlayerColor(), PlayerColor.WHITE);
+        Match match = new Match();
+        match.start();
+        match.setScanner(getRedirectedScannerForSimulatedUserInput("2,1"));
+        match.playTurn();
+        assertEquals(match.getCurrentPlayerColor(), PlayerColor.WHITE);
     }
 
     @Test
     void whenTurnEndsShouldIncrementTurnNumber() throws PlacementViolationException, InvalidUserInputException {
-
-        Game game = new Game();
-        game.start();
-        game.setScanner(getRedirectedScannerForSimulatedUserInput("1,1"));
-        game.playTurn();
-
-        assertEquals(game.getTurn().getTurnNumber(), 2);
-
+        Match match = new Match();
+        match.start();
+        match.setScanner(getRedirectedScannerForSimulatedUserInput("1,1"));
+        match.playTurn();
+        assertEquals(match.getTurn().getTurnNumber(), 2);
     }
 
     @Test
     void whenPlayTurnShouldConvertUserInputToStonePlacement() throws PlacementViolationException, InvalidUserInputException {
-
         String userInput;
         ByteArrayInputStream byteArrayInputStream;
-
-        Game game = new Game();
-        game.start();
-
-        game.setScanner(getRedirectedScannerForSimulatedUserInput("2,3"));
-        game.playTurn();
-
-        assertEquals(game.getBoard().getStoneColorAt(2, 3), PlayerColor.BLACK);
-
+        Match match = new Match();
+        match.start();
+        match.setScanner(getRedirectedScannerForSimulatedUserInput("2,3"));
+        match.playTurn();
+        assertEquals(match.getBoard().getStoneColorAt(2, 3), PlayerColor.BLACK);
     }
 
     Scanner getRedirectedScannerForSimulatedUserInput(String input) {
@@ -214,10 +165,8 @@ public class TurnTests {
     @ParameterizedTest
     @CsvSource({"-1, -1", "30, 30", "-1, 30", "30, -1"})
     void whenPlayerPlacesStoneOutsideOfBoardShouldOutputError(int row, int column) {
-
         Board board = new Board();
-        Game game = new Game(board);
-
-        assertThrows(PlacementViolationException.class, () -> game.placeStoneAt(row, column));
+        Match match = new Match(board);
+        assertThrows(PlacementViolationException.class, () -> match.placeStoneAt(row, column));
     }
 }

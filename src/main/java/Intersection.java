@@ -7,4 +7,5 @@ public class Intersection {
 
     int row;
     int column;
+
 }

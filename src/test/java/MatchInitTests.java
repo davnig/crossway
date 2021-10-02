@@ -5,29 +5,29 @@ import playerProperty.PlayerColor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GameInitTests {
+public class MatchInitTests {
 
     @Test
     void whenGameStartsBoardShouldBeEmpty() {
-        Game game = new Game();
-        game.start();
-        assertTrue(game.getBoard().getBoardState().entrySet().stream()
+        Match match = new Match();
+        match.start();
+        assertTrue(match.getBoard().getBoardState().entrySet().stream()
                 .allMatch(entry -> entry.getValue().equals(PlayerColor.NONE)));
     }
 
     @Test
     void whenGameStartsTurnShouldBeBlack() {
-        Game game = new Game();
-        game.start();
-        assertTrue(game.isBlackTurn());
+        Match match = new Match();
+        match.start();
+        assertTrue(match.isBlackTurn());
     }
 
     @Test
     void whenStoneIsPositionedBoardShouldNotBeEmpty() throws PlacementViolationException {
-        Game game = new Game();
-        game.start();
-        game.placeStoneAt(1, 1);
-        assertEquals(game.getBoard().getBoardState().get(new Intersection(1, 1)), PlayerColor.BLACK);
+        Match match = new Match();
+        match.start();
+        match.placeStoneAt(1, 1);
+        assertEquals(match.getBoard().getBoardState().get(new Intersection(1, 1)), PlayerColor.BLACK);
     }
 
 }

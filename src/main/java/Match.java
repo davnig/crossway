@@ -7,28 +7,28 @@ import playerProperty.PlayerID;
 import java.util.Scanner;
 
 @Data
-public class Game {
+public class Match {
 
     private Board board;
     private Turn turn;
     private Player player1, player2;
     private Scanner scanner;
 
-    Game() {
+    Match() {
         this.scanner = new Scanner(System.in);
         this.board = new Board();
         this.initPlayers();
         this.turn = new Turn();
     }
 
-    Game(Board presetBoard) {
+    Match(Board presetBoard) {
         this.scanner = new Scanner(System.in);
         this.board = presetBoard;
         this.initPlayers();
         this.turn = new Turn();
     }
 
-    Game(Board presetBoard, Turn turn) {
+    Match(Board presetBoard, Turn turn) {
         this.scanner = new Scanner(System.in);
         this.board = presetBoard;
         this.initPlayers();
@@ -41,7 +41,6 @@ public class Game {
     }
 
     public void playTurn() throws PlacementViolationException, InvalidUserInputException {
-
         if (this.turn.getTurnNumber() == 2) {
             System.out.println("Do you Want to switch colors? Y -yes N-No");
             String whiteResponseToPieRule = scanner.nextLine();
@@ -49,24 +48,19 @@ public class Game {
                 return;
             }
         }
-
         String input = scanner.nextLine();
         int row = getIntRowFromPlayerInput(input);
         int column = getIntColumnFromPlayerInput(input);
-
         placeStoneAt(row, column);
         endTurn();
     }
 
 
     public void placeStoneAt(int row, int column) throws PlacementViolationException {
-
         if (board.isPlacementOutOfBoardBoundaries(row, column))
             throw new PlacementViolationException("Placement not allowed: out of board violation");
-
         if (this.board.isLastMoveDiagonalViolation(row, column, getCurrentPlayerColor(), getOppositePlayerColor()))
             throw new PlacementViolationException("Placement not allowed: diagonal violation");
-
         this.board.getBoardState().put(new Intersection(row, column), getCurrentPlayerColor());
     }
 
