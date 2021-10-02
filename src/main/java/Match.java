@@ -9,126 +9,126 @@ import java.util.Scanner;
 @Data
 public class Match {
 
-    private Board board;
-    private Turn turn;
-    private Player player1, player2;
-    private Scanner scanner;
+	private Board board;
+	private Turn turn;
+	private Player player1, player2;
+	private Scanner scanner;
 
-    Match() {
-        this.scanner = new Scanner(System.in);
-        this.board = new Board();
-        this.initPlayers();
-        this.turn = new Turn();
-    }
+	Match() {
+		this.scanner = new Scanner(System.in);
+		this.board = new Board();
+		this.initPlayers();
+		this.turn = new Turn();
+	}
 
-    Match(Board presetBoard) {
-        this.scanner = new Scanner(System.in);
-        this.board = presetBoard;
-        this.initPlayers();
-        this.turn = new Turn();
-    }
+	Match(Board presetBoard) {
+		this.scanner = new Scanner(System.in);
+		this.board = presetBoard;
+		this.initPlayers();
+		this.turn = new Turn();
+	}
 
-    Match(Board presetBoard, Turn turn) {
-        this.scanner = new Scanner(System.in);
-        this.board = presetBoard;
-        this.initPlayers();
-        this.turn = turn;
-    }
+	Match(Board presetBoard, Turn turn) {
+		this.scanner = new Scanner(System.in);
+		this.board = presetBoard;
+		this.initPlayers();
+		this.turn = turn;
+	}
 
-    void start() {
-        this.initFirstTurn();
-        System.out.println("New game started.\nIt's black turn.");
-    }
+	void start() {
+		this.initFirstTurn();
+		System.out.println("New game started.\nIt's black turn.");
+	}
 
-    public void playTurn() throws PlacementViolationException, InvalidUserInputException {
-        if (this.turn.getTurnNumber() == 2) {
-            System.out.println("Do you Want to switch colors? Y -yes N-No");
-            String whiteResponseToPieRule = scanner.nextLine();
-            if (pieRule(whiteResponseToPieRule)) {
-                return;
-            }
-        }
-        String input = scanner.nextLine();
-        int row = getIntRowFromPlayerInput(input);
-        int column = getIntColumnFromPlayerInput(input);
-        placeStoneAt(row, column);
-        endTurn();
-    }
-
-
-    public void placeStoneAt(int row, int column) throws PlacementViolationException {
-        if (board.isPlacementOutOfBoardBoundaries(row, column))
-            throw new PlacementViolationException("Placement not allowed: out of board violation");
-        if (this.board.isLastMoveDiagonalViolation(row, column, getCurrentPlayerColor(), getOppositePlayerColor()))
-            throw new PlacementViolationException("Placement not allowed: diagonal violation");
-        this.board.getBoardState().put(new Intersection(row, column), getCurrentPlayerColor());
-    }
-
-    public PlayerColor getCurrentPlayerColor() {
-        return this.turn.getCurrentPlayer().getColor();
-    }
-
-    public void switchTurnAndColorWithPieRule() {
-        endTurn();
-        switchColors();
-    }
+	public void playTurn() throws PlacementViolationException, InvalidUserInputException {
+		if (this.turn.getTurnNumber() == 2) {
+			System.out.println("Do you Want to switch colors? Y -yes N-No");
+			String whiteResponseToPieRule = scanner.nextLine();
+			if (pieRule(whiteResponseToPieRule)) {
+				return;
+			}
+		}
+		String input = scanner.nextLine();
+		int row = getIntRowFromPlayerInput(input);
+		int column = getIntColumnFromPlayerInput(input);
+		placeStoneAt(row, column);
+		endTurn();
+	}
 
 
-    private void endTurn() {
-        turn.setCurrentPlayer(getPlayerNotInTurn());
-        turn.incrementTurnNumber();
-    }
+	public void placeStoneAt(int row, int column) throws PlacementViolationException {
+		if (board.isPlacementOutOfBoardBoundaries(row, column))
+			throw new PlacementViolationException("Placement not allowed: out of board violation");
+		if (this.board.isLastMoveDiagonalViolation(row, column, getCurrentPlayerColor(), getOppositePlayerColor()))
+			throw new PlacementViolationException("Placement not allowed: diagonal violation");
+		this.board.getBoardState().put(new Intersection(row, column), getCurrentPlayerColor());
+	}
 
-    private void switchColors() {
-        PlayerColor playerONEOldColor = this.player1.getColor();
-        this.player1.setColor(this.player2.getColor());
-        this.player2.setColor(playerONEOldColor);
-    }
+	public PlayerColor getCurrentPlayerColor() {
+		return this.turn.getCurrentPlayer().getColor();
+	}
 
-    private Player getPlayerNotInTurn() {
-        return this.turn.getCurrentPlayer().equals(player1) ? player2 : player1;
-    }
+	public void switchTurnAndColorWithPieRule() {
+		endTurn();
+		switchColors();
+	}
 
-    private PlayerColor getOppositePlayerColor() {
-        return isWhiteTurn() ? PlayerColor.BLACK : PlayerColor.WHITE;
-    }
 
-    private void initFirstTurn() {
-        this.turn.setTurnNumber(1);
-        this.turn.setCurrentPlayer(player1);
-    }
+	private void endTurn() {
+		turn.setCurrentPlayer(getPlayerNotInTurn());
+		turn.incrementTurnNumber();
+	}
 
-    private void initPlayers() {
-        this.player1 = new Player(PlayerID.ONE, PlayerColor.BLACK);
-        this.player2 = new Player(PlayerID.TWO, PlayerColor.WHITE);
-    }
+	private void switchColors() {
+		PlayerColor playerONEOldColor = this.player1.getColor();
+		this.player1.setColor(this.player2.getColor());
+		this.player2.setColor(playerONEOldColor);
+	}
 
-    private int getIntColumnFromPlayerInput(String input) {
-        return Integer.parseInt(input.substring(input.indexOf(",") + 1));
-    }
+	private Player getPlayerNotInTurn() {
+		return this.turn.getCurrentPlayer().equals(player1) ? player2 : player1;
+	}
 
-    private int getIntRowFromPlayerInput(String input) {
-        return Integer.parseInt(input.substring(0, input.indexOf(",")));
-    }
+	private PlayerColor getOppositePlayerColor() {
+		return isWhiteTurn() ? PlayerColor.BLACK : PlayerColor.WHITE;
+	}
 
-    private boolean pieRule(String whiteResponse) throws InvalidUserInputException {
-        if (whiteResponse.equalsIgnoreCase("Y")) {
-            switchTurnAndColorWithPieRule();
-            return true;
-        } else if (whiteResponse.equalsIgnoreCase("N")) {
-            return false;
-        } else {
-            throw new InvalidUserInputException("Input not allowed, insert either Y or N");
-        }
-    }
+	private void initFirstTurn() {
+		this.turn.setTurnNumber(1);
+		this.turn.setCurrentPlayer(player1);
+	}
 
-    boolean isWhiteTurn() {
-        return getCurrentPlayerColor() == PlayerColor.WHITE;
-    }
+	private void initPlayers() {
+		this.player1 = new Player(PlayerID.ONE, PlayerColor.BLACK);
+		this.player2 = new Player(PlayerID.TWO, PlayerColor.WHITE);
+	}
 
-    boolean isBlackTurn() {
-        return getCurrentPlayerColor() == PlayerColor.BLACK;
-    }
+	private int getIntColumnFromPlayerInput(String input) {
+		return Integer.parseInt(input.substring(input.indexOf(",") + 1));
+	}
+
+	private int getIntRowFromPlayerInput(String input) {
+		return Integer.parseInt(input.substring(0, input.indexOf(",")));
+	}
+
+	private boolean pieRule(String whiteResponse) throws InvalidUserInputException {
+		if (whiteResponse.equalsIgnoreCase("Y")) {
+			switchTurnAndColorWithPieRule();
+			return true;
+		} else if (whiteResponse.equalsIgnoreCase("N")) {
+			return false;
+		} else {
+			throw new InvalidUserInputException("Input not allowed, insert either Y or N");
+		}
+	}
+
+	boolean isWhiteTurn() {
+		return getCurrentPlayerColor() == PlayerColor.WHITE;
+	}
+
+	boolean isBlackTurn() {
+		return getCurrentPlayerColor() == PlayerColor.BLACK;
+	}
 
 	boolean checkWinCondition(PlayerColor playerColor) {
 		if (playerColor == PlayerColor.BLACK) {
@@ -172,7 +172,16 @@ public class Match {
 	}
 
 	private int getEmptierRowBetweenFirstAndLast() {
-		return 1;
+		PlayerColor currentPlayerColor = turn.getCurrentPlayer().getColor();
+		int firstRowCount = (int) board.getBoardState().entrySet().stream()
+						.filter(entry -> entry.getKey().row == 1 &&
+										entry.getValue() == currentPlayerColor)
+						.count();
+		int lastRowCount = (int) board.getBoardState().entrySet().stream()
+						.filter(entry -> entry.getKey().row == board.getMAX_ROW() &&
+										entry.getValue() == currentPlayerColor)
+						.count();
+		return firstRowCount > lastRowCount ? 1 : board.getMAX_ROW();
 	}
 
 	private boolean recursionMethod(int row, int column) {
