@@ -25,12 +25,6 @@ public class Board {
                 this.boardState.put(new Intersection(row, column), PlayerColor.NONE);
 
     }
-/*
-    Intersection getIntersectionAt(int row, int column) {
-
-        return this.boardState.get(new Intersection(row,column));
-
-    }*/
 
     PlayerColor getStoneColorAt(int row, int column) {
         return boardState.get(new Intersection(row, column));
