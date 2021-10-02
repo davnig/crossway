@@ -22,9 +22,9 @@ public class TurnTests {
 
         Board presetBoard = new Board();
 
-        presetBoard.getIntersectionAt(1, 2).setStone(player1);
-        presetBoard.getIntersectionAt(2, 3).setStone(player1);
-        presetBoard.getIntersectionAt(2, 2).setStone(player2);
+        presetBoard.getBoardState().put(new Intersection(1, 2), player1);
+        presetBoard.getBoardState().put(new Intersection(2, 3), player1);
+        presetBoard.getBoardState().put(new Intersection(2, 2), player2);
 
         Player playerTWO = new Player(PlayerID.TWO, player2);
         Turn turn = new Turn(4, playerTWO);
@@ -42,9 +42,9 @@ public class TurnTests {
 
         Board presetBoard = new Board();
 
-        presetBoard.getIntersectionAt(1, 4).setStone(player1);
-        presetBoard.getIntersectionAt(2, 3).setStone(player1);
-        presetBoard.getIntersectionAt(1, 3).setStone(player2);
+        presetBoard.getBoardState().put(new Intersection(1, 4), player1);
+        presetBoard.getBoardState().put(new Intersection(2, 3), player1);
+        presetBoard.getBoardState().put(new Intersection(1, 3), player2);
 
         Player playerTWO = new Player(PlayerID.TWO, player2);
         Turn turn = new Turn(4, playerTWO);
@@ -62,9 +62,9 @@ public class TurnTests {
 
         Board presetBoard = new Board();
 
-        presetBoard.getIntersectionAt(3, 4).setStone(player1);
-        presetBoard.getIntersectionAt(2, 3).setStone(player1);
-        presetBoard.getIntersectionAt(2, 4).setStone(player2);
+        presetBoard.getBoardState().put(new Intersection(3, 4), player1);
+        presetBoard.getBoardState().put(new Intersection(2, 3), player1);
+        presetBoard.getBoardState().put(new Intersection(2, 4), player2);
 
         Player playerTWO = new Player(PlayerID.TWO, player2);
         Turn turn = new Turn(4, playerTWO);
@@ -81,10 +81,9 @@ public class TurnTests {
     void whenPlayerPlacesStoneAtPosition24AndSEDiagonalViolationShouldOutputError(PlayerColor player1, PlayerColor player2) {
 
         Board presetBoard = new Board();
-
-        presetBoard.getIntersectionAt(2, 5).setStone(player1);
-        presetBoard.getIntersectionAt(3, 4).setStone(player1);
-        presetBoard.getIntersectionAt(3, 5).setStone(player2);
+        presetBoard.getBoardState().put(new Intersection(2, 5), player1);
+        presetBoard.getBoardState().put(new Intersection(3, 4), player1);
+        presetBoard.getBoardState().put(new Intersection(3, 5), player2);
 
         Player playerTWO = new Player(PlayerID.TWO, player2);
         Turn turn = new Turn(4, playerTWO);
@@ -99,7 +98,7 @@ public class TurnTests {
     @Test
     void whenIsSecondTurnAndPieRuleAcceptedPlayersShouldSwitchColors() {
         Board presetBoard = new Board();
-        presetBoard.getIntersectionAt(1, 4).setStone(PlayerColor.BLACK);
+        presetBoard.getBoardState().put(new Intersection(1, 4), PlayerColor.BLACK);
 
         Game game = new Game(presetBoard);
         Turn turn = new Turn(2, game.getPlayer2());
@@ -117,7 +116,7 @@ public class TurnTests {
     @Test
     void whenIsSecondTurnAndPieRuleNOTAcceptedPlayersShouldNOTSwitchColors() {
         Board presetBoard = new Board();
-        presetBoard.getIntersectionAt(1, 4).setStone(PlayerColor.BLACK);
+        presetBoard.getBoardState().put(new Intersection(1, 4), PlayerColor.BLACK);
 
         Game game = new Game(presetBoard);
         Turn turn = new Turn(2, game.getPlayer2());
@@ -136,7 +135,7 @@ public class TurnTests {
     @Test
     void whenIsSecondTurnAndPieRuleNOTAcceptedWhiteShouldMakeItsMove() {
         Board presetBoard = new Board();
-        presetBoard.getIntersectionAt(1, 4).setStone(PlayerColor.BLACK);
+        presetBoard.getBoardState().put(new Intersection(1, 4), PlayerColor.BLACK);
 
         Game game = new Game(presetBoard);
         Turn turn = new Turn(2, game.getPlayer2());
@@ -155,7 +154,7 @@ public class TurnTests {
     @CsvSource({"yes,no,asd,12-.,-,.-.-.,213,wedfokn"})
     void whenIsSecondTurnAndPlayerInsertWrongInputForPieRulePlayTurnShouldThrowError(String playerResponseToPieRule) {
         Board presetBoard = new Board();
-        presetBoard.getIntersectionAt(1, 4).setStone(PlayerColor.BLACK);
+        presetBoard.getBoardState().put(new Intersection(1, 4), PlayerColor.BLACK);
 
         Game game = new Game(presetBoard);
         Turn turn = new Turn(2, game.getPlayer2());

@@ -11,8 +11,8 @@ public class GameInitTests {
     void whenGameStartsBoardShouldBeEmpty() {
         Game game = new Game();
         game.start();
-        assertTrue(game.getBoard().getIntersections().stream()
-                .allMatch(intersection -> intersection.stone.equals(PlayerColor.NONE)));
+        assertTrue(game.getBoard().getBoardState().entrySet().stream()
+                .allMatch(entry -> entry.getValue().equals(PlayerColor.NONE)));
     }
 
     @Test
@@ -27,7 +27,7 @@ public class GameInitTests {
         Game game = new Game();
         game.start();
         game.placeStoneAt(1, 1);
-        assertEquals(game.getBoard().getIntersectionAt(1, 1).getStone(), PlayerColor.BLACK);
+        assertEquals(game.getBoard().getBoardState().get(new Intersection(1, 1)), PlayerColor.BLACK);
     }
 
 }
