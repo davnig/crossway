@@ -30,4 +30,10 @@ public class MatchInitTests {
         assertEquals(match.getBoard().getBoardState().get(new Intersection(1, 1)), PlayerColor.BLACK);
     }
 
+    @Test
+    void whenPlayerReachOtherSideOfTheBoardShouldWonTheMatch() {
+        Match match = new Match();
+        match.start();
+        assertTrue(match.checkWinCondition());
+    }
 }

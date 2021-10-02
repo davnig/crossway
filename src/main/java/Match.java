@@ -130,5 +130,9 @@ public class Match {
         return getCurrentPlayerColor() == PlayerColor.BLACK;
     }
 
+    boolean checkWinCondition() {
+        return true;
+    }
+
 }
 
