@@ -67,7 +67,7 @@ public class Game {
         if (this.board.isLastMoveDiagonalViolation(row, column, getCurrentPlayerColor(), getOppositePlayerColor()))
             throw new PlacementViolationException("Placement not allowed: diagonal violation");
 
-        this.board.getIntersectionAt(row, column).setStone(getCurrentPlayerColor());
+        this.board.getBoardState().put(new Intersection(row, column), getCurrentPlayerColor());
     }
 
     public PlayerColor getCurrentPlayerColor() {

@@ -1,16 +1,15 @@
 import lombok.Data;
 import playerProperty.PlayerColor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 public class Board {
 
     private final int MAX_ROW = 19;
     private final int MAX_COLUMN = 19;
-    private List<Intersection> intersections;
+    private Map<Intersection, PlayerColor> boardState;
 
 
     Board() {
@@ -19,25 +18,22 @@ public class Board {
 
     private void initIntersections() {
 
-        this.intersections = new ArrayList<>();
+        this.boardState = new HashMap<>();
 
         for (int row = 1; row <= MAX_ROW; row++)
             for (int column = 1; column <= MAX_COLUMN; column++)
-                this.intersections.add(new Intersection(row, column, PlayerColor.NONE));
+                this.boardState.put(new Intersection(row, column), PlayerColor.NONE);
 
     }
-
+/*
     Intersection getIntersectionAt(int row, int column) {
 
-        return this.intersections.stream()
-                .filter(intersection -> intersection.getRow() == row && intersection.getColumn() == column)
-                .collect(Collectors.toList())
-                .get(0);
+        return this.boardState.get(new Intersection(row,column));
 
-    }
+    }*/
 
     PlayerColor getStoneColorAt(int row, int column) {
-        return getIntersectionAt(row, column).getStone();
+        return boardState.get(new Intersection(row, column));
     }
 
     boolean isPlacementOutOfBoardBoundaries(int row, int column) {
