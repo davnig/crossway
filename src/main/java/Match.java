@@ -45,6 +45,9 @@ public class Match {
         int row = getIntRowFromPlayerInput(input);
         int column = getIntColumnFromPlayerInput(input);
         validatePositionAndPlaceStone(row, column);
+        if (turn.getTurnNumber() >= 19) {
+            checkWinCondition(turn.getCurrentPlayer());
+        }
         turn.nextTurn();
     }
 
