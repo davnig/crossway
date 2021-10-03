@@ -19,9 +19,9 @@ public class TurnTests {
     @CsvSource({"BLACK,WHITE", "WHITE,BLACK"})
     void whenPlayerPlacesStoneAtPosition13AndSWDiagonalViolationShouldOutputError(PlayerColor player1, PlayerColor player2) {
         Board presetBoard = new Board();
-        presetBoard.placeStone(1, 2, player1);
-        presetBoard.placeStone(2, 3, player1);
-        presetBoard.placeStone(2, 2, player2);
+        presetBoard.placeStone(new Intersection(1, 2), player1);
+        presetBoard.placeStone(new Intersection(2, 3), player1);
+        presetBoard.placeStone(new Intersection(2, 2), player2);
         Turn turn = new Turn(4, player2);
         Match match = new Match(presetBoard, turn);
         assertThrows(PlacementViolationException.class, () -> match.validatePositionAndPlaceStone(1, 3));
@@ -32,9 +32,9 @@ public class TurnTests {
     @CsvSource({"BLACK,WHITE", "WHITE,BLACK"})
     void whenPlayerPlacesStoneAtPosition24AndNWDiagonalViolationShouldOutputError(PlayerColor player1, PlayerColor player2) {
         Board presetBoard = new Board();
-        presetBoard.placeStone(1, 4, player1);
-        presetBoard.placeStone(2, 3, player1);
-        presetBoard.placeStone(1, 3, player2);
+        presetBoard.placeStone(new Intersection(1, 4), player1);
+        presetBoard.placeStone(new Intersection(2, 3), player1);
+        presetBoard.placeStone(new Intersection(1, 3), player2);
         Turn turn = new Turn(4, player2);
         Match match = new Match(presetBoard, turn);
         assertThrows(PlacementViolationException.class, () -> match.validatePositionAndPlaceStone(2, 4));
@@ -45,9 +45,9 @@ public class TurnTests {
     @CsvSource({"BLACK,WHITE", "WHITE,BLACK"})
     void whenPlayerPlacesStoneAtPosition33AndNEDiagonalViolationShouldOutputError(PlayerColor player1, PlayerColor player2) {
         Board presetBoard = new Board();
-        presetBoard.placeStone(3, 4, player1);
-        presetBoard.placeStone(2, 3, player1);
-        presetBoard.placeStone(2, 4, player2);
+        presetBoard.placeStone(new Intersection(3, 4), player1);
+        presetBoard.placeStone(new Intersection(2, 3), player1);
+        presetBoard.placeStone(new Intersection(2, 4), player2);
         Turn turn = new Turn(4, player2);
         Match match = new Match(presetBoard, turn);
         assertThrows(PlacementViolationException.class, () -> match.validatePositionAndPlaceStone(3, 3));
@@ -58,9 +58,9 @@ public class TurnTests {
     @CsvSource({"BLACK,WHITE", "WHITE,BLACK"})
     void whenPlayerPlacesStoneAtPosition24AndSEDiagonalViolationShouldOutputError(PlayerColor player1, PlayerColor player2) {
         Board presetBoard = new Board();
-        presetBoard.placeStone(2, 5, player1);
-        presetBoard.placeStone(3, 4, player1);
-        presetBoard.placeStone(3, 5, player2);
+        presetBoard.placeStone(new Intersection(2, 5), player1);
+        presetBoard.placeStone(new Intersection(3, 4), player1);
+        presetBoard.placeStone(new Intersection(3, 5), player2);
         Turn turn = new Turn(4, player2);
         Match match = new Match(presetBoard, turn);
         assertThrows(PlacementViolationException.class, () -> match.validatePositionAndPlaceStone(2, 4));
@@ -70,7 +70,7 @@ public class TurnTests {
     @Test
     void whenIsSecondTurnAndPieRuleAcceptedPlayersShouldSwitchColors() {
         Board presetBoard = new Board();
-        presetBoard.placeStone(1, 4, PlayerColor.BLACK);
+        presetBoard.placeStone(new Intersection(1, 4), PlayerColor.BLACK);
         Match match = new Match(presetBoard);
         match.start();
         match.getTurn().nextTurn();
@@ -83,7 +83,7 @@ public class TurnTests {
     @Test
     void whenIsSecondTurnAndPieRuleNotAcceptedPlayersShouldNotSwitchColors() {
         Board presetBoard = new Board();
-        presetBoard.placeStone(1, 4, PlayerColor.BLACK);
+        presetBoard.placeStone(new Intersection(1, 4), PlayerColor.BLACK);
         Match match = new Match(presetBoard);
         match.start();
         match.getTurn().nextTurn();
@@ -100,7 +100,7 @@ public class TurnTests {
     @Test
     void whenIsSecondTurnAndPieRuleNotAcceptedWhiteShouldMakeItsMove() {
         Board presetBoard = new Board();
-        presetBoard.placeStone(1, 4, PlayerColor.BLACK);
+        presetBoard.placeStone(new Intersection(1, 4), PlayerColor.BLACK);
         Match match = new Match(presetBoard);
         match.start();
         match.getTurn().nextTurn();
@@ -110,7 +110,7 @@ public class TurnTests {
                 )
         );
         match.playTurn();
-        assertEquals(presetBoard.getStoneColorAt(6, 6), PlayerColor.WHITE);
+        assertEquals(presetBoard.getStoneColorAt(new Intersection(6, 6)), PlayerColor.WHITE);
     }
 
     @SneakyThrows
@@ -118,7 +118,7 @@ public class TurnTests {
     @CsvSource({"yes,no,asd,12-.,-,.-.-.,213,wedfokn"})
     void whenIsSecondTurnAndPlayerInsertWrongInputForPieRuleThenError(String playerResponseToPieRule) {
         Board presetBoard = new Board();
-        presetBoard.placeStone(1, 4, PlayerColor.BLACK);
+        presetBoard.placeStone(new Intersection(1, 4), PlayerColor.BLACK);
         Match match = new Match(presetBoard);
         match.start();
         match.getTurn().nextTurn();
@@ -150,7 +150,7 @@ public class TurnTests {
         match.start();
         match.setScanner(getRedirectedScannerForSimulatedUserInput("2,3"));
         match.playTurn();
-        assertEquals(match.getBoard().getStoneColorAt(2, 3), PlayerColor.BLACK);
+        assertEquals(match.getBoard().getStoneColorAt(new Intersection(2, 3)), PlayerColor.BLACK);
     }
 
     Scanner getRedirectedScannerForSimulatedUserInput(String input) {

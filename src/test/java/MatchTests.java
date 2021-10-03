@@ -37,7 +37,7 @@ public class MatchTests {
     void whenBlackPlayerCreatesFullVerticalConnectedPathAcrossBoardShouldWinTheMatch() {
         Board presetBoard = new Board();
         for (int i = presetBoard.getFIRST_ROW(); i <= presetBoard.getLAST_ROW(); i++) {
-            presetBoard.placeStone(i, 5, PlayerColor.BLACK);
+            presetBoard.placeStone(new Intersection(i, 5), PlayerColor.BLACK);
         }
         Match match = new Match(presetBoard);
         match.start();
@@ -50,7 +50,7 @@ public class MatchTests {
     void whenWhitePlayerCreatesFullHorizontalConnectedPathAcrossBoardShouldWinTheMatch() {
         Board presetBoard = new Board();
         for (int i = presetBoard.getFIRST_COLUMN(); i <= presetBoard.getLAST_COLUMN(); i++) {
-            presetBoard.placeStone(5, i, PlayerColor.WHITE);
+            presetBoard.placeStone(new Intersection(5, i), PlayerColor.WHITE);
         }
         Match match = new Match(presetBoard);
         match.start();
@@ -66,10 +66,11 @@ public class MatchTests {
         int columnStartPath = 1;
         Board presetBoard = new Board();
         for (int i = columnStartPath; i <= columnEndPath; i++) {
-            presetBoard.placeStone(5, i, PlayerColor.WHITE);
+            presetBoard.placeStone(new Intersection(5, i), PlayerColor.WHITE);
         }
         Match match = new Match(presetBoard);
         assertFalse(match.checkWinCondition(PlayerColor.WHITE));
     }
+
 
 }

@@ -23,30 +23,27 @@ public class Board {
     }
 
     /**
-     * Gets the stone color at the specified position.
+     * Gets the stone color at the specified intersection.
      *
-     * @param row    the row number
-     * @param column the column number
+     * @param intersection the {@code Intersection}
      * @return a {@code PlayerColor}
      */
-    PlayerColor getStoneColorAt(int row, int column) {
-        Intersection i = new Intersection(row, column);
-        if (boardState.containsKey(i)) {
-            return boardState.get(i);
+    PlayerColor getStoneColorAt(Intersection intersection) {
+        if (boardState.containsKey(intersection)) {
+            return boardState.get(intersection);
         }
         return PlayerColor.NONE;
     }
 
     /**
-     * Places a stone of the given player color on the board in the specified position.
+     * Places a stone of the given player color on the board in the specified intersection.
      *
-     * @param row         the row number
-     * @param column      the column number
-     * @param playerColor the {@code PlayerColor} of the stone
+     * @param intersection the {@code Intersection}
+     * @param playerColor  the {@code PlayerColor} of the stone
      */
-    public void placeStone(int row, int column, PlayerColor playerColor) {
+    public void placeStone(Intersection intersection, PlayerColor playerColor) {
         if (playerColor != PlayerColor.NONE) {
-            boardState.put(new Intersection(row, column), playerColor);
+            boardState.put(intersection, playerColor);
         }
     }
 
@@ -70,18 +67,20 @@ public class Board {
                 .collect(Collectors.toList());
     }
 
-    public Set<Intersection> getAdjIntersections(int row, int column) {
+    public Set<Intersection> getAdjIntersections(Intersection intersection) {
         Set<Intersection> adjIntersections = new HashSet<>();
+        int row = intersection.getRow();
+        int column = intersection.getColumn();
         if (column == LAST_COLUMN && row > FIRST_ROW && row < LAST_ROW) {
-            adjIntersections.add(new Intersection(row-1, column));
-            adjIntersections.add(new Intersection(row+1, column));
-            adjIntersections.add(new Intersection(row-1, column-1));
-            adjIntersections.add(new Intersection(row, column-1));
-            adjIntersections.add(new Intersection(row+1, column-1));
+            adjIntersections.add(new Intersection(row - 1, column));
+            adjIntersections.add(new Intersection(row + 1, column));
+            adjIntersections.add(new Intersection(row - 1, column - 1));
+            adjIntersections.add(new Intersection(row, column - 1));
+            adjIntersections.add(new Intersection(row + 1, column - 1));
             return adjIntersections;
         }
         if (row == LAST_ROW && column > FIRST_COLUMN && column < LAST_COLUMN) {
-            adjIntersections.add(new Intersection(row-1, column-1));
+            adjIntersections.add(new Intersection(row - 1, column - 1));
             adjIntersections.add(new Intersection(row-1, column));
             adjIntersections.add(new Intersection(row-1, column+1));
             adjIntersections.add(new Intersection(row, column+1));
