@@ -20,50 +20,51 @@ public class Board {
 
     private void initIntersections() {
         this.boardState = new HashMap<>();
-        for (int row = 1; row <= LAST_ROW; row++)
-            for (int column = 1; column <= LAST_COLUMN; column++)
-                this.boardState.put(new Intersection(row, column), PlayerColor.NONE);
     }
 
+    /**
+     * Gets the stone color at the specified position.
+     *
+     * @param row    the row number
+     * @param column the column number
+     * @return a {@code PlayerColor}
+     */
     PlayerColor getStoneColorAt(int row, int column) {
-        return boardState.get(new Intersection(row, column));
+        Intersection i = new Intersection(row, column);
+        if (boardState.containsKey(i)) {
+            return boardState.get(i);
+        }
+        return PlayerColor.NONE;
     }
 
+    /**
+     * Places a stone of the given player color on the board in the specified position.
+     *
+     * @param row         the row number
+     * @param column      the column number
+     * @param playerColor the {@code PlayerColor} of the stone
+     */
     public void placeStone(int row, int column, PlayerColor playerColor) {
-        boardState.put(new Intersection(row, column), playerColor);
+        if (playerColor != PlayerColor.NONE) {
+            boardState.put(new Intersection(row, column), playerColor);
+        }
     }
 
     boolean isPlacementOutOfBoardBoundaries(int row, int column) {
         return row > LAST_ROW || column > LAST_COLUMN || row < FIRST_ROW || column < FIRST_COLUMN;
     }
 
-    public boolean isLastColumn(int column) {
-        return column == LAST_COLUMN;
-    }
-
-    public boolean isFirstColumn(int column) {
-        return column == FIRST_COLUMN;
-    }
-
-    public boolean isLastRow(int row) {
-        return row == LAST_ROW;
-    }
-
-    public boolean isFirstRow(int row) {
-        return row == FIRST_ROW;
-    }
-
-    public List<Intersection> getNonEmptyIntersectionsInColumn(int columnToCheck, PlayerColor playerColor) {
+    public List<Intersection> getIntersectionsOccupiedByPlayerInColumn(int column, PlayerColor playerColor) {
         return boardState.entrySet().stream()
-                .filter(entry -> entry.getKey().getColumn() == columnToCheck &&
+                .filter(entry -> entry.getKey().getColumn() == column &&
                         entry.getValue() == playerColor)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
 
-    public List<Intersection> getNonEmptyIntersectionsInRow(int rowToCheck, PlayerColor playerColor) {
+    public List<Intersection> getIntersectionsOccupiedByPlayerInRow(int row, PlayerColor playerColor) {
         return boardState.entrySet().stream()
-                .filter(entry -> entry.getKey().getRow() == rowToCheck &&
+                .filter(entry -> entry.getKey().getRow() == row &&
                         entry.getValue() == playerColor)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
@@ -103,14 +104,30 @@ public class Board {
             adjIntersections.add(new Intersection(row+1, column-1));
             return adjIntersections;
         }
-        adjIntersections.add(new Intersection(row, column+1));
-        adjIntersections.add(new Intersection(row-1, column+1));
-        adjIntersections.add(new Intersection(row+1, column+1));
-        adjIntersections.add(new Intersection(row-1, column));
-        adjIntersections.add(new Intersection(row+1, column));
-        adjIntersections.add(new Intersection(row-1, column-1));
-        adjIntersections.add(new Intersection(row, column-1));
-        adjIntersections.add(new Intersection(row+1, column-1));
+        adjIntersections.add(new Intersection(row, column + 1));
+        adjIntersections.add(new Intersection(row - 1, column + 1));
+        adjIntersections.add(new Intersection(row + 1, column + 1));
+        adjIntersections.add(new Intersection(row - 1, column));
+        adjIntersections.add(new Intersection(row + 1, column));
+        adjIntersections.add(new Intersection(row - 1, column - 1));
+        adjIntersections.add(new Intersection(row, column - 1));
+        adjIntersections.add(new Intersection(row + 1, column - 1));
         return adjIntersections;
+    }
+
+    public boolean isLastColumn(int column) {
+        return column == LAST_COLUMN;
+    }
+
+    public boolean isFirstColumn(int column) {
+        return column == FIRST_COLUMN;
+    }
+
+    public boolean isLastRow(int row) {
+        return row == LAST_ROW;
+    }
+
+    public boolean isFirstRow(int row) {
+        return row == FIRST_ROW;
     }
 }

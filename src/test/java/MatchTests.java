@@ -13,8 +13,7 @@ public class MatchTests {
     void whenGameStartsBoardShouldBeEmpty() {
         Match match = new Match();
         match.start();
-        assertTrue(match.getBoard().getBoardState().entrySet().stream()
-                .allMatch(entry -> entry.getValue().equals(PlayerColor.NONE)));
+        assertTrue(match.getBoard().getBoardState().isEmpty());
     }
 
     @Test
@@ -29,6 +28,7 @@ public class MatchTests {
         Match match = new Match();
         match.start();
         match.validatePositionAndPlaceStone(1, 1);
+        assertFalse(match.getBoard().getBoardState().isEmpty());
         assertEquals(match.getBoard().getBoardState().get(new Intersection(1, 1)), PlayerColor.BLACK);
     }
 
@@ -53,13 +53,15 @@ public class MatchTests {
             presetBoard.placeStone(5, i, PlayerColor.WHITE);
         }
         Match match = new Match(presetBoard);
+        match.start();
+        match.getTurn().nextTurn();
         assertTrue(match.checkWinCondition(PlayerColor.WHITE));
         assertFalse(match.checkWinCondition(PlayerColor.BLACK));
     }
 
     @SneakyThrows
     @ParameterizedTest
-    @CsvSource({"19", "18", "15", "10", "9"})
+    @CsvSource({"7", "18", "15", "10", "9"})
     void whenWhitePlayerDoesNotHaveFullConnectedPathFromLeftToRightShouldFailWinCondition(int columnEndPath) {
         int columnStartPath = 1;
         Board presetBoard = new Board();

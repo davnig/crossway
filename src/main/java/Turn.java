@@ -14,11 +14,13 @@ public class Turn {
     public void initFirstTurn() {
         turnNumber = 1;
         currentPlayer = PlayerColor.BLACK;
+        printTurnInfo();
     }
 
     public void nextTurn() {
         turnNumber++;
         switchCurrentPlayer();
+        printTurnInfo();
     }
 
     public void switchCurrentPlayer() {
@@ -36,5 +38,9 @@ public class Turn {
             case WHITE -> PlayerColor.BLACK;
             default -> PlayerColor.NONE;
         };
+    }
+
+    private void printTurnInfo() {
+        System.out.printf("Turn %d: %s plays%n", turnNumber, currentPlayer);
     }
 }
