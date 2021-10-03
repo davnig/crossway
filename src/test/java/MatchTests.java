@@ -5,7 +5,7 @@ import playerProperty.PlayerColor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MatchInitTests {
+public class MatchTests {
 
     @Test
     void whenGameStartsBoardShouldBeEmpty() {
@@ -43,8 +43,5 @@ public class MatchInitTests {
         match.start();
         assertTrue(match.checkWinCondition(PlayerColor.WHITE));
     }
-
-    // white orizzontale
-    // black verticale
 
 }
