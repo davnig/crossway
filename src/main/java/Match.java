@@ -140,9 +140,17 @@ public class Match {
         int columnToCheck = getEmptierColumnBetweenFirstAndLast();
         final List<Intersection> nonEmptyIntersectionsInColumn = board.getNonEmptyIntersectionsInColumn(columnToCheck, PlayerColor.WHITE);
         Set<Intersection> visited = new HashSet<>();
-        for (Intersection i : nonEmptyIntersectionsInColumn) {
-            if (whiteRecursionMethodFromLeftToRight(i.getRow(), i.getColumn(), visited)) {
-                return true;
+        if (columnToCheck == board.getFIRST_COLUMN()) {
+            for (Intersection i : nonEmptyIntersectionsInColumn) {
+                if (whiteRecursionMethodFromLeftToRight(i.getRow(), i.getColumn(), visited)) {
+                    return true;
+                }
+            }
+        } else {
+            for (Intersection i : nonEmptyIntersectionsInColumn) {
+                if (whiteRecursionMethodFromRightToLeft(i.getRow(), i.getColumn(), visited)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -153,7 +161,7 @@ public class Match {
         final List<Intersection> nonEmptyIntersectionsInRow = board.getNonEmptyIntersectionsInRow(rowToCheck, PlayerColor.BLACK);
         Set<Intersection> visited = new HashSet<>();
         for (Intersection i : nonEmptyIntersectionsInRow) {
-            if (whiteRecursionMethodFromLeftToRight(i.getRow(), i.getColumn(), visited)) {
+            if (blackRecursionMethodFromDownToUp(i.getRow(), i.getColumn(), visited)) {
                 return true;
             }
         }
@@ -190,6 +198,42 @@ public class Match {
             return true;
         for (Intersection intersection : board.getAdjIntersections(row, column)) {
             if(board.getBoardState().get(intersection) == PlayerColor.WHITE && !(visited.contains(intersection))) {
+                return whiteRecursionMethodFromLeftToRight(intersection.getRow(), intersection.getColumn(), visited);
+            }
+        }
+        return false;
+    }
+
+    private boolean whiteRecursionMethodFromRightToLeft(int row, int column, Set<Intersection> visited) {
+        visited.add(new Intersection(row, column));
+        if (column == board.getFIRST_COLUMN())
+            return true;
+        for (Intersection intersection : board.getAdjIntersections(row, column)) {
+            if(board.getBoardState().get(intersection) == PlayerColor.WHITE && !(visited.contains(intersection))) {
+                return whiteRecursionMethodFromLeftToRight(intersection.getRow(), intersection.getColumn(), visited);
+            }
+        }
+        return false;
+    }
+
+    private boolean blackRecursionMethodFromUpToDown(int row, int column, Set<Intersection> visited) {
+        visited.add(new Intersection(row, column));
+        if (row == board.getFIRST_ROW())
+            return true;
+        for (Intersection intersection : board.getAdjIntersections(row, column)) {
+            if(board.getBoardState().get(intersection) == PlayerColor.BLACK && !(visited.contains(intersection))) {
+                return whiteRecursionMethodFromLeftToRight(intersection.getRow(), intersection.getColumn(), visited);
+            }
+        }
+        return false;
+    }
+
+    private boolean blackRecursionMethodFromDownToUp(int row, int column, Set<Intersection> visited) {
+        visited.add(new Intersection(row, column));
+        if (row == board.getLAST_ROW())
+            return true;
+        for (Intersection intersection : board.getAdjIntersections(row, column)) {
+            if(board.getBoardState().get(intersection) == PlayerColor.BLACK && !(visited.contains(intersection))) {
                 return whiteRecursionMethodFromLeftToRight(intersection.getRow(), intersection.getColumn(), visited);
             }
         }
