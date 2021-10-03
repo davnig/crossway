@@ -4,7 +4,6 @@ import lombok.Data;
 import playerProperty.PlayerColor;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -131,24 +130,27 @@ public class Match {
 
     public boolean checkWinCondition(PlayerColor playerColor) {
         if (playerColor == PlayerColor.BLACK) {
-            return checkBlackWinCondition();
+            return hasBlackWon();
         }
-        return checkWhiteWinCondition();
+        return hasWhiteWon();
     }
 
-    private boolean checkWhiteWinCondition() {
-        int emptierColumn = getColumnWithLeastAmountOfCurrentPlayerStonesBetweenFirstAndLast();
-        final List<Intersection> intersectionsOccupiedByPlayerInEmptierColumn = board.getIntersectionsOccupiedByPlayerInColumn(emptierColumn, PlayerColor.WHITE);
+    private boolean hasWhiteWon() {
+        int emptierColumn = getColumnWithLeastAmountOfWhiteStonesBetweenFirstAndLast();
+        final Set<Intersection> intersectionsOccupiedByPlayerInEmptierColumn =
+                board.getIntersectionsOccupiedByPlayerInColumn(PlayerColor.WHITE, emptierColumn);
         Set<Intersection> visited = new HashSet<>();
         if (emptierColumn == board.getFIRST_COLUMN()) {
+            int targetColumn = board.getLAST_COLUMN();
             for (Intersection i : intersectionsOccupiedByPlayerInEmptierColumn) {
-                if (whiteRecursionMethodFromLeftToRight(i.getRow(), i.getColumn(), visited)) {
+                if (hasWhiteWonRecursive(i, visited, targetColumn)) {
                     return true;
                 }
             }
         } else {
+            int targetColumn = board.getFIRST_COLUMN();
             for (Intersection i : intersectionsOccupiedByPlayerInEmptierColumn) {
-                if (whiteRecursionMethodFromRightToLeft(i.getRow(), i.getColumn(), visited)) {
+                if (hasWhiteWonRecursive(i, visited, targetColumn)) {
                     return true;
                 }
             }
@@ -156,92 +158,75 @@ public class Match {
         return false;
     }
 
-    private boolean checkBlackWinCondition() {
-        int emptierRow = getRowWithLeastAmountOfCurrentPlayerStonesBetweenFirstAndLast();
-        final List<Intersection> intersectionsOccupiedByPlayerInEmptierRow = board.getIntersectionsOccupiedByPlayerInRow(emptierRow, PlayerColor.BLACK);
+    private boolean hasBlackWon() {
+        int emptierRow = getRowWithLeastAmountOfBlackStonesBetweenFirstAndLast();
+        final Set<Intersection> intersectionsOccupiedByPlayerInEmptierRow =
+                board.getIntersectionsOccupiedByPlayerInRow(PlayerColor.BLACK, emptierRow);
         Set<Intersection> visited = new HashSet<>();
-        for (Intersection i : intersectionsOccupiedByPlayerInEmptierRow) {
-            if (blackRecursionMethodFromDownToUp(i.getRow(), i.getColumn(), visited)) {
-                return true;
+        if (emptierRow == board.getFIRST_ROW()) {
+            int targetRow = board.getLAST_ROW();
+            for (Intersection i : intersectionsOccupiedByPlayerInEmptierRow) {
+                if (hasBlackWonRecursive(i, visited, targetRow)) {
+                    return true;
+                }
+            }
+        } else {
+            int targetRow = board.getFIRST_ROW();
+            for (Intersection i : intersectionsOccupiedByPlayerInEmptierRow) {
+                if (hasBlackWonRecursive(i, visited, targetRow)) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
-    private int getColumnWithLeastAmountOfCurrentPlayerStonesBetweenFirstAndLast() {
+    private boolean hasWhiteWonRecursive(Intersection currentIntersection, Set<Intersection> visited, int targetColumn) {
+        visited.add(currentIntersection);
+        if (currentIntersection.getColumn() == targetColumn)
+            return true;
+        for (Intersection adjIntersection : board.getAdjIntersections(currentIntersection)) {
+            if (board.getBoardState().get(adjIntersection) == PlayerColor.WHITE && !(visited.contains(adjIntersection))) {
+                return hasWhiteWonRecursive(adjIntersection, visited, targetColumn);
+            }
+        }
+        return false;
+    }
+
+    private boolean hasBlackWonRecursive(Intersection currentIntersection, Set<Intersection> visited, int targetRow) {
+        visited.add(currentIntersection);
+        if (currentIntersection.getRow() == targetRow)
+            return true;
+        for (Intersection adjIntersection : board.getAdjIntersections(currentIntersection)) {
+            if (board.getBoardState().get(adjIntersection) == PlayerColor.BLACK && !(visited.contains(adjIntersection))) {
+                return hasBlackWonRecursive(adjIntersection, visited, targetRow);
+            }
+        }
+        return false;
+    }
+
+    private int getColumnWithLeastAmountOfWhiteStonesBetweenFirstAndLast() {
         int firstColumnCount = (int) board.getBoardState().entrySet().stream()
                 .filter(entry -> entry.getKey().getColumn() == board.getFIRST_COLUMN() &&
-                        entry.getValue() == turn.getCurrentPlayer())
+                        entry.getValue() == PlayerColor.WHITE)
                 .count();
         int lastColumnCount = (int) board.getBoardState().entrySet().stream()
                 .filter(entry -> entry.getKey().getColumn() == board.getLAST_COLUMN() &&
-                        entry.getValue() == turn.getCurrentPlayer())
+                        entry.getValue() == PlayerColor.WHITE)
                 .count();
         return firstColumnCount < lastColumnCount ? board.getFIRST_COLUMN() : board.getLAST_COLUMN();
     }
 
-    private int getRowWithLeastAmountOfCurrentPlayerStonesBetweenFirstAndLast() {
+    private int getRowWithLeastAmountOfBlackStonesBetweenFirstAndLast() {
         int firstRowCount = (int) board.getBoardState().entrySet().stream()
                 .filter(entry -> entry.getKey().getRow() == board.getFIRST_ROW() &&
-                        entry.getValue() == turn.getCurrentPlayer())
+                        entry.getValue() == PlayerColor.BLACK)
                 .count();
         int lastRowCount = (int) board.getBoardState().entrySet().stream()
                 .filter(entry -> entry.getKey().getRow() == board.getLAST_ROW() &&
-                        entry.getValue() == turn.getCurrentPlayer())
+                        entry.getValue() == PlayerColor.BLACK)
                 .count();
         return firstRowCount < lastRowCount ? board.getFIRST_ROW() : board.getLAST_ROW();
-    }
-
-    private boolean whiteRecursionMethodFromLeftToRight(int row, int column, Set<Intersection> visited) {
-        final Intersection currentIntersection = new Intersection(row, column);
-        visited.add(currentIntersection);
-        if (column == board.getLAST_COLUMN())
-            return true;
-        for (Intersection adjIntersection : board.getAdjIntersections(currentIntersection)) {
-            if (board.getBoardState().get(adjIntersection) == PlayerColor.WHITE && !(visited.contains(adjIntersection))) {
-                return whiteRecursionMethodFromLeftToRight(adjIntersection.getRow(), adjIntersection.getColumn(), visited);
-            }
-        }
-        return false;
-    }
-
-    private boolean whiteRecursionMethodFromRightToLeft(int row, int column, Set<Intersection> visited) {
-        final Intersection currentIntersection = new Intersection(row, column);
-        visited.add(currentIntersection);
-        if (column == board.getFIRST_COLUMN())
-            return true;
-        for (Intersection adjIntersection : board.getAdjIntersections(currentIntersection)) {
-            if (board.getBoardState().get(adjIntersection) == PlayerColor.WHITE && !(visited.contains(adjIntersection))) {
-                return whiteRecursionMethodFromRightToLeft(adjIntersection.getRow(), adjIntersection.getColumn(), visited);
-            }
-        }
-        return false;
-    }
-
-    private boolean blackRecursionMethodFromUpToDown(int row, int column, Set<Intersection> visited) {
-        final Intersection currentIntersection = new Intersection(row, column);
-        visited.add(currentIntersection);
-        if (row == board.getFIRST_ROW())
-            return true;
-        for (Intersection adjIntersection : board.getAdjIntersections(currentIntersection)) {
-            if (board.getBoardState().get(adjIntersection) == PlayerColor.BLACK && !(visited.contains(adjIntersection))) {
-                return blackRecursionMethodFromUpToDown(adjIntersection.getRow(), adjIntersection.getColumn(), visited);
-            }
-        }
-        return false;
-    }
-
-    private boolean blackRecursionMethodFromDownToUp(int row, int column, Set<Intersection> visited) {
-        final Intersection currentIntersection = new Intersection(row, column);
-        visited.add(currentIntersection);
-        if (row == board.getLAST_ROW())
-            return true;
-        for (Intersection adjIntersection : board.getAdjIntersections(currentIntersection)) {
-            if (board.getBoardState().get(adjIntersection) == PlayerColor.BLACK && !(visited.contains(adjIntersection))) {
-                return blackRecursionMethodFromDownToUp(adjIntersection.getRow(), adjIntersection.getColumn(), visited);
-            }
-        }
-        return false;
     }
 }
 

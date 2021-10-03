@@ -32,44 +32,53 @@ public class MatchTests {
         assertEquals(match.getBoard().getBoardState().get(new Intersection(1, 1)), PlayerColor.BLACK);
     }
 
-
-    @Test
-    void whenBlackPlayerCreatesFullVerticalConnectedPathAcrossBoardShouldWinTheMatch() {
-        Board presetBoard = new Board();
-        for (int i = presetBoard.getFIRST_ROW(); i <= presetBoard.getLAST_ROW(); i++) {
-            presetBoard.placeStone(new Intersection(i, 5), PlayerColor.BLACK);
-        }
-        Match match = new Match(presetBoard);
-        match.start();
-        assertTrue(match.checkWinCondition(PlayerColor.BLACK));
-        assertFalse(match.checkWinCondition(PlayerColor.WHITE));
-    }
-
     @SneakyThrows
     @Test
-    void whenWhitePlayerCreatesFullHorizontalConnectedPathAcrossBoardShouldWinTheMatch() {
+    void whenWhitePlayerCreatesConnectedPathBetweenLeftAndRightShouldWinTheMatch() {
         Board presetBoard = new Board();
         for (int i = presetBoard.getFIRST_COLUMN(); i <= presetBoard.getLAST_COLUMN(); i++) {
             presetBoard.placeStone(new Intersection(5, i), PlayerColor.WHITE);
         }
         Match match = new Match(presetBoard);
-        match.start();
-        match.getTurn().nextTurn();
         assertTrue(match.checkWinCondition(PlayerColor.WHITE));
         assertFalse(match.checkWinCondition(PlayerColor.BLACK));
     }
 
+    @Test
+    void whenBlackPlayerCreatesConnectedPathBetweenTopAndBottomShouldWinTheMatch() {
+        Board presetBoard = new Board();
+        for (int i = presetBoard.getFIRST_ROW(); i <= presetBoard.getLAST_ROW(); i++) {
+            presetBoard.placeStone(new Intersection(i, 5), PlayerColor.BLACK);
+        }
+        Match match = new Match(presetBoard);
+        assertTrue(match.checkWinCondition(PlayerColor.BLACK));
+        assertFalse(match.checkWinCondition(PlayerColor.WHITE));
+    }
+
     @SneakyThrows
     @ParameterizedTest
-    @CsvSource({"7", "18", "15", "10", "9"})
-    void whenWhitePlayerDoesNotHaveFullConnectedPathFromLeftToRightShouldFailWinCondition(int columnEndPath) {
-        int columnStartPath = 1;
+    @CsvSource({"2,7", "1,18", "1,15", "8,10", "2,19"})
+    void whenWhitePlayerDoesNotHaveConnectedPathBetweenLeftAndRightThenWinConditionShouldFail(int columnStartPath, int columnEndPath) {
         Board presetBoard = new Board();
         for (int i = columnStartPath; i <= columnEndPath; i++) {
             presetBoard.placeStone(new Intersection(5, i), PlayerColor.WHITE);
         }
         Match match = new Match(presetBoard);
         assertFalse(match.checkWinCondition(PlayerColor.WHITE));
+        assertFalse(match.checkWinCondition(PlayerColor.BLACK));
+    }
+
+    @SneakyThrows
+    @ParameterizedTest
+    @CsvSource({"2,7", "1,18", "1,15", "8,10", "2,19"})
+    void whenBlackPlayerDoesNotHaveConnectedPathBetweenLeftAndRightThenWinConditionShouldFail(int rowStartPath, int rowEndPath) {
+        Board presetBoard = new Board();
+        for (int i = rowStartPath; i <= rowEndPath; i++) {
+            presetBoard.placeStone(new Intersection(i, 7), PlayerColor.BLACK);
+        }
+        Match match = new Match(presetBoard);
+        assertFalse(match.checkWinCondition(PlayerColor.WHITE));
+        assertFalse(match.checkWinCondition(PlayerColor.BLACK));
     }
 
 

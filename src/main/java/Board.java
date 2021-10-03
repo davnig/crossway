@@ -1,7 +1,10 @@
 import lombok.Data;
 import playerProperty.PlayerColor;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
@@ -51,20 +54,20 @@ public class Board {
         return row > LAST_ROW || column > LAST_COLUMN || row < FIRST_ROW || column < FIRST_COLUMN;
     }
 
-    public List<Intersection> getIntersectionsOccupiedByPlayerInColumn(int column, PlayerColor playerColor) {
+    public Set<Intersection> getIntersectionsOccupiedByPlayerInColumn(PlayerColor playerColor, int column) {
         return boardState.entrySet().stream()
                 .filter(entry -> entry.getKey().getColumn() == column &&
                         entry.getValue() == playerColor)
                 .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
-    public List<Intersection> getIntersectionsOccupiedByPlayerInRow(int row, PlayerColor playerColor) {
+    public Set<Intersection> getIntersectionsOccupiedByPlayerInRow(PlayerColor playerColor, int row) {
         return boardState.entrySet().stream()
                 .filter(entry -> entry.getKey().getRow() == row &&
                         entry.getValue() == playerColor)
                 .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     public Set<Intersection> getAdjIntersections(Intersection intersection) {
