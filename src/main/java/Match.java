@@ -134,7 +134,7 @@ public class Match {
 
     private boolean checkWhiteWinCondition() {
         int columnToCheck = getEmptierColumnBetweenFirstAndLast();
-        for (int row = 1; row < board.getLAST_ROW(); row++) {
+        for (int row = board.getFIRST_ROW(); row < board.getLAST_ROW(); row++) {
             if (recursionMethod(row, columnToCheck)) {
                 return true;
             }
@@ -143,12 +143,21 @@ public class Match {
     }
 
     private int getEmptierColumnBetweenFirstAndLast() {
-        return 1;
+        PlayerColor currentPlayerColor = turn.getCurrentPlayer();
+        int firstColumnCount = (int) board.getBoardState().entrySet().stream()
+                .filter(entry -> entry.getKey().column == board.getFIRST_COLUMN() &&
+                        entry.getValue() == currentPlayerColor)
+                .count();
+        int lastColumnCount = (int) board.getBoardState().entrySet().stream()
+                .filter(entry -> entry.getKey().column == board.getLAST_COLUMN() &&
+                        entry.getValue() == currentPlayerColor)
+                .count();
+        return firstColumnCount < lastColumnCount ? board.getFIRST_COLUMN() : board.getLAST_COLUMN();
     }
 
     private boolean checkBlackWinCondition() {
         int rowToCheck = getEmptierRowBetweenFirstAndLast();
-        for (int column = 1; column < board.getLAST_COLUMN(); column++) {
+        for (int column = board.getFIRST_COLUMN(); column < board.getLAST_COLUMN(); column++) {
             if (recursionMethod(rowToCheck, column))
                 return true;
         }
@@ -156,7 +165,16 @@ public class Match {
     }
 
     private int getEmptierRowBetweenFirstAndLast() {
-        return 1;
+        PlayerColor currentPlayerColor = turn.getCurrentPlayer();
+        int firstRowCount = (int) board.getBoardState().entrySet().stream()
+                .filter(entry -> entry.getKey().row == board.getFIRST_ROW() &&
+                        entry.getValue() == currentPlayerColor)
+                .count();
+        int lastRowCount = (int) board.getBoardState().entrySet().stream()
+                .filter(entry -> entry.getKey().row == board.getLAST_ROW() &&
+                        entry.getValue() == currentPlayerColor)
+                .count();
+        return firstRowCount < lastRowCount ? board.getFIRST_ROW() : board.getLAST_ROW();
     }
 
     private boolean recursionMethod(int row, int column) {
