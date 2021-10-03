@@ -2,8 +2,7 @@ import exception.PlacementViolationException;
 import org.junit.jupiter.api.Test;
 import playerProperty.PlayerColor;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MatchTests {
 
@@ -30,17 +29,22 @@ public class MatchTests {
         assertEquals(match.getBoard().getBoardState().get(new Intersection(1, 1)), PlayerColor.BLACK);
     }
 
+    /*
     @Test
     void whenBlackPlayerReachOtherSideOfTheBoardShouldWinTheMatch() {
         Match match = new Match();
         match.start();
         assertTrue(match.checkWinCondition(PlayerColor.BLACK));
-    }
+    }*/
 
+    @SneakyThrows
     @Test
-    void whenWhitePlayerReachOtherSideOfTheBoardShouldWinTheMatch() {
-        Match match = new Match();
-        match.start();
+    void whenWhitePlayerCreatesHorizontalConnectedPathAcrossBoardShouldWinTheMatch() {
+        Board presetBoard = new Board();
+        for (int i = presetBoard.getFIRST_COLUMN(); i <= presetBoard.getLAST_COLUMN(); i++) {
+            presetBoard.placeStone(5, i, PlayerColor.WHITE);
+        }
+        Match match = new Match(presetBoard);
         assertTrue(match.checkWinCondition(PlayerColor.WHITE));
     }
 

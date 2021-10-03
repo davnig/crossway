@@ -3,6 +3,7 @@ import exception.PlacementViolationException;
 import lombok.Data;
 import playerProperty.PlayerColor;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
