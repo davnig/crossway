@@ -3,6 +3,7 @@ import exception.PlacementViolationException;
 import lombok.Data;
 import playerProperty.PlayerColor;
 
+import java.util.List;
 import java.util.Scanner;
 
 @Data
@@ -134,8 +135,20 @@ public class Match {
 
     private boolean checkWhiteWinCondition() {
         int columnToCheck = getEmptierColumnBetweenFirstAndLast();
-        for (int row = board.getFIRST_ROW(); row < board.getLAST_ROW(); row++) {
-            if (recursionMethod(row, columnToCheck)) {
+        final List<Intersection> nonEmptyIntersectionsInColumn = board.getNonEmptyIntersectionsInColumn(columnToCheck, turn.getCurrentPlayer());
+        for (Intersection i : nonEmptyIntersectionsInColumn) {
+            if (recursionMethod(i.getRow(), i.getColumn())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkBlackWinCondition() {
+        int rowToCheck = getEmptierRowBetweenFirstAndLast();
+        final List<Intersection> nonEmptyIntersectionsInRow = board.getNonEmptyIntersectionsInRow(rowToCheck, turn.getCurrentPlayer());
+        for (Intersection i : nonEmptyIntersectionsInRow) {
+            if (recursionMethod(i.getRow(), i.getColumn())) {
                 return true;
             }
         }
@@ -143,36 +156,25 @@ public class Match {
     }
 
     private int getEmptierColumnBetweenFirstAndLast() {
-        PlayerColor currentPlayerColor = turn.getCurrentPlayer();
         int firstColumnCount = (int) board.getBoardState().entrySet().stream()
-                .filter(entry -> entry.getKey().column == board.getFIRST_COLUMN() &&
-                        entry.getValue() == currentPlayerColor)
+                .filter(entry -> entry.getKey().getColumn() == board.getFIRST_COLUMN() &&
+                        entry.getValue() == turn.getCurrentPlayer())
                 .count();
         int lastColumnCount = (int) board.getBoardState().entrySet().stream()
-                .filter(entry -> entry.getKey().column == board.getLAST_COLUMN() &&
-                        entry.getValue() == currentPlayerColor)
+                .filter(entry -> entry.getKey().getColumn() == board.getLAST_COLUMN() &&
+                        entry.getValue() == turn.getCurrentPlayer())
                 .count();
         return firstColumnCount < lastColumnCount ? board.getFIRST_COLUMN() : board.getLAST_COLUMN();
     }
 
-    private boolean checkBlackWinCondition() {
-        int rowToCheck = getEmptierRowBetweenFirstAndLast();
-        for (int column = board.getFIRST_COLUMN(); column < board.getLAST_COLUMN(); column++) {
-            if (recursionMethod(rowToCheck, column))
-                return true;
-        }
-        return false;
-    }
-
     private int getEmptierRowBetweenFirstAndLast() {
-        PlayerColor currentPlayerColor = turn.getCurrentPlayer();
         int firstRowCount = (int) board.getBoardState().entrySet().stream()
-                .filter(entry -> entry.getKey().row == board.getFIRST_ROW() &&
-                        entry.getValue() == currentPlayerColor)
+                .filter(entry -> entry.getKey().getRow() == board.getFIRST_ROW() &&
+                        entry.getValue() == turn.getCurrentPlayer())
                 .count();
         int lastRowCount = (int) board.getBoardState().entrySet().stream()
-                .filter(entry -> entry.getKey().row == board.getLAST_ROW() &&
-                        entry.getValue() == currentPlayerColor)
+                .filter(entry -> entry.getKey().getRow() == board.getLAST_ROW() &&
+                        entry.getValue() == turn.getCurrentPlayer())
                 .count();
         return firstRowCount < lastRowCount ? board.getFIRST_ROW() : board.getLAST_ROW();
     }

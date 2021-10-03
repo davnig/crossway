@@ -5,7 +5,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class Intersection {
 
-    int row;
-    int column;
+    private int row;
+    private int column;
 
 }

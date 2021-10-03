@@ -2,7 +2,9 @@ import lombok.Data;
 import playerProperty.PlayerColor;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Data
 public class Board {
@@ -51,6 +53,22 @@ public class Board {
 
     public boolean isFirstRow(int row) {
         return row == FIRST_ROW;
+    }
+
+    public List<Intersection> getNonEmptyIntersectionsInColumn(int columnToCheck, PlayerColor playerColor) {
+        return boardState.entrySet().stream()
+                .filter(entry -> entry.getKey().getColumn() == columnToCheck &&
+                        entry.getValue() == playerColor)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+    }
+
+    public List<Intersection> getNonEmptyIntersectionsInRow(int rowToCheck, PlayerColor playerColor) {
+        return boardState.entrySet().stream()
+                .filter(entry -> entry.getKey().getRow() == rowToCheck &&
+                        entry.getValue() == playerColor)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 
 }
