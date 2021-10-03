@@ -6,6 +6,7 @@ import playerProperty.PlayerColor;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 @Data
 public class Match {
@@ -128,20 +129,19 @@ public class Match {
                 board.getStoneColorAt(row + 1, column + 1) == turnColor;
     }
 
-    boolean checkWinCondition(PlayerColor playerColor) {
+    public boolean checkWinCondition(PlayerColor playerColor) {
         if (playerColor == PlayerColor.BLACK) {
-            checkBlackWinCondition();
-        } else {
-            checkWhiteWinCondition();
+            return checkBlackWinCondition();
         }
-        return true;
+        return checkWhiteWinCondition();
     }
 
     private boolean checkWhiteWinCondition() {
         int columnToCheck = getEmptierColumnBetweenFirstAndLast();
-        final List<Intersection> nonEmptyIntersectionsInColumn = board.getNonEmptyIntersectionsInColumn(columnToCheck, turn.getCurrentPlayer());
+        final List<Intersection> nonEmptyIntersectionsInColumn = board.getNonEmptyIntersectionsInColumn(columnToCheck, PlayerColor.WHITE);
+        Set<Intersection> visited = new HashSet<>();
         for (Intersection i : nonEmptyIntersectionsInColumn) {
-            if (recursionMethod(i.getRow(), i.getColumn())) {
+            if (whiteRecursionMethodFromLeftToRight(i.getRow(), i.getColumn(), visited)) {
                 return true;
             }
         }
@@ -150,9 +150,10 @@ public class Match {
 
     private boolean checkBlackWinCondition() {
         int rowToCheck = getEmptierRowBetweenFirstAndLast();
-        final List<Intersection> nonEmptyIntersectionsInRow = board.getNonEmptyIntersectionsInRow(rowToCheck, turn.getCurrentPlayer());
+        final List<Intersection> nonEmptyIntersectionsInRow = board.getNonEmptyIntersectionsInRow(rowToCheck, PlayerColor.BLACK);
+        Set<Intersection> visited = new HashSet<>();
         for (Intersection i : nonEmptyIntersectionsInRow) {
-            if (recursionMethod(i.getRow(), i.getColumn())) {
+            if (whiteRecursionMethodFromLeftToRight(i.getRow(), i.getColumn(), visited)) {
                 return true;
             }
         }
@@ -183,8 +184,16 @@ public class Match {
         return firstRowCount < lastRowCount ? board.getFIRST_ROW() : board.getLAST_ROW();
     }
 
-    private boolean recursionMethod(int row, int column) {
-        return true;
+    private boolean whiteRecursionMethodFromLeftToRight(int row, int column, Set<Intersection> visited) {
+        visited.add(new Intersection(row, column));
+        if (column == board.getLAST_COLUMN())
+            return true;
+        for (Intersection intersection : board.getAdjIntersections(row, column)) {
+            if(board.getBoardState().get(intersection) == PlayerColor.WHITE && !(visited.contains(intersection))) {
+                return whiteRecursionMethodFromLeftToRight(intersection.getRow(), intersection.getColumn(), visited);
+            }
+        }
+        return false;
     }
 
 }

@@ -69,4 +69,48 @@ public class Board {
                 .collect(Collectors.toList());
     }
 
+    public Set<Intersection> getAdjIntersections(int row, int column) {
+        Set<Intersection> adjIntersections = new HashSet<>();
+        if (column == LAST_COLUMN && row > FIRST_ROW && row < LAST_ROW) {
+            adjIntersections.add(new Intersection(row-1, column));
+            adjIntersections.add(new Intersection(row+1, column));
+            adjIntersections.add(new Intersection(row-1, column-1));
+            adjIntersections.add(new Intersection(row, column-1));
+            adjIntersections.add(new Intersection(row+1, column-1));
+            return adjIntersections;
+        }
+        if (row == LAST_ROW && column > FIRST_COLUMN && column < LAST_COLUMN) {
+            adjIntersections.add(new Intersection(row-1, column-1));
+            adjIntersections.add(new Intersection(row-1, column));
+            adjIntersections.add(new Intersection(row-1, column+1));
+            adjIntersections.add(new Intersection(row, column+1));
+            adjIntersections.add(new Intersection(row, column-1));
+            return adjIntersections;
+        }
+        if (column == FIRST_COLUMN && row > FIRST_ROW && row < LAST_ROW) {
+            adjIntersections.add(new Intersection(row-1, column));
+            adjIntersections.add(new Intersection(row+1, column));
+            adjIntersections.add(new Intersection(row, column+1));
+            adjIntersections.add(new Intersection(row-1, column+1));
+            adjIntersections.add(new Intersection(row+1, column+1));
+            return adjIntersections;
+        }
+        if (row == FIRST_ROW && column > FIRST_COLUMN && column < LAST_COLUMN) {
+            adjIntersections.add(new Intersection(row, column+1));
+            adjIntersections.add(new Intersection(row, column-1));
+            adjIntersections.add(new Intersection(row+1, column));
+            adjIntersections.add(new Intersection(row+1, column+1));
+            adjIntersections.add(new Intersection(row+1, column-1));
+            return adjIntersections;
+        }
+        adjIntersections.add(new Intersection(row, column+1));
+        adjIntersections.add(new Intersection(row-1, column+1));
+        adjIntersections.add(new Intersection(row+1, column+1));
+        adjIntersections.add(new Intersection(row-1, column));
+        adjIntersections.add(new Intersection(row+1, column));
+        adjIntersections.add(new Intersection(row-1, column-1));
+        adjIntersections.add(new Intersection(row, column-1));
+        adjIntersections.add(new Intersection(row+1, column-1));
+        return adjIntersections;
+    }
 }
