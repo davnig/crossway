@@ -142,15 +142,15 @@ public class Match {
         Set<Intersection> visited = new HashSet<>();
         if (emptierColumn == board.getFIRST_COLUMN()) {
             int targetColumn = board.getLAST_COLUMN();
-            for (Intersection i : intersectionsOccupiedByPlayerInEmptierColumn) {
-                if (hasWhiteWonRecursive(i, visited, targetColumn)) {
+            for (Intersection intersection : intersectionsOccupiedByPlayerInEmptierColumn) {
+                if (hasWhiteWonRecursive(intersection, visited, targetColumn)) {
                     return true;
                 }
             }
         } else {
             int targetColumn = board.getFIRST_COLUMN();
-            for (Intersection i : intersectionsOccupiedByPlayerInEmptierColumn) {
-                if (hasWhiteWonRecursive(i, visited, targetColumn)) {
+            for (Intersection intersection : intersectionsOccupiedByPlayerInEmptierColumn) {
+                if (hasWhiteWonRecursive(intersection, visited, targetColumn)) {
                     return true;
                 }
             }
@@ -165,15 +165,15 @@ public class Match {
         Set<Intersection> visited = new HashSet<>();
         if (emptierRow == board.getFIRST_ROW()) {
             int targetRow = board.getLAST_ROW();
-            for (Intersection i : intersectionsOccupiedByPlayerInEmptierRow) {
-                if (hasBlackWonRecursive(i, visited, targetRow)) {
+            for (Intersection intersection : intersectionsOccupiedByPlayerInEmptierRow) {
+                if (hasBlackWonRecursive(intersection, visited, targetRow)) {
                     return true;
                 }
             }
         } else {
             int targetRow = board.getFIRST_ROW();
-            for (Intersection i : intersectionsOccupiedByPlayerInEmptierRow) {
-                if (hasBlackWonRecursive(i, visited, targetRow)) {
+            for (Intersection intersection : intersectionsOccupiedByPlayerInEmptierRow) {
+                if (hasBlackWonRecursive(intersection, visited, targetRow)) {
                     return true;
                 }
             }
