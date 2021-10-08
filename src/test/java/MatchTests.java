@@ -82,4 +82,33 @@ public class MatchTests {
         assertTrue(match.checkWinCondition(playerColor));
     }
 
+    @Test
+    void whenWhitePlayerCreatesConnectedPathBetweenLeftAndRightShouldWinTheMatch() {
+        Board presetBoard = new Board();
+        // from 3,1 to 3,6
+        for (int i = presetBoard.getFIRST_COLUMN(); i <= 6; i++) {
+            presetBoard.placeStone(new Intersection(3, i), PlayerColor.WHITE);
+        }
+        // from 1,3 to 19,3
+        for (int i = presetBoard.getFIRST_ROW(); i <= presetBoard.getLAST_ROW(); i++) {
+            presetBoard.placeStone(new Intersection(i, 3), PlayerColor.WHITE);
+        }
+        // from 4,2 to 4,4
+        for (int i = 2; i <= 4; i++) {
+            presetBoard.placeStone(new Intersection(4, i), PlayerColor.WHITE);
+        }
+        // from 5,5 to 5,18
+        for (int i = 5; i <= presetBoard.getLAST_COLUMN() - 1; i++) {
+            presetBoard.placeStone(new Intersection(5, i), PlayerColor.WHITE);
+        }
+        // from 5,18 to 3,18
+        for (int i = 5; i >= 3; i--) {
+            presetBoard.placeStone(new Intersection(i, 18), PlayerColor.WHITE);
+        }
+        presetBoard.placeStone(new Intersection(2, 19), PlayerColor.WHITE);
+        Match match = new Match(presetBoard);
+        presetBoard.printBoard();
+        assertTrue(match.checkWinCondition(PlayerColor.WHITE));
+    }
+
 }
