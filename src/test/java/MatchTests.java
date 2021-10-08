@@ -32,7 +32,6 @@ public class MatchTests {
         assertEquals(match.getBoard().getBoardState().get(new Intersection(1, 1)), PlayerColor.BLACK);
     }
 
-    @SneakyThrows
     @Test
     void whenWhitePlayerCreatesConnectedPathBetweenLeftAndRightShouldWinTheMatch() {
         Board presetBoard = new Board();
@@ -55,7 +54,6 @@ public class MatchTests {
         assertFalse(match.checkWinCondition(PlayerColor.WHITE));
     }
 
-    @SneakyThrows
     @ParameterizedTest
     @CsvSource({"2,7", "1,18", "1,15", "8,10", "2,19"})
     void whenWhitePlayerDoesNotHaveConnectedPathBetweenLeftAndRightThenWinConditionShouldFail(int columnStartPath, int columnEndPath) {
@@ -68,7 +66,6 @@ public class MatchTests {
         assertFalse(match.checkWinCondition(PlayerColor.BLACK));
     }
 
-    @SneakyThrows
     @ParameterizedTest
     @CsvSource({"2,7", "1,18", "1,15", "8,10", "2,19"})
     void whenBlackPlayerDoesNotHaveConnectedPathBetweenLeftAndRightThenWinConditionShouldFail(int rowStartPath, int rowEndPath) {
@@ -81,5 +78,26 @@ public class MatchTests {
         assertFalse(match.checkWinCondition(PlayerColor.BLACK));
     }
 
+    @Test
+    void whenBlackPlayerCreatesDiagonalConnectedPathBetweenTopAndBottomShouldWinTheMatch() {
+        Board presetBoard = new Board();
+        for (int i = presetBoard.getFIRST_ROW(); i <= presetBoard.getLAST_ROW(); i++) {
+            presetBoard.placeStone(new Intersection(i, i), PlayerColor.BLACK);
+        }
+        Match match = new Match(presetBoard);
+        assertTrue(match.checkWinCondition(PlayerColor.BLACK));
+        assertFalse(match.checkWinCondition(PlayerColor.WHITE));
+    }
+
+    @Test
+    void whenWhitePlayerCreatesDiagonalConnectedPathBetweenTopAndBottomShouldWinTheMatch() {
+        Board presetBoard = new Board();
+        for (int i = presetBoard.getFIRST_ROW(); i <= presetBoard.getLAST_ROW(); i++) {
+            presetBoard.placeStone(new Intersection(i, i), PlayerColor.WHITE);
+        }
+        Match match = new Match(presetBoard);
+        assertTrue(match.checkWinCondition(PlayerColor.WHITE));
+        assertFalse(match.checkWinCondition(PlayerColor.BLACK));
+    }
 
 }
