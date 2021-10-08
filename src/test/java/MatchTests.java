@@ -1,5 +1,4 @@
 import exception.PlacementViolationException;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -35,13 +34,13 @@ public class MatchTests {
 
     @ParameterizedTest
     @EnumSource(PlayerColor.class)
-    void whenBlackPlayerCreatesLinearConnectedPathBetweenTopAndBottomShouldWinTheMatch(PlayerColor playerColor) {
+    void whenPlayerCreatesLinearConnectedPathBetweenTopAndBottomShouldWinTheMatch(PlayerColor playerColor) {
         Board presetBoard = new Board();
         for (int i = presetBoard.getFIRST_ROW(); i <= presetBoard.getLAST_ROW(); i++) {
             if (playerColor == PlayerColor.BLACK) {
-                presetBoard.placeStone(new Intersection(i, 5), PlayerColor.BLACK);
+                presetBoard.placeStone(new Intersection(i, 5), playerColor);
             } else {
-                presetBoard.placeStone(new Intersection(5, i), PlayerColor.WHITE);
+                presetBoard.placeStone(new Intersection(5, i), playerColor);
             }
         }
         Match match = new Match(presetBoard);
@@ -82,4 +81,5 @@ public class MatchTests {
         Match match = new Match(presetBoard);
         assertTrue(match.checkWinCondition(playerColor));
     }
+
 }
