@@ -54,6 +54,20 @@ public class Board {
         return row > LAST_ROW || column > LAST_COLUMN || row < FIRST_ROW || column < FIRST_COLUMN;
     }
 
+    public int getNumberOfStonesInColumnByPlayerColor(int column, PlayerColor playerColor) {
+        return (int) boardState.entrySet().stream()
+                .filter(entry -> entry.getKey().getColumn() == column &&
+                        entry.getValue() == playerColor)
+                .count();
+    }
+
+    public int getNumberOfStonesInRowByPlayerColor(int row, PlayerColor playerColor) {
+        return (int) boardState.entrySet().stream()
+                .filter(entry -> entry.getKey().getRow() == row &&
+                        entry.getValue() == playerColor)
+                .count();
+    }
+
     public Set<Intersection> getIntersectionsOccupiedByPlayerInColumn(PlayerColor playerColor, int column) {
         return boardState.entrySet().stream()
                 .filter(entry -> entry.getKey().getColumn() == column &&

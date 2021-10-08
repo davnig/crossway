@@ -136,49 +136,39 @@ public class Match {
     }
 
     private boolean hasWhiteWon() {
-        int emptierColumn = getColumnWithLeastAmountOfWhiteStonesBetweenFirstAndLast();
+        int startingColumn = getColumnWithLeastAmountOfWhiteStonesBetweenFirstAndLast();
+        int targetColumn = getTargetColumnFromStartingColumn(startingColumn);
         final Set<Intersection> intersectionsOccupiedByPlayerInEmptierColumn =
-                board.getIntersectionsOccupiedByPlayerInColumn(PlayerColor.WHITE, emptierColumn);
+                board.getIntersectionsOccupiedByPlayerInColumn(PlayerColor.WHITE, startingColumn);
         Set<Intersection> visited = new HashSet<>();
-        if (emptierColumn == board.getFIRST_COLUMN()) {
-            int targetColumn = board.getLAST_COLUMN();
-            for (Intersection intersection : intersectionsOccupiedByPlayerInEmptierColumn) {
-                if (hasWhiteWonRecursive(intersection, visited, targetColumn)) {
-                    return true;
-                }
-            }
-        } else {
-            int targetColumn = board.getFIRST_COLUMN();
-            for (Intersection intersection : intersectionsOccupiedByPlayerInEmptierColumn) {
-                if (hasWhiteWonRecursive(intersection, visited, targetColumn)) {
-                    return true;
-                }
-            }
+        for (Intersection intersection : intersectionsOccupiedByPlayerInEmptierColumn) {
+            return hasWhiteWonRecursive(intersection, visited, targetColumn);
         }
         return false;
     }
 
+    private int getTargetColumnFromStartingColumn(int startingColumn) {
+        if(startingColumn == board.getFIRST_COLUMN())
+            return board.getLAST_COLUMN();
+        return board.getFIRST_COLUMN();
+    }
+
     private boolean hasBlackWon() {
-        int emptierRow = getRowWithLeastAmountOfBlackStonesBetweenFirstAndLast();
+        int startingRow = getRowWithLeastAmountOfBlackStonesBetweenFirstAndLast();
+        int targetRow = getTargetRowFromStartingRow(startingRow);
         final Set<Intersection> intersectionsOccupiedByPlayerInEmptierRow =
-                board.getIntersectionsOccupiedByPlayerInRow(PlayerColor.BLACK, emptierRow);
+                board.getIntersectionsOccupiedByPlayerInRow(PlayerColor.BLACK, startingRow);
         Set<Intersection> visited = new HashSet<>();
-        if (emptierRow == board.getFIRST_ROW()) {
-            int targetRow = board.getLAST_ROW();
             for (Intersection intersection : intersectionsOccupiedByPlayerInEmptierRow) {
-                if (hasBlackWonRecursive(intersection, visited, targetRow)) {
-                    return true;
-                }
+                return hasBlackWonRecursive(intersection, visited, targetRow);
             }
-        } else {
-            int targetRow = board.getFIRST_ROW();
-            for (Intersection intersection : intersectionsOccupiedByPlayerInEmptierRow) {
-                if (hasBlackWonRecursive(intersection, visited, targetRow)) {
-                    return true;
-                }
-            }
-        }
         return false;
+    }
+
+    private int getTargetRowFromStartingRow(int startingRow) {
+        if(startingRow == board.getFIRST_ROW())
+            return board.getLAST_ROW();
+        return board.getFIRST_ROW();
     }
 
     private boolean hasWhiteWonRecursive(Intersection currentIntersection, Set<Intersection> visited, int targetColumn) {
@@ -206,27 +196,16 @@ public class Match {
     }
 
     private int getColumnWithLeastAmountOfWhiteStonesBetweenFirstAndLast() {
-        int firstColumnCount = (int) board.getBoardState().entrySet().stream()
-                .filter(entry -> entry.getKey().getColumn() == board.getFIRST_COLUMN() &&
-                        entry.getValue() == PlayerColor.WHITE)
-                .count();
-        int lastColumnCount = (int) board.getBoardState().entrySet().stream()
-                .filter(entry -> entry.getKey().getColumn() == board.getLAST_COLUMN() &&
-                        entry.getValue() == PlayerColor.WHITE)
-                .count();
+        int firstColumnCount = board.getNumberOfStonesInColumnByPlayerColor(board.getFIRST_COLUMN(), PlayerColor.WHITE);
+        int lastColumnCount = board.getNumberOfStonesInColumnByPlayerColor(board.getLAST_COLUMN(), PlayerColor.WHITE);
         return firstColumnCount < lastColumnCount ? board.getFIRST_COLUMN() : board.getLAST_COLUMN();
     }
 
     private int getRowWithLeastAmountOfBlackStonesBetweenFirstAndLast() {
-        int firstRowCount = (int) board.getBoardState().entrySet().stream()
-                .filter(entry -> entry.getKey().getRow() == board.getFIRST_ROW() &&
-                        entry.getValue() == PlayerColor.BLACK)
-                .count();
-        int lastRowCount = (int) board.getBoardState().entrySet().stream()
-                .filter(entry -> entry.getKey().getRow() == board.getLAST_ROW() &&
-                        entry.getValue() == PlayerColor.BLACK)
-                .count();
+        int firstRowCount = board.getNumberOfStonesInRowByPlayerColor(board.getFIRST_ROW(), PlayerColor.WHITE);
+        int lastRowCount = board.getNumberOfStonesInRowByPlayerColor(board.getLAST_ROW(), PlayerColor.WHITE);
         return firstRowCount < lastRowCount ? board.getFIRST_ROW() : board.getLAST_ROW();
     }
+
 }
 
