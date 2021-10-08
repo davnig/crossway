@@ -3,6 +3,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import playerProperty.PlayerColor;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,26 +33,19 @@ public class MatchTests {
         assertEquals(match.getBoard().getBoardState().get(new Intersection(1, 1)), PlayerColor.BLACK);
     }
 
-    @Test
-    void whenWhitePlayerCreatesConnectedPathBetweenLeftAndRightShouldWinTheMatch() {
-        Board presetBoard = new Board();
-        for (int i = presetBoard.getFIRST_COLUMN(); i <= presetBoard.getLAST_COLUMN(); i++) {
-            presetBoard.placeStone(new Intersection(5, i), PlayerColor.WHITE);
-        }
-        Match match = new Match(presetBoard);
-        assertTrue(match.checkWinCondition(PlayerColor.WHITE));
-        assertFalse(match.checkWinCondition(PlayerColor.BLACK));
-    }
-
-    @Test
-    void whenBlackPlayerCreatesConnectedPathBetweenTopAndBottomShouldWinTheMatch() {
+    @ParameterizedTest
+    @EnumSource(PlayerColor.class)
+    void whenBlackPlayerCreatesLinearConnectedPathBetweenTopAndBottomShouldWinTheMatch(PlayerColor playerColor) {
         Board presetBoard = new Board();
         for (int i = presetBoard.getFIRST_ROW(); i <= presetBoard.getLAST_ROW(); i++) {
-            presetBoard.placeStone(new Intersection(i, 5), PlayerColor.BLACK);
+            if (playerColor == PlayerColor.BLACK) {
+                presetBoard.placeStone(new Intersection(i, 5), PlayerColor.BLACK);
+            } else {
+                presetBoard.placeStone(new Intersection(5, i), PlayerColor.WHITE);
+            }
         }
         Match match = new Match(presetBoard);
-        assertTrue(match.checkWinCondition(PlayerColor.BLACK));
-        assertFalse(match.checkWinCondition(PlayerColor.WHITE));
+        assertTrue(match.checkWinCondition(playerColor));
     }
 
     @ParameterizedTest
@@ -68,7 +62,7 @@ public class MatchTests {
 
     @ParameterizedTest
     @CsvSource({"2,7", "1,18", "1,15", "8,10", "2,19"})
-    void whenBlackPlayerDoesNotHaveConnectedPathBetweenLeftAndRightThenWinConditionShouldFail(int rowStartPath, int rowEndPath) {
+    void whenBlackPlayerDoesNotHaveConnectedPathBetweenTopAndBottomThenWinConditionShouldFail(int rowStartPath, int rowEndPath) {
         Board presetBoard = new Board();
         for (int i = rowStartPath; i <= rowEndPath; i++) {
             presetBoard.placeStone(new Intersection(i, 7), PlayerColor.BLACK);
@@ -78,26 +72,14 @@ public class MatchTests {
         assertFalse(match.checkWinCondition(PlayerColor.BLACK));
     }
 
-    @Test
-    void whenBlackPlayerCreatesDiagonalConnectedPathBetweenTopAndBottomShouldWinTheMatch() {
+    @ParameterizedTest
+    @EnumSource(value = PlayerColor.class, names = {"WHITE", "BLACK"})
+    void whenPlayerCreatesDiagonalConnectedPathBetweenTopAndBottomShouldWinTheMatch(PlayerColor playerColor) {
         Board presetBoard = new Board();
         for (int i = presetBoard.getFIRST_ROW(); i <= presetBoard.getLAST_ROW(); i++) {
-            presetBoard.placeStone(new Intersection(i, i), PlayerColor.BLACK);
+            presetBoard.placeStone(new Intersection(i, i), playerColor);
         }
         Match match = new Match(presetBoard);
-        assertTrue(match.checkWinCondition(PlayerColor.BLACK));
-        assertFalse(match.checkWinCondition(PlayerColor.WHITE));
+        assertTrue(match.checkWinCondition(playerColor));
     }
-
-    @Test
-    void whenWhitePlayerCreatesDiagonalConnectedPathBetweenTopAndBottomShouldWinTheMatch() {
-        Board presetBoard = new Board();
-        for (int i = presetBoard.getFIRST_ROW(); i <= presetBoard.getLAST_ROW(); i++) {
-            presetBoard.placeStone(new Intersection(i, i), PlayerColor.WHITE);
-        }
-        Match match = new Match(presetBoard);
-        assertTrue(match.checkWinCondition(PlayerColor.WHITE));
-        assertFalse(match.checkWinCondition(PlayerColor.BLACK));
-    }
-
 }
