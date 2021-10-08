@@ -4,7 +4,6 @@ import lombok.Data;
 import playerProperty.PlayerColor;
 
 import java.util.HashSet;
-import java.util.Scanner;
 import java.util.Set;
 
 @Data
@@ -12,22 +11,18 @@ public class Match {
 
     private Board board;
     private Turn turn;
-    private Scanner scanner;
 
     Match() {
-        this.scanner = new Scanner(System.in);
         this.board = new Board();
         this.turn = new Turn();
     }
 
     Match(Board presetBoard) {
-        this.scanner = new Scanner(System.in);
         this.board = presetBoard;
         this.turn = new Turn();
     }
 
     Match(Board presetBoard, Turn turn) {
-        this.scanner = new Scanner(System.in);
         this.board = presetBoard;
         this.turn = turn;
     }
@@ -37,11 +32,11 @@ public class Match {
     }
 
     public void playTurn() throws PlacementViolationException, InvalidUserInputException {
-        if (turn.getTurnNumber() == 2 && isPieRuleRequested()) {
+        if (turn.getTurnNumber() == 2 && IOUtils.isPieRuleRequested()) {
             turn.applyPieRule();
             return;
         }
-        String input = scanner.nextLine();
+        String input = IOUtils.getInputLine();
         int row = getIntRowFromPlayerInput(input);
         int column = getIntColumnFromPlayerInput(input);
         validatePositionAndPlaceStone(row, column);
@@ -70,16 +65,6 @@ public class Match {
 
     private int getIntRowFromPlayerInput(String input) {
         return Integer.parseInt(input.substring(0, input.indexOf(",")));
-    }
-
-    private boolean isPieRuleRequested() throws InvalidUserInputException {
-        System.out.println("Do you Want to switch colors? Y-yes N-No");
-        String whiteResponse = scanner.nextLine();
-        if (whiteResponse.equalsIgnoreCase("Y"))
-            return true;
-        if (whiteResponse.equalsIgnoreCase("N"))
-            return false;
-        throw new InvalidUserInputException("Input not allowed, insert either Y or N");
     }
 
     private boolean isDiagonalViolation(int row, int column) {
@@ -135,6 +120,11 @@ public class Match {
         return hasWhiteWon();
     }
 
+    /**
+     * Check if white has won the match
+     *
+     * @return a boolean indicating if white has won
+     */
     private boolean hasWhiteWon() {
         int startingColumn = getColumnWithLeastAmountOfWhiteStonesBetweenFirstAndLast();
         int targetColumn = getTargetColumnFromStartingColumn(startingColumn);
@@ -153,6 +143,11 @@ public class Match {
         return board.getFIRST_COLUMN();
     }
 
+    /**
+     * Check if black has won the match
+     *
+     * @return a boolean indicating if black has won
+     */
     private boolean hasBlackWon() {
         int startingRow = getRowWithLeastAmountOfBlackStonesBetweenFirstAndLast();
         int targetRow = getTargetRowFromStartingRow(startingRow);
@@ -171,6 +166,14 @@ public class Match {
         return board.getFIRST_ROW();
     }
 
+    /**
+     * Recursively searches for a path of white stones connecting the vertical edges of the board
+     *
+     * @param currentIntersection the current {@code Intersection} analyzed
+     * @param visited             the {@code Set} of already visited {@code Intersection}s
+     * @param targetColumn        the column where the path should end for the method to be successful
+     * @return a boolean indicating if white has won
+     */
     private boolean hasWhiteWonRecursive(Intersection currentIntersection, Set<Intersection> visited, int targetColumn) {
         visited.add(currentIntersection);
         if (currentIntersection.getColumn() == targetColumn)
@@ -183,6 +186,14 @@ public class Match {
         return false;
     }
 
+    /**
+     * Recursively searches for a path of black stones connecting the horizontal edges of the board
+     *
+     * @param currentIntersection the current {@code Intersection} analyzed
+     * @param visited             the {@code Set} of already visited {@code Intersection}s
+     * @param targetRow           the row where the path should end for the method to be successful
+     * @return a boolean indicating if black has won
+     */
     private boolean hasBlackWonRecursive(Intersection currentIntersection, Set<Intersection> visited, int targetRow) {
         visited.add(currentIntersection);
         if (currentIntersection.getRow() == targetRow)
