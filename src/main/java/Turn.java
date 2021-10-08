@@ -33,11 +33,11 @@ public class Turn {
     }
 
     public PlayerColor getCurrentPlayerOpponent() {
-        return switch (currentPlayer) {
-            case BLACK -> PlayerColor.WHITE;
-            case WHITE -> PlayerColor.BLACK;
-            default -> PlayerColor.NONE;
-        };
+        switch (currentPlayer) {
+            case BLACK: return PlayerColor.WHITE;
+            case WHITE: return PlayerColor.BLACK;
+            default: return PlayerColor.NONE;
+        }
     }
 
     private void printTurnInfo() {
