@@ -33,8 +33,8 @@ public class MatchTests {
     }
 
     @ParameterizedTest
-    @EnumSource(PlayerColor.class)
-    void whenPlayerCreatesLinearConnectedPathBetweenTopAndBottomShouldWinTheMatch(PlayerColor playerColor) {
+    @EnumSource(value = PlayerColor.class, names = {"WHITE", "BLACK"})
+    void whenPlayerCreatesLinearConnectedPathShouldWinTheMatch(PlayerColor playerColor) {
         Board presetBoard = new Board();
         for (int i = presetBoard.getFIRST_ROW(); i <= presetBoard.getLAST_ROW(); i++) {
             if (playerColor == PlayerColor.BLACK) {
@@ -44,6 +44,7 @@ public class MatchTests {
             }
         }
         Match match = new Match(presetBoard);
+        presetBoard.printBoard();
         assertTrue(match.checkWinCondition(playerColor));
     }
 
@@ -55,6 +56,7 @@ public class MatchTests {
             presetBoard.placeStone(new Intersection(5, i), PlayerColor.WHITE);
         }
         Match match = new Match(presetBoard);
+        presetBoard.printBoard();
         assertFalse(match.checkWinCondition(PlayerColor.WHITE));
         assertFalse(match.checkWinCondition(PlayerColor.BLACK));
     }
@@ -67,6 +69,7 @@ public class MatchTests {
             presetBoard.placeStone(new Intersection(i, 7), PlayerColor.BLACK);
         }
         Match match = new Match(presetBoard);
+        presetBoard.printBoard();
         assertFalse(match.checkWinCondition(PlayerColor.WHITE));
         assertFalse(match.checkWinCondition(PlayerColor.BLACK));
     }
@@ -79,7 +82,23 @@ public class MatchTests {
             presetBoard.placeStone(new Intersection(i, i), playerColor);
         }
         Match match = new Match(presetBoard);
+        presetBoard.printBoard();
         assertTrue(match.checkWinCondition(playerColor));
+    }
+
+    @Test
+    void whenWhitePlayerCreatesVShapedConnectedPathBetweenLeftAndRightShouldWinTheMatch() {
+        Board presetBoard = new Board();
+        for (int i = presetBoard.getFIRST_ROW(); i <= presetBoard.getLAST_ROW() / 2; i++) {
+            presetBoard.placeStone(new Intersection(i, i), PlayerColor.WHITE);
+        }
+        for (int i = 9; i <= 19; i++) {
+            presetBoard.placeStone(new Intersection(9, i), PlayerColor.WHITE);
+        }
+        presetBoard.placeStone(new Intersection(10, 10), PlayerColor.WHITE);
+        Match match = new Match(presetBoard);
+        presetBoard.printBoard();
+        assertTrue(match.checkWinCondition(PlayerColor.WHITE));
     }
 
     @Test

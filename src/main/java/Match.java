@@ -187,7 +187,7 @@ public class Match {
             return true;
         for (Intersection adjIntersection : board.getAdjIntersections(currentIntersection)) {
             if (board.getBoardState().get(adjIntersection) == PlayerColor.WHITE && !(visited.contains(adjIntersection))) {
-                return hasWhiteWonRecursive(adjIntersection, visited, targetColumn);
+                if (hasWhiteWonRecursive(adjIntersection, visited, targetColumn)) return true;
             }
         }
         return false;
@@ -199,7 +199,7 @@ public class Match {
             return true;
         for (Intersection adjIntersection : board.getAdjIntersections(currentIntersection)) {
             if (board.getBoardState().get(adjIntersection) == PlayerColor.BLACK && !(visited.contains(adjIntersection))) {
-                return hasBlackWonRecursive(adjIntersection, visited, targetRow);
+                if (hasBlackWonRecursive(adjIntersection, visited, targetRow)) return true;
             }
         }
         return false;
