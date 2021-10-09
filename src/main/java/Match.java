@@ -3,8 +3,10 @@ import exception.PlacementViolationException;
 import lombok.Data;
 import playerProperty.PlayerColor;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 @Data
 public class Match {
@@ -69,48 +71,65 @@ public class Match {
 
     private boolean isDiagonalViolation(int row, int column) {
         PlayerColor turnColor = turn.getCurrentPlayer();
-        PlayerColor oppositeColor = turn.getCurrentPlayerOpponent();
         if (board.isFirstRow(row))
-            return isSouthEastDiagonalViolation(row, column, turnColor, oppositeColor) ||
-                    isSouthWestDiagonalViolation(row, column, turnColor, oppositeColor);
+            return checkGivenDiagonalViolations(new Intersection(row, column), turnColor, isSouthEastDiagonalViolation(), isSouthWestDiagonalViolation());
         if (board.isLastRow(row))
-            return isNorthEastDiagonalViolation(row, column, turnColor, oppositeColor) ||
-                    isNorthWestDiagonalViolation(row, column, turnColor, oppositeColor);
+            return checkGivenDiagonalViolations(new Intersection(row, column), turnColor, isNorthEastDiagonalViolation(), isNorthWestDiagonalViolation());
         if (board.isFirstColumn(column))
-            return isNorthEastDiagonalViolation(row, column, turnColor, oppositeColor) ||
-                    isSouthEastDiagonalViolation(row, column, turnColor, oppositeColor);
+            return checkGivenDiagonalViolations(new Intersection(row, column), turnColor, isNorthEastDiagonalViolation(), isSouthEastDiagonalViolation());
         if (board.isLastColumn(column))
-            return isNorthWestDiagonalViolation(row, column, turnColor, oppositeColor) ||
-                    isSouthWestDiagonalViolation(row, column, turnColor, oppositeColor);
-        return
-                isNorthEastDiagonalViolation(row, column, turnColor, oppositeColor) ||
-                        isSouthEastDiagonalViolation(row, column, turnColor, oppositeColor) ||
-                        isSouthWestDiagonalViolation(row, column, turnColor, oppositeColor) ||
-                        isNorthWestDiagonalViolation(row, column, turnColor, oppositeColor);
+            return checkGivenDiagonalViolations(new Intersection(row, column), turnColor, isNorthWestDiagonalViolation(), isSouthWestDiagonalViolation());
+        return checkGivenDiagonalViolations(
+                new Intersection(row, column),
+                turnColor,
+                isNorthEastDiagonalViolation(),
+                isSouthEastDiagonalViolation(),
+                isSouthWestDiagonalViolation(),
+                isNorthWestDiagonalViolation()
+        );
     }
 
-    private boolean isSouthWestDiagonalViolation(int row, int column, PlayerColor turnColor, PlayerColor oppositeColor) {
-        return board.getStoneColorAt(new Intersection(row + 1, column)) == oppositeColor &&
-                board.getStoneColorAt(new Intersection(row, column - 1)) == oppositeColor &&
-                board.getStoneColorAt(new Intersection(row + 1, column - 1)) == turnColor;
+    @SafeVarargs
+    private boolean checkGivenDiagonalViolations(Intersection intersection, PlayerColor playerColor, BiFunction<Intersection, PlayerColor, Boolean>... functions) {
+        return Arrays.stream(functions)
+                .map(fun -> fun.apply(intersection, playerColor))
+                .reduce(Boolean.FALSE, Boolean::logicalOr);
     }
 
-    private boolean isNorthWestDiagonalViolation(int row, int column, PlayerColor turnColor, PlayerColor oppositeColor) {
-        return board.getStoneColorAt(new Intersection(row - 1, column)) == oppositeColor &&
-                board.getStoneColorAt(new Intersection(row, column - 1)) == oppositeColor &&
-                board.getStoneColorAt(new Intersection(row - 1, column - 1)) == turnColor;
+    private BiFunction<Intersection, PlayerColor, Boolean> isSouthWestDiagonalViolation() {
+        return (((intersection, turnColor) -> {
+            PlayerColor oppositeColor = turn.getCurrentPlayerOpponent();
+            return board.getStoneColorAt(new Intersection(intersection.getRow() + 1, intersection.getColumn())) == oppositeColor &&
+                    board.getStoneColorAt(new Intersection(intersection.getRow(), intersection.getColumn() - 1)) == oppositeColor &&
+                    board.getStoneColorAt(new Intersection(intersection.getRow() + 1, intersection.getColumn() - 1)) == turnColor;
+        }));
     }
 
-    private boolean isNorthEastDiagonalViolation(int row, int column, PlayerColor turnColor, PlayerColor oppositeColor) {
-        return board.getStoneColorAt(new Intersection(row - 1, column)) == oppositeColor &&
-                board.getStoneColorAt(new Intersection(row, column + 1)) == oppositeColor &&
-                board.getStoneColorAt(new Intersection(row - 1, column + 1)) == turnColor;
+    private BiFunction<Intersection, PlayerColor, Boolean> isNorthWestDiagonalViolation() {
+        return (((intersection, turnColor) -> {
+            PlayerColor oppositeColor = turn.getCurrentPlayerOpponent();
+            return board.getStoneColorAt(new Intersection(intersection.getRow() - 1, intersection.getColumn())) == oppositeColor &&
+                    board.getStoneColorAt(new Intersection(intersection.getRow(), intersection.getColumn() - 1)) == oppositeColor &&
+                    board.getStoneColorAt(new Intersection(intersection.getRow() - 1, intersection.getColumn() - 1)) == turnColor;
+        }));
     }
 
-    private boolean isSouthEastDiagonalViolation(int row, int column, PlayerColor turnColor, PlayerColor oppositeColor) {
-        return board.getStoneColorAt(new Intersection(row + 1, column)) == oppositeColor &&
-                board.getStoneColorAt(new Intersection(row, column + 1)) == oppositeColor &&
-                board.getStoneColorAt(new Intersection(row + 1, column + 1)) == turnColor;
+    private BiFunction<Intersection, PlayerColor, Boolean> isNorthEastDiagonalViolation() {
+        return (((intersection, turnColor) -> {
+            PlayerColor oppositeColor = turn.getCurrentPlayerOpponent();
+            return board.getStoneColorAt(new Intersection(intersection.getRow() - 1, intersection.getColumn())) == oppositeColor &&
+                    board.getStoneColorAt(new Intersection(intersection.getRow(), intersection.getColumn() + 1)) == oppositeColor &&
+                    board.getStoneColorAt(new Intersection(intersection.getRow() - 1, intersection.getColumn() + 1)) == turnColor;
+        }));
+    }
+
+    private BiFunction<Intersection, PlayerColor, Boolean> isSouthEastDiagonalViolation() {
+        return ((intersection, turnColor) -> {
+            PlayerColor oppositeColor = turn.getCurrentPlayerOpponent();
+            return board.getStoneColorAt(new Intersection(intersection.getRow() + 1, intersection.getColumn())) == oppositeColor &&
+                    board.getStoneColorAt(new Intersection(intersection.getRow(), intersection.getColumn() + 1)) == oppositeColor &&
+                    board.getStoneColorAt(new Intersection(intersection.getRow() + 1, intersection.getColumn() + 1)) == turnColor;
+        });
     }
 
     public boolean checkWinCondition(PlayerColor playerColor) {
@@ -138,7 +157,7 @@ public class Match {
     }
 
     private int getTargetColumnFromStartingColumn(int startingColumn) {
-        if(startingColumn == board.getFIRST_COLUMN())
+        if (startingColumn == board.getFIRST_COLUMN())
             return board.getLAST_COLUMN();
         return board.getFIRST_COLUMN();
     }
@@ -154,14 +173,14 @@ public class Match {
         final Set<Intersection> intersectionsOccupiedByPlayerInEmptierRow =
                 board.getIntersectionsOccupiedByPlayerInRow(PlayerColor.BLACK, startingRow);
         Set<Intersection> visited = new HashSet<>();
-            for (Intersection intersection : intersectionsOccupiedByPlayerInEmptierRow) {
-                return hasBlackWonRecursive(intersection, visited, targetRow);
-            }
+        for (Intersection intersection : intersectionsOccupiedByPlayerInEmptierRow) {
+            return hasBlackWonRecursive(intersection, visited, targetRow);
+        }
         return false;
     }
 
     private int getTargetRowFromStartingRow(int startingRow) {
-        if(startingRow == board.getFIRST_ROW())
+        if (startingRow == board.getFIRST_ROW())
             return board.getLAST_ROW();
         return board.getFIRST_ROW();
     }
