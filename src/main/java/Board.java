@@ -10,10 +10,10 @@ import java.util.stream.Collectors;
 @Data
 public class Board {
 
-    private final int FIRST_ROW = 1;
-    private final int FIRST_COLUMN = 1;
-    private final int LAST_ROW = 19;
-    private final int LAST_COLUMN = 19;
+    private int FIRST_ROW = 1;
+    private int FIRST_COLUMN = 1;
+    private int LAST_ROW = 19;
+    private int LAST_COLUMN = 19;
     private Map<Intersection, PlayerColor> boardState;
 
 
