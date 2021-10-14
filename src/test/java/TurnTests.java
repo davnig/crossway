@@ -72,7 +72,7 @@ public class TurnTests {
         Board presetBoard = new Board();
         presetBoard.placeStone(new Intersection(1, 4), PlayerColor.BLACK);
         Match match = new Match(presetBoard);
-        match.start();
+        match.getTurn().initFirstTurn();
         match.getTurn().nextTurn();
         IOUtils.scanner = getRedirectedScannerForSimulatedUserInput("Y");
         match.playTurn();
@@ -85,7 +85,7 @@ public class TurnTests {
         Board presetBoard = new Board();
         presetBoard.placeStone(new Intersection(1, 4), PlayerColor.BLACK);
         Match match = new Match(presetBoard);
-        match.start();
+        match.getTurn().initFirstTurn();
         match.getTurn().nextTurn();
         IOUtils.scanner =
                 getRedirectedScannerForSimulatedUserInput(
@@ -101,7 +101,7 @@ public class TurnTests {
         Board presetBoard = new Board();
         presetBoard.placeStone(new Intersection(1, 4), PlayerColor.BLACK);
         Match match = new Match(presetBoard);
-        match.start();
+        match.getTurn().initFirstTurn();
         match.getTurn().nextTurn();
         IOUtils.scanner =
                 getRedirectedScannerForSimulatedUserInput(
@@ -118,7 +118,7 @@ public class TurnTests {
         Board presetBoard = new Board();
         presetBoard.placeStone(new Intersection(1, 4), PlayerColor.BLACK);
         Match match = new Match(presetBoard);
-        match.start();
+        match.getTurn().initFirstTurn();
         match.getTurn().nextTurn();
         IOUtils.scanner = getRedirectedScannerForSimulatedUserInput(playerResponseToPieRule);
         assertThrows(InvalidUserInputException.class, match::playTurn);
@@ -127,7 +127,7 @@ public class TurnTests {
     @Test
     void whenTurnEndsShouldSwitchCurrentPlayer() throws PlacementViolationException, InvalidUserInputException {
         Match match = new Match();
-        match.start();
+        match.getTurn().initFirstTurn();
         IOUtils.scanner = getRedirectedScannerForSimulatedUserInput("2,1");
         match.playTurn();
         assertEquals(PlayerColor.WHITE, match.getTurn().getCurrentPlayer());
@@ -136,7 +136,7 @@ public class TurnTests {
     @Test
     void whenTurnEndsShouldIncrementTurnNumber() throws PlacementViolationException, InvalidUserInputException {
         Match match = new Match();
-        match.start();
+        match.getTurn().initFirstTurn();
         IOUtils.scanner = getRedirectedScannerForSimulatedUserInput("1,1");
         match.playTurn();
         assertEquals(match.getTurn().getTurnNumber(), 2);
@@ -145,7 +145,7 @@ public class TurnTests {
     @Test
     void whenPlayTurnShouldConvertUserInputToStonePlacement() throws PlacementViolationException, InvalidUserInputException {
         Match match = new Match();
-        match.start();
+        match.getTurn().initFirstTurn();
         IOUtils.scanner = getRedirectedScannerForSimulatedUserInput("2,3");
         match.playTurn();
         assertEquals(match.getBoard().getStoneColorAt(new Intersection(2, 3)), PlayerColor.BLACK);

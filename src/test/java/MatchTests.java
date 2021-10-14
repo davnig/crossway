@@ -12,21 +12,21 @@ public class MatchTests {
     @Test
     void whenGameStartsBoardShouldBeEmpty() {
         Match match = new Match();
-        match.start();
+        match.getTurn().initFirstTurn();
         assertTrue(match.getBoard().getBoardState().isEmpty());
     }
 
     @Test
     void whenGameStartsTurnShouldBeBlack() {
         Match match = new Match();
-        match.start();
+        match.getTurn().initFirstTurn();
         assertEquals(PlayerColor.BLACK, match.getTurn().getCurrentPlayer());
     }
 
     @Test
     void whenStoneIsPositionedBoardShouldNotBeEmpty() throws PlacementViolationException {
         Match match = new Match();
-        match.start();
+        match.getTurn().initFirstTurn();
         match.validatePositionAndPlaceStone(1, 1);
         assertFalse(match.getBoard().getBoardState().isEmpty());
         assertEquals(match.getBoard().getBoardState().get(new Intersection(1, 1)), PlayerColor.BLACK);

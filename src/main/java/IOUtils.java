@@ -12,6 +12,15 @@ public class IOUtils {
 		scanner = new Scanner(System.in);
 	}
 
+	public static void printMenu() {
+		System.out.println("Welcome to crossway! \n");
+		System.out.println("press any button to start a new match versus another player...");
+		getInputLine();
+		System.out.println("you are the player with white stones -> x");
+		System.out.println("your opponent has the black stones -> O \n");
+	}
+
+
 	public static String getInputLine() {
 		return scanner.nextLine();
 	}

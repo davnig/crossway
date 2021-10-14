@@ -31,6 +31,7 @@ public class Match {
 
     void start() {
         turn.initFirstTurn();
+        IOUtils.printMenu();
     }
 
     public void playTurn() throws PlacementViolationException, InvalidUserInputException {
