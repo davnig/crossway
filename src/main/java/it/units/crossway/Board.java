@@ -1,5 +1,6 @@
+package it.units.crossway;
+
 import lombok.Data;
-import playerProperty.PlayerColor;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,7 +29,7 @@ public class Board {
     /**
      * Gets the stone color at the specified intersection.
      *
-     * @param intersection the {@code Intersection}
+     * @param intersection the {@code it.units.crossway.Intersection}
      * @return a {@code PlayerColor}
      */
     PlayerColor getStoneColorAt(Intersection intersection) {
@@ -41,7 +42,7 @@ public class Board {
     /**
      * Places a stone of the given player color on the board in the specified intersection.
      *
-     * @param intersection the {@code Intersection}
+     * @param intersection the {@code it.units.crossway.Intersection}
      * @param playerColor  the {@code PlayerColor} of the stone
      */
     public void placeStone(Intersection intersection, PlayerColor playerColor) {

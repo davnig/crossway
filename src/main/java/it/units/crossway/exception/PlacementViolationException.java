@@ -1,4 +1,4 @@
-package exception;
+package it.units.crossway.exception;
 
 public class PlacementViolationException extends Exception {
 

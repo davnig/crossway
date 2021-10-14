@@ -1,3 +1,5 @@
+package it.units.crossway;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

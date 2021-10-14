@@ -1,4 +1,6 @@
-import exception.InvalidUserInputException;
+package it.units.crossway;
+
+import it.units.crossway.exception.InvalidUserInputException;
 import lombok.Data;
 
 import java.util.Scanner;
@@ -6,9 +8,9 @@ import java.util.Scanner;
 @Data
 public class IOUtils {
 
-	public static Scanner scanner;
+    public static Scanner scanner;
 
-	IOUtils() {
+    IOUtils() {
 		scanner = new Scanner(System.in);
 	}
 

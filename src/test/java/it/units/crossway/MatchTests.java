@@ -1,11 +1,11 @@
-import exception.PlacementViolationException;
+package it.units.crossway;
+
+import it.units.crossway.exception.PlacementViolationException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
-import playerProperty.PlayerColor;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class MatchTests {
 
@@ -13,14 +13,14 @@ public class MatchTests {
     void whenGameStartsBoardShouldBeEmpty() {
         Match match = new Match();
         match.getTurn().initFirstTurn();
-        assertTrue(match.getBoard().getBoardState().isEmpty());
+        Assertions.assertTrue(match.getBoard().getBoardState().isEmpty());
     }
 
     @Test
     void whenGameStartsTurnShouldBeBlack() {
         Match match = new Match();
         match.getTurn().initFirstTurn();
-        assertEquals(PlayerColor.BLACK, match.getTurn().getCurrentPlayer());
+        Assertions.assertEquals(PlayerColor.BLACK, match.getTurn().getCurrentPlayer());
     }
 
     @Test
@@ -28,8 +28,8 @@ public class MatchTests {
         Match match = new Match();
         match.getTurn().initFirstTurn();
         match.validatePositionAndPlaceStone(1, 1);
-        assertFalse(match.getBoard().getBoardState().isEmpty());
-        assertEquals(match.getBoard().getBoardState().get(new Intersection(1, 1)), PlayerColor.BLACK);
+        Assertions.assertFalse(match.getBoard().getBoardState().isEmpty());
+        Assertions.assertEquals(match.getBoard().getBoardState().get(new Intersection(1, 1)), PlayerColor.BLACK);
     }
 
     @ParameterizedTest
@@ -45,7 +45,7 @@ public class MatchTests {
         }
         Match match = new Match(presetBoard);
         presetBoard.printBoard();
-        assertTrue(match.checkWinCondition(playerColor));
+        Assertions.assertTrue(match.checkWinCondition(playerColor));
     }
 
     @ParameterizedTest
@@ -57,8 +57,8 @@ public class MatchTests {
         }
         Match match = new Match(presetBoard);
         presetBoard.printBoard();
-        assertFalse(match.checkWinCondition(PlayerColor.WHITE));
-        assertFalse(match.checkWinCondition(PlayerColor.BLACK));
+        Assertions.assertFalse(match.checkWinCondition(PlayerColor.WHITE));
+        Assertions.assertFalse(match.checkWinCondition(PlayerColor.BLACK));
     }
 
     @ParameterizedTest
@@ -70,8 +70,8 @@ public class MatchTests {
         }
         Match match = new Match(presetBoard);
         presetBoard.printBoard();
-        assertFalse(match.checkWinCondition(PlayerColor.WHITE));
-        assertFalse(match.checkWinCondition(PlayerColor.BLACK));
+        Assertions.assertFalse(match.checkWinCondition(PlayerColor.WHITE));
+        Assertions.assertFalse(match.checkWinCondition(PlayerColor.BLACK));
     }
 
     @ParameterizedTest
@@ -83,7 +83,7 @@ public class MatchTests {
         }
         Match match = new Match(presetBoard);
         presetBoard.printBoard();
-        assertTrue(match.checkWinCondition(playerColor));
+        Assertions.assertTrue(match.checkWinCondition(playerColor));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class MatchTests {
         presetBoard.placeStone(new Intersection(10, 10), PlayerColor.WHITE);
         Match match = new Match(presetBoard);
         presetBoard.printBoard();
-        assertTrue(match.checkWinCondition(PlayerColor.WHITE));
+        Assertions.assertTrue(match.checkWinCondition(PlayerColor.WHITE));
     }
 
     @Test
@@ -127,7 +127,7 @@ public class MatchTests {
         presetBoard.placeStone(new Intersection(2, 19), PlayerColor.WHITE);
         Match match = new Match(presetBoard);
         presetBoard.printBoard();
-        assertTrue(match.checkWinCondition(PlayerColor.WHITE));
+        Assertions.assertTrue(match.checkWinCondition(PlayerColor.WHITE));
     }
 
 }

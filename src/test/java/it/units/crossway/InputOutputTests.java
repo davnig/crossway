@@ -1,3 +1,5 @@
+package it.units.crossway;
+
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -21,9 +23,9 @@ public class InputOutputTests {
     void print2x2EmptyBoard() {
         String board2x2 =
                 "---------" + System.lineSeparator() +
-                "|   |   |" + System.lineSeparator() +
-                "|   |   |" + System.lineSeparator() +
-                "---------" + System.lineSeparator();
+                        "|   |   |" + System.lineSeparator() +
+                        "|   |   |" + System.lineSeparator() +
+                        "---------" + System.lineSeparator();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(baos);

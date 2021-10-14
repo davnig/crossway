@@ -1,15 +1,16 @@
-import exception.InvalidUserInputException;
-import exception.PlacementViolationException;
+package it.units.crossway;
+
+import it.units.crossway.exception.InvalidUserInputException;
+import it.units.crossway.exception.PlacementViolationException;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import playerProperty.PlayerColor;
 
 import java.io.ByteArrayInputStream;
 import java.util.Scanner;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TurnTests {
@@ -76,7 +77,7 @@ public class TurnTests {
         match.getTurn().nextTurn();
         IOUtils.scanner = getRedirectedScannerForSimulatedUserInput("Y");
         match.playTurn();
-        assertEquals(match.getTurn().getCurrentPlayer(), PlayerColor.WHITE);
+        Assertions.assertEquals(match.getTurn().getCurrentPlayer(), PlayerColor.WHITE);
     }
 
     @SneakyThrows
@@ -92,7 +93,7 @@ public class TurnTests {
                         "N" + System.getProperty("line.separator") + "6,6" + System.getProperty("line.separator")
         );
         match.playTurn();
-        assertEquals(match.getTurn().getCurrentPlayer(), PlayerColor.BLACK);
+        Assertions.assertEquals(match.getTurn().getCurrentPlayer(), PlayerColor.BLACK);
     }
 
     @SneakyThrows
@@ -108,7 +109,7 @@ public class TurnTests {
                         "N" + System.getProperty("line.separator") + "6,6" + System.getProperty("line.separator")
                 );
         match.playTurn();
-        assertEquals(presetBoard.getStoneColorAt(new Intersection(6, 6)), PlayerColor.WHITE);
+        Assertions.assertEquals(presetBoard.getStoneColorAt(new Intersection(6, 6)), PlayerColor.WHITE);
     }
 
     @SneakyThrows
@@ -130,7 +131,7 @@ public class TurnTests {
         match.getTurn().initFirstTurn();
         IOUtils.scanner = getRedirectedScannerForSimulatedUserInput("2,1");
         match.playTurn();
-        assertEquals(PlayerColor.WHITE, match.getTurn().getCurrentPlayer());
+        Assertions.assertEquals(PlayerColor.WHITE, match.getTurn().getCurrentPlayer());
     }
 
     @Test
@@ -139,7 +140,7 @@ public class TurnTests {
         match.getTurn().initFirstTurn();
         IOUtils.scanner = getRedirectedScannerForSimulatedUserInput("1,1");
         match.playTurn();
-        assertEquals(match.getTurn().getTurnNumber(), 2);
+        Assertions.assertEquals(match.getTurn().getTurnNumber(), 2);
     }
 
     @Test
@@ -148,7 +149,7 @@ public class TurnTests {
         match.getTurn().initFirstTurn();
         IOUtils.scanner = getRedirectedScannerForSimulatedUserInput("2,3");
         match.playTurn();
-        assertEquals(match.getBoard().getStoneColorAt(new Intersection(2, 3)), PlayerColor.BLACK);
+        Assertions.assertEquals(match.getBoard().getStoneColorAt(new Intersection(2, 3)), PlayerColor.BLACK);
     }
 
     Scanner getRedirectedScannerForSimulatedUserInput(String input) {

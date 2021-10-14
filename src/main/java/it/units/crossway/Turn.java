@@ -1,7 +1,8 @@
+package it.units.crossway;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import playerProperty.PlayerColor;
 
 @Data
 @AllArgsConstructor
@@ -41,6 +42,6 @@ public class Turn {
     }
 
     private void printTurnInfo() {
-        System.out.printf("Turn %d: %s plays%n", turnNumber, currentPlayer);
+        System.out.printf("it.units.crossway.Turn %d: %s plays%n", turnNumber, currentPlayer);
     }
 }
