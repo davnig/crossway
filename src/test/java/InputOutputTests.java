@@ -8,11 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class InputOutputTests {
 
-    @BeforeEach
-    void init() {
-
-    }
-
     @Test
     void givenSystemInRedirectWhenScannerNextShouldReadPreMadeString() {
         String data = "Hello, World!";
