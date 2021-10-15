@@ -15,5 +15,6 @@ public class Game {
     private String uuid;
     private String whitePlayer;
     private String blackPlayer;
+    private GameStatus gameStatus;
 
 }

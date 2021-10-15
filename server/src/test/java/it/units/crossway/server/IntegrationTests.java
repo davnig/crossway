@@ -5,6 +5,7 @@ import it.units.crossway.server.model.dto.GameCreationIntent;
 import it.units.crossway.server.model.dto.GameJoinIntent;
 import it.units.crossway.server.model.dto.PlayerDto;
 import it.units.crossway.server.model.entity.Game;
+import it.units.crossway.server.model.entity.GameStatus;
 import it.units.crossway.server.repository.GameRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +68,7 @@ public class IntegrationTests {
         String uuid = UUID.randomUUID().toString();
         game.setUuid(uuid);
         game.setBlackPlayer("player1");
+        game.setGameStatus(GameStatus.CREATED);
         gameRepository.save(game);
         GameJoinIntent gameJoinIntent = new GameJoinIntent(uuid, "player2");
         ObjectMapper om = new ObjectMapper();
