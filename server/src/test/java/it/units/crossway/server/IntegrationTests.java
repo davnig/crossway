@@ -92,8 +92,14 @@ public class IntegrationTests {
     }
 
     @Test
-    void when_putGameJoiningIntentAndGameDoesNotExists_then_401() {
-        // todo
+    void when_putGameJoiningIntentAndGameDoesNotExists_then_401() throws Exception {
+        GameJoinIntent gameJoinIntent = new GameJoinIntent("fake-uuid", "player0");
+        ObjectMapper om = new ObjectMapper();
+        mvc.perform(put("/games")
+                        .content(om.writeValueAsString(gameJoinIntent))
+                        .contentType(MediaType.APPLICATION_JSON))
+//                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
 }
