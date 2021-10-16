@@ -1,5 +1,6 @@
 package it.units.crossway.server.service;
 
+import it.units.crossway.server.exception.DuplicatePlayerException;
 import it.units.crossway.server.model.dto.PlayerDto;
 import it.units.crossway.server.model.entity.Player;
 import it.units.crossway.server.repository.PlayerRepository;
@@ -15,6 +16,9 @@ public class PlayerService {
     }
 
     public PlayerDto addUser(PlayerDto playerDto) {
+        if (playerRepository.existsByNickname(playerDto.getNickname())) {
+            throw new DuplicatePlayerException("nickname", playerDto.getNickname());
+        }
         Player saved = playerRepository.save(new Player(playerDto.getNickname()));
         return new PlayerDto(saved.getNickname());
     }

@@ -6,7 +6,9 @@ import it.units.crossway.server.model.dto.GameJoinIntent;
 import it.units.crossway.server.model.dto.PlayerDto;
 import it.units.crossway.server.model.entity.Game;
 import it.units.crossway.server.model.entity.GameStatus;
+import it.units.crossway.server.model.entity.Player;
 import it.units.crossway.server.repository.GameRepository;
+import it.units.crossway.server.repository.PlayerRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,6 +33,8 @@ public class IntegrationTests {
     private MockMvc mvc;
     @Autowired
     private GameRepository gameRepository;
+    @Autowired
+    private PlayerRepository playerRepository;
 
     @Test
     void when_postPlayer_should_saveInDb() throws Exception {
@@ -45,8 +49,15 @@ public class IntegrationTests {
     }
 
     @Test
-    void when_postPlayerAndDuplicateNickname_then_401() {
-        // todo
+    void when_postPlayerAndDuplicateNickname_then_401() throws Exception {
+        Player player1 = new Player("playerX");
+        playerRepository.save(player1);
+        PlayerDto user = new PlayerDto("playerX");
+        ObjectMapper om = new ObjectMapper();
+        mvc.perform(post("/players")
+                        .content(om.writeValueAsString(user))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
