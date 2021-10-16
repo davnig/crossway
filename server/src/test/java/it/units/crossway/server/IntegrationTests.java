@@ -2,7 +2,6 @@ package it.units.crossway.server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.units.crossway.server.model.dto.GameCreationIntent;
-import it.units.crossway.server.model.dto.GameJoinIntent;
 import it.units.crossway.server.model.dto.PlayerDto;
 import it.units.crossway.server.model.entity.Game;
 import it.units.crossway.server.model.entity.GameStatus;
@@ -81,10 +80,10 @@ public class IntegrationTests {
         game.setBlackPlayer("player1");
         game.setGameStatus(GameStatus.CREATED);
         gameRepository.save(game);
-        GameJoinIntent gameJoinIntent = new GameJoinIntent(uuid, "player2");
+        PlayerDto player2 = new PlayerDto("player2");
         ObjectMapper om = new ObjectMapper();
-        mvc.perform(put("/games")
-                        .content(om.writeValueAsString(gameJoinIntent))
+        mvc.perform(put("/games/{uuid}", uuid)
+                        .content(om.writeValueAsString(player2))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
 //                .andDo(print())
@@ -93,10 +92,11 @@ public class IntegrationTests {
 
     @Test
     void when_putGameJoiningIntentAndGameDoesNotExists_then_401() throws Exception {
-        GameJoinIntent gameJoinIntent = new GameJoinIntent("fake-uuid", "player0");
+        String uuid = "fake-uuid";
+        PlayerDto player0 = new PlayerDto("player0");
         ObjectMapper om = new ObjectMapper();
-        mvc.perform(put("/games")
-                        .content(om.writeValueAsString(gameJoinIntent))
+        mvc.perform(put("/games/{uuid}", uuid)
+                        .content(om.writeValueAsString(player0))
                         .contentType(MediaType.APPLICATION_JSON))
 //                .andDo(print())
                 .andExpect(status().isBadRequest());
