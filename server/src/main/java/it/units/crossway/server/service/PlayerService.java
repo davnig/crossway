@@ -2,20 +2,20 @@ package it.units.crossway.server.service;
 
 import it.units.crossway.server.model.dto.PlayerDto;
 import it.units.crossway.server.model.entity.Player;
-import it.units.crossway.server.repository.UserRepository;
+import it.units.crossway.server.repository.PlayerRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PlayerService {
 
-    private final UserRepository userRepository;
+    private final PlayerRepository playerRepository;
 
-    public PlayerService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public PlayerService(PlayerRepository playerRepository) {
+        this.playerRepository = playerRepository;
     }
 
     public PlayerDto addUser(PlayerDto playerDto) {
-        Player saved = userRepository.save(new Player(playerDto.getNickname()));
+        Player saved = playerRepository.save(new Player(playerDto.getNickname()));
         return new PlayerDto(saved.getNickname());
     }
 
