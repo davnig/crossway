@@ -3,6 +3,7 @@ package it.units.crossway.server.controller;
 import it.units.crossway.server.model.dto.GameCreationIntent;
 import it.units.crossway.server.model.dto.GameDto;
 import it.units.crossway.server.model.dto.PlayerDto;
+import it.units.crossway.server.model.dto.StonePlacementIntent;
 import it.units.crossway.server.service.GameService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -31,11 +32,11 @@ public class GameController {
         return ResponseEntity.ok(gameService.joinGame(uuid, playerDto));
     }
 
-//    @PutMapping("/{uuid}/play")
-//    public ResponseEntity<String> playTurn(@PathVariable String uuid, @RequestBody PlayTurnIntent playTurnIntent) {
-//        simpMessagingTemplate.convertAndSend("/topic/greetings", "ok");
-//        return ResponseEntity.ok().build();
-//    }
+    @PostMapping("/{uuid}/play")
+    public ResponseEntity<Void> placeStone(@PathVariable String uuid, @RequestBody StonePlacementIntent stonePlacementIntent) {
+        gameService.placeStone(uuid, stonePlacementIntent);
+        return ResponseEntity.ok().build();
+    }
 
     @MessageMapping("/greetings")
     public String greeting(String payload) {
