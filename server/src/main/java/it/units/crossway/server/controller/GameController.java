@@ -6,8 +6,6 @@ import it.units.crossway.server.model.dto.PlayerDto;
 import it.units.crossway.server.model.dto.StonePlacementIntent;
 import it.units.crossway.server.service.GameService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,11 +13,9 @@ import org.springframework.web.bind.annotation.*;
 public class GameController {
 
     private final GameService gameService;
-    private final SimpMessagingTemplate simpMessagingTemplate;
 
-    public GameController(GameService gameService, SimpMessagingTemplate simpMessagingTemplate) {
+    public GameController(GameService gameService) {
         this.gameService = gameService;
-        this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
     @PostMapping
@@ -36,11 +32,6 @@ public class GameController {
     public ResponseEntity<Void> placeStone(@PathVariable String uuid, @RequestBody StonePlacementIntent stonePlacementIntent) {
         gameService.placeStone(uuid, stonePlacementIntent);
         return ResponseEntity.ok().build();
-    }
-
-    @MessageMapping("/greetings")
-    public String greeting(String payload) {
-        return "ok";
     }
 
 }
