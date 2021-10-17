@@ -4,8 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.units.crossway.server.model.dto.StonePlacementIntent;
 import it.units.crossway.server.model.entity.Game;
 import it.units.crossway.server.model.entity.GameStatus;
-import it.units.crossway.server.model.entity.PlayerColor;
+import it.units.crossway.server.model.entity.Player;
 import it.units.crossway.server.repository.GameRepository;
+import it.units.crossway.server.repository.PlayerRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.*;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
@@ -31,7 +33,6 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -43,6 +44,8 @@ public class WebSocketTests {
     private MockMvc mvc;
     @Autowired
     private GameRepository gameRepository;
+    @Autowired
+    private PlayerRepository playerRepository;
     private WebSocketStompClient stompClient;
 
     @BeforeEach
@@ -56,17 +59,21 @@ public class WebSocketTests {
     void when_postStonePlacementIntent_should_respondWith200AndSendMessageToSubscribedClients() throws Exception {
         BlockingQueue<StonePlacementIntent> blockingQueue = new ArrayBlockingQueue<>(1);
         String uuid = UUID.randomUUID().toString();
+        Player whiteP = new Player("whiteP");
+        Player blackP = new Player("blackP");
         Game game = new Game();
         game.setUuid(uuid);
-        game.setWhitePlayer("whiteP");
-        game.setBlackPlayer("blackP");
+        game.setWhitePlayer(whiteP.getNickname());
+        game.setBlackPlayer(blackP.getNickname());
         game.setGameStatus(GameStatus.IN_PROGRESS);
+        playerRepository.save(whiteP);
         gameRepository.save(game);
         StonePlacementIntent stonePlacementIntent = new StonePlacementIntent(
                 1,
                 2,
-                PlayerColor.WHITE
+                "whiteP"
         );
+        final MvcResult[] mvcResult = new MvcResult[1];
         StompSessionHandler stompSessionHandler = new StompSessionHandlerAdapter() {
             @SneakyThrows
             @Override
@@ -84,11 +91,11 @@ public class WebSocketTests {
                 });
                 ObjectMapper om = new ObjectMapper();
                 try {
-                    mvc.perform(post("/games/{uuid}/play", uuid)
+                    mvcResult[0] = mvc.perform(post("/games/{uuid}/play", uuid)
                                     .content(om.writeValueAsString(stonePlacementIntent))
                                     .contentType(MediaType.APPLICATION_JSON))
-//                        .andDo(print())
-                            .andExpect(status().isOk());
+                            .andReturn();
+                    System.out.println(mvcResult[0].getResponse().getContentAsString());
                 } catch (Exception e) {
                     System.err.println(e.getMessage());
                 }
@@ -98,6 +105,7 @@ public class WebSocketTests {
         // block until available or expired timeout
         StonePlacementIntent response = blockingQueue.poll(2, TimeUnit.SECONDS);
         assertEquals(stonePlacementIntent, response);
+        assertEquals(200, mvcResult[0].getResponse().getStatus());
     }
 
     private String getWsEndpoint() {
