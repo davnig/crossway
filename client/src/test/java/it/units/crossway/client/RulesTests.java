@@ -10,21 +10,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import java.io.ByteArrayInputStream;
 import java.util.Scanner;
 
-public class MatchTests {
-
-    @Test
-    void whenGameStartsBoardShouldBeEmpty() {
-        GameHandler gameHandler = new GameHandler();
-        gameHandler.getTurn().initFirstTurn();
-        Assertions.assertTrue(gameHandler.getBoard().getBoardState().isEmpty());
-    }
-
-    @Test
-    void whenGameStartsTurnShouldBeBlack() {
-        GameHandler gameHandler = new GameHandler();
-        gameHandler.getTurn().initFirstTurn();
-        Assertions.assertEquals(PlayerColor.BLACK, gameHandler.getTurn().getCurrentPlayer());
-    }
+public class RulesTests {
 
     @Test
     void whenStoneIsPlacedThenBoardShouldNotBeEmpty() {
