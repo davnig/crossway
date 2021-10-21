@@ -63,8 +63,8 @@ public class WebSocketTests {
         Player blackP = new Player("blackP");
         Game game = new Game();
         game.setUuid(uuid);
-        game.setWhitePlayer(whiteP.getNickname());
-        game.setBlackPlayer(blackP.getNickname());
+        game.setWhitePlayerNickname(whiteP.getNickname());
+        game.setBlackPlayerNickname(blackP.getNickname());
         game.setGameStatus(GameStatus.IN_PROGRESS);
         playerRepository.save(whiteP);
         gameRepository.save(game);

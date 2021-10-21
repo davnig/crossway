@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 public class GameDto {
 
     private String uuid;
-    private String whitePlayer;
-    private String blackPlayer;
+    private String whitePlayerNickname;
+    private String blackPlayerNickname;
 
     public GameDto(Game game) {
         this.uuid = game.getUuid();
-        this.whitePlayer = game.getWhitePlayer();
-        this.blackPlayer = game.getBlackPlayer();
+        this.whitePlayerNickname = game.getWhitePlayerNickname();
+        this.blackPlayerNickname = game.getBlackPlayerNickname();
     }
 
 }

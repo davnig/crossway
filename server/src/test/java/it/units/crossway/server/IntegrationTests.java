@@ -77,7 +77,7 @@ public class IntegrationTests {
         Game game = new Game();
         String uuid = UUID.randomUUID().toString();
         game.setUuid(uuid);
-        game.setBlackPlayer("player1");
+        game.setBlackPlayerNickname("player1");
         game.setGameStatus(GameStatus.CREATED);
         gameRepository.save(game);
         PlayerDto player2 = new PlayerDto("player2");

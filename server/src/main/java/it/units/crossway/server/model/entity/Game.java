@@ -13,8 +13,8 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String uuid;
-    private String whitePlayer;
-    private String blackPlayer;
+    private String whitePlayerNickname;
+    private String blackPlayerNickname;
     private GameStatus gameStatus;
 
 }

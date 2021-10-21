@@ -31,7 +31,7 @@ public class GameService {
     public GameDto createGame(GameCreationIntent intent) {
         Game game = new Game();
         game.setUuid(UUID.randomUUID().toString());
-        game.setBlackPlayer(intent.getPlayerNickname());
+        game.setBlackPlayerNickname(intent.getPlayerNickname());
         game.setGameStatus(GameStatus.CREATED);
         return new GameDto(gameRepository.save(game));
     }
@@ -40,13 +40,13 @@ public class GameService {
         Game gameToJoin = gameRepository.findByUuid(uuid)
                 .orElseThrow(() -> new GameException("The game does not exist"));
         checkIfGameIsJoinable(gameToJoin);
-        gameToJoin.setWhitePlayer(playerDto.getNickname());
+        gameToJoin.setWhitePlayerNickname(playerDto.getNickname());
         gameToJoin.setGameStatus(GameStatus.IN_PROGRESS);
         return new GameDto(gameToJoin);
     }
 
     private void checkIfGameIsJoinable(Game gameToJoin) {
-        if (gameToJoin.getGameStatus() != GameStatus.CREATED || gameToJoin.getWhitePlayer() != null) {
+        if (gameToJoin.getGameStatus() != GameStatus.CREATED || gameToJoin.getWhitePlayerNickname() != null) {
             throw new GameException("The game is not valid anymore");
         }
     }
@@ -78,7 +78,7 @@ public class GameService {
     }
 
     private void checkIfNicknameBelongsToGame(String nickname, Game game) {
-        if (!Objects.equals(game.getWhitePlayer(), nickname) && !Objects.equals(game.getBlackPlayer(), nickname)) {
+        if (!Objects.equals(game.getWhitePlayerNickname(), nickname) && !Objects.equals(game.getBlackPlayerNickname(), nickname)) {
             throw new GameException("The player with {nickname = " + nickname + "} does belong to this game");
         }
     }
