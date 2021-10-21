@@ -1,14 +1,25 @@
 package it.units.crossway.client.remote;
 
+import feign.Response;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(name = "api", url = "http://localhost:8080")
+@FeignClient(name = "api")
 public interface Api {
 
     @RequestMapping(method = RequestMethod.POST, value = "/players")
     PlayerDto addPlayer(@RequestBody PlayerDto playerDto);
+
+    @RequestMapping(method = RequestMethod.POST, value = "/games")
+    GameDto createGame(@RequestBody GameCreationIntent gameCreationIntent);
+
+    @RequestMapping(method = RequestMethod.PUT, value = "/games/{uuid}")
+    GameDto joinGame(@PathVariable String uuid, @RequestBody PlayerDto playerDto);
+
+    @RequestMapping(method = RequestMethod.POST, value = "/games/{uuid}/play")
+    Response placeStone(@PathVariable String uuid, @RequestBody StonePlacementIntent stonePlacementIntent);
 
 }
