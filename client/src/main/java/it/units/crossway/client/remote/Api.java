@@ -1,6 +1,10 @@
 package it.units.crossway.client.remote;
 
 import feign.Response;
+import it.units.crossway.client.model.dto.GameCreationIntent;
+import it.units.crossway.client.model.dto.GameDto;
+import it.units.crossway.client.model.dto.PlayerDto;
+import it.units.crossway.client.model.dto.StonePlacementIntent;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;

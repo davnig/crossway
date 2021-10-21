@@ -1,4 +1,4 @@
-package it.units.crossway.client.remote;
+package it.units.crossway.client.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
