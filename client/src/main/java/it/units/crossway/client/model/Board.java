@@ -1,4 +1,4 @@
-package it.units.crossway.client;
+package it.units.crossway.client.model;
 
 import lombok.Data;
 
@@ -18,7 +18,7 @@ public class Board {
     private Map<Intersection, PlayerColor> boardState;
 
 
-    Board() {
+    public Board() {
         initIntersections();
     }
 
@@ -29,10 +29,10 @@ public class Board {
     /**
      * Gets the stone color at the specified intersection.
      *
-     * @param intersection the {@code it.units.crossway.client.Intersection}
+     * @param intersection the {@code it.units.crossway.client.model.Intersection}
      * @return a {@code PlayerColor}
      */
-    PlayerColor getStoneColorAt(Intersection intersection) {
+    public PlayerColor getStoneColorAt(Intersection intersection) {
         if (boardState.containsKey(intersection)) {
             return boardState.get(intersection);
         }
@@ -42,7 +42,7 @@ public class Board {
     /**
      * Places a stone of the given player color on the board in the specified intersection.
      *
-     * @param intersection the {@code it.units.crossway.client.Intersection}
+     * @param intersection the {@code it.units.crossway.client.model.Intersection}
      * @param playerColor  the {@code PlayerColor} of the stone
      */
     public void placeStone(Intersection intersection, PlayerColor playerColor) {

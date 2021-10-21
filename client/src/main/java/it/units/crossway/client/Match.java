@@ -2,6 +2,10 @@ package it.units.crossway.client;
 
 import it.units.crossway.client.exception.InvalidUserInputException;
 import it.units.crossway.client.exception.PlacementViolationException;
+import it.units.crossway.client.model.Board;
+import it.units.crossway.client.model.Intersection;
+import it.units.crossway.client.model.PlayerColor;
+import it.units.crossway.client.model.Turn;
 import lombok.Data;
 
 import java.util.Arrays;
@@ -15,22 +19,22 @@ public class Match {
     private Board board;
     private Turn turn;
 
-    Match() {
+    public Match() {
         this.board = new Board();
         this.turn = new Turn();
     }
 
-    Match(Board presetBoard) {
+    public Match(Board presetBoard) {
         this.board = presetBoard;
         this.turn = new Turn();
     }
 
-    Match(Board presetBoard, Turn turn) {
+    public Match(Board presetBoard, Turn turn) {
         this.board = presetBoard;
         this.turn = turn;
     }
 
-    void start() {
+    public void start() {
         turn.initFirstTurn();
         IOUtils.printMenu();
     }
@@ -190,8 +194,8 @@ public class Match {
     /**
      * Recursively searches for a path of white stones connecting the vertical edges of the board
      *
-     * @param currentIntersection the current {@code it.units.crossway.client.Intersection} analyzed
-     * @param visited             the {@code Set} of already visited {@code it.units.crossway.client.Intersection}s
+     * @param currentIntersection the current {@code it.units.crossway.client.model.Intersection} analyzed
+     * @param visited             the {@code Set} of already visited {@code it.units.crossway.client.model.Intersection}s
      * @param targetColumn        the column where the path should end for the method to be successful
      * @return a boolean indicating if white has won
      */
@@ -210,8 +214,8 @@ public class Match {
     /**
      * Recursively searches for a path of black stones connecting the horizontal edges of the board
      *
-     * @param currentIntersection the current {@code it.units.crossway.client.Intersection} analyzed
-     * @param visited             the {@code Set} of already visited {@code it.units.crossway.client.Intersection}s
+     * @param currentIntersection the current {@code it.units.crossway.client.model.Intersection} analyzed
+     * @param visited             the {@code Set} of already visited {@code it.units.crossway.client.model.Intersection}s
      * @param targetRow           the row where the path should end for the method to be successful
      * @return a boolean indicating if black has won
      */

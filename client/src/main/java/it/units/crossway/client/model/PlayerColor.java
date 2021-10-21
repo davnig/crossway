@@ -1,4 +1,4 @@
-package it.units.crossway.client;
+package it.units.crossway.client.model;
 
 public enum PlayerColor {
 	WHITE,

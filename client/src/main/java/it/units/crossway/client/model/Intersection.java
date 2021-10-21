@@ -1,4 +1,4 @@
-package it.units.crossway.client;
+package it.units.crossway.client.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

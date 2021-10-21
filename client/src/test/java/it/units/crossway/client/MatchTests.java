@@ -1,6 +1,9 @@
 package it.units.crossway.client;
 
 import it.units.crossway.client.exception.PlacementViolationException;
+import it.units.crossway.client.model.Board;
+import it.units.crossway.client.model.Intersection;
+import it.units.crossway.client.model.PlayerColor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

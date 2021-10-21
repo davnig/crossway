@@ -1,4 +1,4 @@
-package it.units.crossway.client;
+package it.units.crossway.client.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -42,6 +42,6 @@ public class Turn {
     }
 
     private void printTurnInfo() {
-        System.out.printf("it.units.crossway.client.Turn %d: %s plays%n", turnNumber, currentPlayer);
+        System.out.printf("it.units.crossway.client.model.Turn %d: %s plays%n", turnNumber, currentPlayer);
     }
 }

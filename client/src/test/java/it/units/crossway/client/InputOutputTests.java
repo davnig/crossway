@@ -1,5 +1,6 @@
 package it.units.crossway.client;
 
+import it.units.crossway.client.model.Board;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
