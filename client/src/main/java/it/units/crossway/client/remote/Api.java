@@ -11,11 +11,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.List;
+
 @FeignClient(name = "api")
 public interface Api {
 
+    @RequestMapping(method = RequestMethod.GET, value = "/games")
+    List<GameDto> getAllAvailableGames();
+
     @RequestMapping(method = RequestMethod.POST, value = "/players")
-    PlayerDto addPlayer(@RequestBody PlayerDto playerDto);
+    Response addPlayer(@RequestBody PlayerDto playerDto);
 
     @RequestMapping(method = RequestMethod.POST, value = "/games")
     GameDto createGame(@RequestBody GameCreationIntent gameCreationIntent);
