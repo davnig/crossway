@@ -24,6 +24,22 @@ public class GameHandler {
         player.setNickname(nickname);
         turn.initFirstTurn();
         // todo: connect to server and retrieve playerColor
+
+        System.out.println("1. Create a new game...\n" + "2. Join a game...");
+        int choice = IOUtils.scanner.nextInt();
+        while((choice != 1) && (choice != 2)) {
+            System.out.println("bad response...");
+        }
+
+        if(choice == 1) {
+            //todo: create new game
+        }
+        else {
+            System.out.println("choose from the list of available games:");
+            //todo: retrieve from server available games
+        }
+
+        System.out.println("Game start!!");
         while(true) {
             board.printBoard();
             IOUtils.printCurrentPlayer(turn);
