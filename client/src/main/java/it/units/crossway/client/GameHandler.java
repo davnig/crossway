@@ -17,21 +17,16 @@ public class GameHandler {
         this.turn = new Turn();
     }
 
-//    public GameHandler(Player player) {
-//        this.player = player;
-//        this.board = new Board();
-//        this.turn = new Turn();
-//    }
-
     public void startGame() {
         turn.initFirstTurn();
         IOUtils.printMenu();
-    }
 
-    public void startGameAtGivenState(Board board) {
-        this.player = new Player();
-        this.board = board;
-        this.turn = new Turn();
+        while(true) {
+            board.printBoard();
+            IOUtils.printCurrentPlayer(turn);
+            IOUtils.printAskNextMove();
+            playTurn();
+        }
     }
 
     public void startGameAtGivenState(Board board, Turn turn) {
@@ -94,6 +89,8 @@ public class GameHandler {
     }
 
     private void endGame() {
+        IOUtils.printWinner(turn);
+        System.exit(0);
     }
 
 

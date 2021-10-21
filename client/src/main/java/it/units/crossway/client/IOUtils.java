@@ -1,5 +1,6 @@
 package it.units.crossway.client;
 
+import it.units.crossway.client.model.Turn;
 import lombok.Data;
 
 import java.util.Scanner;
@@ -21,6 +22,15 @@ public class IOUtils {
 		System.out.println("your opponent has the black stones -> O \n");
 	}
 
+	public static void printCurrentPlayer(Turn turn) {
+		String currentPlayer = turn.getCurrentPlayer().toString();
+		System.out.println("It is the turn of the " + currentPlayer + " player!");
+	}
+
+	public static void printAskNextMove() {
+		System.out.println("insert a valid placement for your stone...");
+	}
+
 
 	public static String getInputLine() {
 		return scanner.nextLine();
@@ -38,4 +48,8 @@ public class IOUtils {
 		}
 	}
 
+	public static void printWinner(Turn turn) {
+		String currentPlayer = turn.getCurrentPlayer().toString();
+		System.out.println(currentPlayer + " has won!!!!");
+	}
 }
