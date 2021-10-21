@@ -13,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class GameService {
@@ -26,6 +28,13 @@ public class GameService {
     public GameService(GameRepository gameRepository, SimpMessagingTemplate simpMessagingTemplate) {
         this.gameRepository = gameRepository;
         this.simpMessagingTemplate = simpMessagingTemplate;
+    }
+
+    public List<GameDto> getAllAvailableGames() {
+        return gameRepository.findAll().stream()
+                .filter(game -> game.getGameStatus().equals(GameStatus.CREATED))
+                .map(GameDto::new)
+                .collect(Collectors.toList());
     }
 
     public GameDto createGame(GameCreationIntent intent) {

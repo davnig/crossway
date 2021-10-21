@@ -17,10 +17,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.matchesRegex;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -100,6 +99,22 @@ public class IntegrationTests {
                         .contentType(MediaType.APPLICATION_JSON))
 //                .andDo(print())
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void when_getAvailableGames_then_200() throws Exception {
+        Game game = new Game();
+        game.setUuid(UUID.randomUUID().toString());
+        game.setWhitePlayerNickname("whiteP");
+        game.setBlackPlayerNickname("blackP");
+        game.setGameStatus(GameStatus.CREATED);
+        gameRepository.save(game);
+        mvc.perform(get("/games/")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].whitePlayerNickname", is("whiteP")));
     }
 
 }

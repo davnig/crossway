@@ -8,6 +8,8 @@ import it.units.crossway.server.service.GameService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/games")
 public class GameController {
@@ -16,6 +18,11 @@ public class GameController {
 
     public GameController(GameService gameService) {
         this.gameService = gameService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<GameDto>> getAllAvailableGames() {
+        return ResponseEntity.ok(gameService.getAllAvailableGames());
     }
 
     @PostMapping
