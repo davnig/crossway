@@ -2,7 +2,24 @@ package it.units.crossway.client;
 
 import it.units.crossway.client.exception.PlacementViolationException;
 import it.units.crossway.client.model.*;
+import it.units.crossway.client.model.dto.GameCreationIntent;
+import it.units.crossway.client.model.dto.GameDto;
+import it.units.crossway.client.model.dto.PlayerDto;
+import it.units.crossway.client.remote.Api;
+import it.units.crossway.client.remote.StompMessageHandler;
 import lombok.Data;
+import lombok.SneakyThrows;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.simp.stomp.StompHeaders;
+import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
+import org.springframework.web.socket.sockjs.client.SockJsClient;
+import org.springframework.web.socket.sockjs.client.WebSocketTransport;
+
+import java.util.List;
+import java.util.stream.IntStream;
 
 @Data
 public class GameHandler {
@@ -10,11 +27,18 @@ public class GameHandler {
     private Player player;
     private Board board;
     private Turn turn;
+    private WebSocketStompClient stompClient;
+    private Api api;
+    private final String WS_ENDPOINT = "ws://localhost:8080/endpoint";
 
     public GameHandler() {
         this.player = new Player();
         this.board = new Board();
         this.turn = new Turn();
+//        stompClient = new WebSocketStompClient(new StandardWebSocketClient());
+        stompClient = new WebSocketStompClient(new SockJsClient(
+                List.of(new WebSocketTransport(new StandardWebSocketClient()))));
+        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
     }
 
     public void startGame() {
@@ -22,26 +46,45 @@ public class GameHandler {
         System.out.println("choose a nickname!");
         String nickname = IOUtils.getInputLine();
         player.setNickname(nickname);
-        turn.initFirstTurn();
-        // todo: connect to server and retrieve playerColor
-
+        PlayerDto playerDto = new PlayerDto(nickname);
+        api.addPlayer(playerDto);
         System.out.println("1. Create a new game...\n" + "2. Join a game...");
-        int choice = IOUtils.scanner.nextInt();
-        while((choice != 1) && (choice != 2)) {
-            System.out.println("bad response...");
+        int choice;
+        do {
             choice = IOUtils.scanner.nextInt();
-        }
-
-        if(choice == 1) {
-            //todo: create new game
-        }
-        else {
+        } while ((choice != 1) && (choice != 2));
+        if (choice == 1) {
+            // create new game
+            GameDto gameDto = api.createGame(new GameCreationIntent(player.getNickname()));
+            stompClient.connect(WS_ENDPOINT, new StompSessionHandlerAdapter() {
+                @SneakyThrows
+                @Override
+                public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
+                    session.subscribe("/topic/" + gameDto.getUuid(), new StompMessageHandler());
+                }
+            });
+            player.setColor(PlayerColor.BLACK);
+        } else {
+            // enter existing game
+            List<GameDto> allAvailableGames = api.getAllAvailableGames();
             System.out.println("choose from the list of available games:");
-            //todo: retrieve from server available games
+            IntStream.range(0, allAvailableGames.size())
+                    .forEach(i ->
+                            System.out.println(i + " - opponent is " + allAvailableGames.get(i).getBlackPlayer())
+                    );
+            do {
+                choice = IOUtils.scanner.nextInt();
+            } while ((choice < 0) || (choice > allAvailableGames.size()));
+            api.joinGame(allAvailableGames.get(choice).getUuid(), new PlayerDto(player.getNickname()));
+            player.setColor(PlayerColor.WHITE);
         }
+        playGame();
+    }
 
+    private void playGame() {
+        turn.initFirstTurn();
         System.out.println("Game start!!");
-        while(true) {
+        while (true) {
             board.printBoard();
             IOUtils.printCurrentPlayer(turn);
             IOUtils.printAskNextMove();
