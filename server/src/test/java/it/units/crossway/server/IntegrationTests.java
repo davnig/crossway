@@ -69,7 +69,7 @@ public class IntegrationTests {
                 .andExpect(status().isOk())
 //                .andDo(print())
                 .andExpect(jsonPath("$.uuid", matchesRegex("\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b")))
-                .andExpect(jsonPath("$.blackPlayer", is("player1")));
+                .andExpect(jsonPath("$.blackPlayerNickname", is("player1")));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class IntegrationTests {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
 //                .andDo(print())
-                .andExpect(jsonPath("$.whitePlayer", is("player2")));
+                .andExpect(jsonPath("$.whitePlayerNickname", is("player2")));
     }
 
     @Test
