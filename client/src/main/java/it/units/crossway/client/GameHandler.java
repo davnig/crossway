@@ -18,9 +18,12 @@ public class GameHandler {
     }
 
     public void startGame() {
+        System.out.println("Welcome to crossway! \n");
+        System.out.println("choose a nickname!");
+        String nickname = IOUtils.getInputLine();
+        player.setNickname(nickname);
         turn.initFirstTurn();
-        IOUtils.printMenu();
-
+        // todo: connect to server and retrieve playerColor
         while(true) {
             board.printBoard();
             IOUtils.printCurrentPlayer(turn);

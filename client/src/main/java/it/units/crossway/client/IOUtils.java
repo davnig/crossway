@@ -1,5 +1,6 @@
 package it.units.crossway.client;
 
+import it.units.crossway.client.model.Player;
 import it.units.crossway.client.model.Turn;
 import lombok.Data;
 
@@ -8,19 +9,7 @@ import java.util.Scanner;
 @Data
 public class IOUtils {
 
-    public static Scanner scanner;
-
-    IOUtils() {
-		scanner = new Scanner(System.in);
-	}
-
-	public static void printMenu() {
-		System.out.println("Welcome to crossway! \n");
-		System.out.println("press any button to start a new match versus another player...");
-		getInputLine();
-		System.out.println("you are the player with white stones -> x");
-		System.out.println("your opponent has the black stones -> O \n");
-	}
+	public static Scanner scanner;
 
 	public static void printCurrentPlayer(Turn turn) {
 		String currentPlayer = turn.getCurrentPlayer().toString();
