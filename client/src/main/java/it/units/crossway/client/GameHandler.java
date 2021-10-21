@@ -29,6 +29,7 @@ public class GameHandler {
         int choice = IOUtils.scanner.nextInt();
         while((choice != 1) && (choice != 2)) {
             System.out.println("bad response...");
+            choice = IOUtils.scanner.nextInt();
         }
 
         if(choice == 1) {
