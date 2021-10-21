@@ -1,38 +1,44 @@
 package it.units.crossway.client;
 
-import it.units.crossway.client.exception.PlacementViolationException;
-import it.units.crossway.client.model.Board;
-import it.units.crossway.client.model.Intersection;
-import it.units.crossway.client.model.PlayerColor;
+import it.units.crossway.client.model.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 
+import java.io.ByteArrayInputStream;
+import java.util.Scanner;
+
 public class MatchTests {
 
     @Test
     void whenGameStartsBoardShouldBeEmpty() {
-        Match match = new Match();
-        match.getTurn().initFirstTurn();
-        Assertions.assertTrue(match.getBoard().getBoardState().isEmpty());
+        GameHandler gameHandler = new GameHandler();
+        gameHandler.getTurn().initFirstTurn();
+        Assertions.assertTrue(gameHandler.getBoard().getBoardState().isEmpty());
     }
 
     @Test
     void whenGameStartsTurnShouldBeBlack() {
-        Match match = new Match();
-        match.getTurn().initFirstTurn();
-        Assertions.assertEquals(PlayerColor.BLACK, match.getTurn().getCurrentPlayer());
+        GameHandler gameHandler = new GameHandler();
+        gameHandler.getTurn().initFirstTurn();
+        Assertions.assertEquals(PlayerColor.BLACK, gameHandler.getTurn().getCurrentPlayer());
     }
 
     @Test
-    void whenStoneIsPositionedBoardShouldNotBeEmpty() throws PlacementViolationException {
-        Match match = new Match();
-        match.getTurn().initFirstTurn();
-        match.validatePositionAndPlaceStone(1, 1);
-        Assertions.assertFalse(match.getBoard().getBoardState().isEmpty());
-        Assertions.assertEquals(match.getBoard().getBoardState().get(new Intersection(1, 1)), PlayerColor.BLACK);
+    void whenStoneIsPlacedThenBoardShouldNotBeEmpty() {
+        GameHandler gameHandler = new GameHandler();
+        Player blackPlayer = new Player("xxx", PlayerColor.BLACK);
+        Turn turn = new Turn(1, PlayerColor.BLACK);
+        gameHandler.startGameAtGivenState(new Board(), turn, blackPlayer);
+        IOUtils.scanner =
+                getRedirectedScannerForSimulatedUserInput(
+                        "1,1" + System.getProperty("line.separator")
+                );
+        gameHandler.placeStone();
+        Assertions.assertFalse(gameHandler.getBoard().getBoardState().isEmpty());
+        Assertions.assertEquals(PlayerColor.BLACK, gameHandler.getBoard().getBoardState().get(new Intersection(1, 1)));
     }
 
     @ParameterizedTest
@@ -46,9 +52,8 @@ public class MatchTests {
                 presetBoard.placeStone(new Intersection(5, i), playerColor);
             }
         }
-        Match match = new Match(presetBoard);
         presetBoard.printBoard();
-        Assertions.assertTrue(match.checkWinCondition(playerColor));
+        Assertions.assertTrue(Rules.checkWin(presetBoard, playerColor));
     }
 
     @ParameterizedTest
@@ -58,10 +63,9 @@ public class MatchTests {
         for (int i = columnStartPath; i <= columnEndPath; i++) {
             presetBoard.placeStone(new Intersection(5, i), PlayerColor.WHITE);
         }
-        Match match = new Match(presetBoard);
         presetBoard.printBoard();
-        Assertions.assertFalse(match.checkWinCondition(PlayerColor.WHITE));
-        Assertions.assertFalse(match.checkWinCondition(PlayerColor.BLACK));
+        Assertions.assertFalse(Rules.checkWin(presetBoard, PlayerColor.WHITE));
+        Assertions.assertFalse(Rules.checkWin(presetBoard, PlayerColor.BLACK));
     }
 
     @ParameterizedTest
@@ -71,10 +75,9 @@ public class MatchTests {
         for (int i = rowStartPath; i <= rowEndPath; i++) {
             presetBoard.placeStone(new Intersection(i, 7), PlayerColor.BLACK);
         }
-        Match match = new Match(presetBoard);
         presetBoard.printBoard();
-        Assertions.assertFalse(match.checkWinCondition(PlayerColor.WHITE));
-        Assertions.assertFalse(match.checkWinCondition(PlayerColor.BLACK));
+        Assertions.assertFalse(Rules.checkWin(presetBoard, PlayerColor.WHITE));
+        Assertions.assertFalse(Rules.checkWin(presetBoard, PlayerColor.BLACK));
     }
 
     @ParameterizedTest
@@ -84,9 +87,9 @@ public class MatchTests {
         for (int i = presetBoard.getFIRST_ROW(); i <= presetBoard.getLAST_ROW(); i++) {
             presetBoard.placeStone(new Intersection(i, i), playerColor);
         }
-        Match match = new Match(presetBoard);
+        GameHandler gameHandler = new GameHandler();
         presetBoard.printBoard();
-        Assertions.assertTrue(match.checkWinCondition(playerColor));
+        Assertions.assertTrue(Rules.checkWin(presetBoard, playerColor));
     }
 
     @Test
@@ -99,9 +102,8 @@ public class MatchTests {
             presetBoard.placeStone(new Intersection(9, i), PlayerColor.WHITE);
         }
         presetBoard.placeStone(new Intersection(10, 10), PlayerColor.WHITE);
-        Match match = new Match(presetBoard);
         presetBoard.printBoard();
-        Assertions.assertTrue(match.checkWinCondition(PlayerColor.WHITE));
+        Assertions.assertTrue(Rules.checkWin(presetBoard, PlayerColor.WHITE));
     }
 
     @Test
@@ -128,9 +130,14 @@ public class MatchTests {
             presetBoard.placeStone(new Intersection(i, 18), PlayerColor.WHITE);
         }
         presetBoard.placeStone(new Intersection(2, 19), PlayerColor.WHITE);
-        Match match = new Match(presetBoard);
         presetBoard.printBoard();
-        Assertions.assertTrue(match.checkWinCondition(PlayerColor.WHITE));
+        Assertions.assertTrue(Rules.checkWin(presetBoard, PlayerColor.WHITE));
+    }
+
+    Scanner getRedirectedScannerForSimulatedUserInput(String input) {
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(input.getBytes());
+        System.setIn(byteArrayInputStream);
+        return new Scanner(System.in);
     }
 
 }

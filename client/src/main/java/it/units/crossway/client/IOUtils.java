@@ -1,6 +1,5 @@
 package it.units.crossway.client;
 
-import it.units.crossway.client.exception.InvalidUserInputException;
 import lombok.Data;
 
 import java.util.Scanner;
@@ -27,14 +26,16 @@ public class IOUtils {
 		return scanner.nextLine();
 	}
 
-	public static boolean isPieRuleRequested() throws InvalidUserInputException {
-		System.out.println("Do you Want to switch colors? Y-yes N-No");
-		String whiteResponse = scanner.nextLine();
-		if (whiteResponse.equalsIgnoreCase("Y"))
-			return true;
-		if (whiteResponse.equalsIgnoreCase("N"))
-			return false;
-		throw new InvalidUserInputException("Input not allowed, insert either Y or N");
+	public static boolean isPieRuleRequested() {
+		while (true) {
+			System.out.println("Do you Want to switch colors? Y-yes N-No");
+			String whiteResponse = scanner.nextLine();
+			if (whiteResponse.equalsIgnoreCase("Y"))
+				return true;
+			if (whiteResponse.equalsIgnoreCase("N"))
+				return false;
+			System.out.println("Input not allowed, insert either Y or N");
+		}
 	}
 
 }

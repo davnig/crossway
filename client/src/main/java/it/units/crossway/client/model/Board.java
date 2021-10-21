@@ -29,8 +29,8 @@ public class Board {
     /**
      * Gets the stone color at the specified intersection.
      *
-     * @param intersection the {@code it.units.crossway.client.model.Intersection}
-     * @return a {@code PlayerColor}
+     * @param intersection the {@link Intersection}
+     * @return a {@link PlayerColor}
      */
     public PlayerColor getStoneColorAt(Intersection intersection) {
         if (boardState.containsKey(intersection)) {
@@ -42,8 +42,8 @@ public class Board {
     /**
      * Places a stone of the given player color on the board in the specified intersection.
      *
-     * @param intersection the {@code it.units.crossway.client.model.Intersection}
-     * @param playerColor  the {@code PlayerColor} of the stone
+     * @param intersection the {@link Intersection}
+     * @param playerColor  the {@link PlayerColor} of the stone
      */
     public void placeStone(Intersection intersection, PlayerColor playerColor) {
         if (playerColor != PlayerColor.NONE) {
