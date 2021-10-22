@@ -2,9 +2,11 @@ package it.units.crossway.client;
 
 import it.units.crossway.client.exception.PlacementViolationException;
 import it.units.crossway.client.model.*;
+import it.units.crossway.client.remote.Api;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.Mock;
 
 import java.io.ByteArrayInputStream;
 import java.util.Scanner;
@@ -13,6 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TurnTests {
+
+    @Mock
+    private Api api;
 
     //test south-west violation
     @ParameterizedTest
@@ -64,10 +69,11 @@ public class TurnTests {
 
     @Test
     void whenIsSecondTurnAndPieRuleAcceptedPlayersShouldSwitchColors() {
+        Player player = new Player();
         Board presetBoard = new Board();
         presetBoard.placeStone(new Intersection(1, 4), PlayerColor.BLACK);
         Turn turn = new Turn(2, PlayerColor.WHITE);
-        GameHandler gameHandler = new GameHandler();
+        GameHandler gameHandler = new GameHandler(player, presetBoard, turn, api);
         gameHandler.startGameAtGivenState(presetBoard, turn);
         IOUtils.scanner = getRedirectedScannerForSimulatedUserInput("Y");
         gameHandler.playTurn();
@@ -76,10 +82,11 @@ public class TurnTests {
 
     @Test
     void whenIsSecondTurnAndPieRuleNotAcceptedPlayersShouldNotSwitchColors() {
+        Player player = new Player();
         Board presetBoard = new Board();
         presetBoard.placeStone(new Intersection(1, 4), PlayerColor.BLACK);
         Turn turn = new Turn(2, PlayerColor.WHITE);
-        GameHandler gameHandler = new GameHandler();
+        GameHandler gameHandler = new GameHandler(player, presetBoard, turn, api);
         gameHandler.startGameAtGivenState(presetBoard, turn);
         IOUtils.scanner =
                 getRedirectedScannerForSimulatedUserInput(
@@ -95,7 +102,7 @@ public class TurnTests {
         Player whitePlayer = new Player("xxx", PlayerColor.WHITE);
         Turn turn = new Turn(2, PlayerColor.WHITE);
         presetBoard.placeStone(new Intersection(1, 4), PlayerColor.BLACK);
-        GameHandler gameHandler = new GameHandler();
+        GameHandler gameHandler = new GameHandler(whitePlayer, presetBoard, turn, api);
         gameHandler.startGameAtGivenState(presetBoard, turn, whitePlayer);
         IOUtils.scanner =
                 getRedirectedScannerForSimulatedUserInput(
@@ -105,21 +112,12 @@ public class TurnTests {
         assertEquals(PlayerColor.WHITE, presetBoard.getStoneColorAt(new Intersection(6, 6)));
     }
 
-//    @ParameterizedTest
-//    @CsvSource({"yes,no,asd,12-.,-,.-.-.,213,wedfokn"})
-//    void whenIsSecondTurnAndPlayerInsertWrongInputForPieRuleThenError(String playerResponseToPieRule) {
-//        Board presetBoard = new Board();
-//        presetBoard.placeStone(new Intersection(1, 4), PlayerColor.BLACK);
-//        GameHandler gameHandler = new GameHandler(presetBoard);
-//        gameHandler.getTurn().initFirstTurn();
-//        gameHandler.getTurn().nextTurn();
-//        IOUtils.scanner = getRedirectedScannerForSimulatedUserInput(playerResponseToPieRule);
-//        assertThrows(InvalidUserInputException.class, gameHandler::playTurn);
-//    }
-
     @Test
     void whenTurnEndsShouldSwitchCurrentPlayer() {
-        GameHandler gameHandler = new GameHandler();
+        Player player = new Player();
+        Board board = new Board();
+        Turn turn = new Turn();
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
         gameHandler.getTurn().initFirstTurn();
         IOUtils.scanner = getRedirectedScannerForSimulatedUserInput("2,1");
         gameHandler.playTurn();
@@ -128,7 +126,10 @@ public class TurnTests {
 
     @Test
     void whenTurnEndsShouldIncrementTurnNumber() {
-        GameHandler gameHandler = new GameHandler();
+        Player player = new Player();
+        Board board = new Board();
+        Turn turn = new Turn();
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
         gameHandler.getTurn().initFirstTurn();
         IOUtils.scanner = getRedirectedScannerForSimulatedUserInput("1,1");
         gameHandler.playTurn();
@@ -137,10 +138,10 @@ public class TurnTests {
 
     @Test
     void whenPlayTurnShouldConvertUserInputToStonePlacement() {
-        GameHandler gameHandler = new GameHandler();
         Board board = new Board();
         Player blackPlayer = new Player("xxx", PlayerColor.BLACK);
         Turn turn = new Turn(1, PlayerColor.BLACK);
+        GameHandler gameHandler = new GameHandler(blackPlayer, board, turn, api);
         gameHandler.startGameAtGivenState(board, turn, blackPlayer);
         IOUtils.scanner = getRedirectedScannerForSimulatedUserInput("2,3");
         gameHandler.playTurn();

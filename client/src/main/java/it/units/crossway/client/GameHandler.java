@@ -13,6 +13,7 @@ import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
@@ -21,6 +22,7 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import java.util.List;
 import java.util.stream.IntStream;
 
+@Component
 @Data
 public class GameHandler {
 
@@ -29,12 +31,13 @@ public class GameHandler {
     private Turn turn;
     private WebSocketStompClient stompClient;
     private Api api;
-    private final String WS_ENDPOINT = "ws://localhost:8080/endpoint";
+    private final String WS_ENDPOINT = "ws://localhost:9111/endpoint";
 
-    public GameHandler() {
-        this.player = new Player();
-        this.board = new Board();
-        this.turn = new Turn();
+    public GameHandler(Player player, Board board, Turn turn, Api api) {
+        this.player = player;
+        this.board = board;
+        this.turn = turn;
+        this.api = api;
 //        stompClient = new WebSocketStompClient(new StandardWebSocketClient());
         stompClient = new WebSocketStompClient(new SockJsClient(
                 List.of(new WebSocketTransport(new StandardWebSocketClient()))));
@@ -164,6 +167,5 @@ public class GameHandler {
     private int getIntRowFromPlayerInput(String input) {
         return Integer.parseInt(input.substring(0, input.indexOf(",")));
     }
-
 }
 

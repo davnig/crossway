@@ -1,22 +1,28 @@
 package it.units.crossway.client;
 
 import it.units.crossway.client.model.*;
+import it.units.crossway.client.remote.Api;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.mockito.Mock;
 
 import java.io.ByteArrayInputStream;
 import java.util.Scanner;
 
 public class RulesTests {
 
+    @Mock
+    private Api api;
+
     @Test
     void whenStoneIsPlacedThenBoardShouldNotBeEmpty() {
-        GameHandler gameHandler = new GameHandler();
         Player blackPlayer = new Player("xxx", PlayerColor.BLACK);
         Turn turn = new Turn(1, PlayerColor.BLACK);
+        Board board = new Board();
+        GameHandler gameHandler = new GameHandler(blackPlayer, board, turn, api);
         gameHandler.startGameAtGivenState(new Board(), turn, blackPlayer);
         IOUtils.scanner =
                 getRedirectedScannerForSimulatedUserInput(
@@ -73,7 +79,7 @@ public class RulesTests {
         for (int i = presetBoard.getFIRST_ROW(); i <= presetBoard.getLAST_ROW(); i++) {
             presetBoard.placeStone(new Intersection(i, i), playerColor);
         }
-        GameHandler gameHandler = new GameHandler();
+
         presetBoard.printBoard();
         Assertions.assertTrue(Rules.checkWin(presetBoard, playerColor));
     }

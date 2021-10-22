@@ -1,6 +1,5 @@
 package it.units.crossway.client;
 
-import it.units.crossway.client.model.Player;
 import it.units.crossway.client.model.Turn;
 import lombok.Data;
 
