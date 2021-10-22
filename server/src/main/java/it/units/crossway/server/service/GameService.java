@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -60,6 +61,7 @@ public class GameService {
         return new GameDto(gameToJoin);
     }
 
+    @Transactional
     public void deleteGame(String uuid) {
         gameRepository.deleteByUuid(uuid);
     }

@@ -108,8 +108,7 @@ public class IntegrationTests {
         game.setBlackPlayerNickname("blackP");
         game.setGameStatus(GameStatus.CREATED);
         gameRepository.save(game);
-        mvc.perform(get("/games/")
-                        .contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/games/new"))
 //                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
