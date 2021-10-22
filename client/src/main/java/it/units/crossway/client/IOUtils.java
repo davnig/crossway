@@ -9,7 +9,7 @@ import java.util.Scanner;
 @Data
 public class IOUtils {
 
-	public static Scanner scanner;
+	public static Scanner scanner = new Scanner(System.in);
 
 	public static void printCurrentPlayer(Turn turn) {
 		String currentPlayer = turn.getCurrentPlayer().toString();
