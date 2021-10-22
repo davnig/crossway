@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
 
-@FeignClient(name = "api")
+@FeignClient(name = "api", url = "http://localhost:9111")
 public interface Api {
 
     @RequestMapping(method = RequestMethod.GET, value = "/games")

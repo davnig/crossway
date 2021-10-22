@@ -1,5 +1,0 @@
-feign:
-  client:
-    config:
-      api:
-        url: http://localhost:8080
