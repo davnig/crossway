@@ -27,9 +27,9 @@ import java.util.stream.IntStream;
 @Data
 public class GameHandler {
 
-    private static final String newGameChoice = "1";
-    private static final String joinGameChoice = "2";
-    private static final String quitGameChoice = "q";
+    private static final String NEW_GAME_CHOICE = "1";
+    private static final String JOIN_GAME_CHOICE = "2";
+    private static final String QUIT_GAME_CHOICE = "q";
 
     private Player player;
     private Board board;
@@ -57,15 +57,15 @@ public class GameHandler {
         player.setNickname(nickname);
         PlayerDto playerDto = new PlayerDto(nickname);
         api.addPlayer(playerDto);
-        System.out.println(newGameChoice + " -> Create a new game...\n" + joinGameChoice + " -> Join a game...\n" + quitGameChoice + " -> quit...");
+        System.out.println(NEW_GAME_CHOICE + " -> Create a new game...\n" + JOIN_GAME_CHOICE + " -> Join a game...\n" + QUIT_GAME_CHOICE + " -> quit...");
         String choice;
         do {
             choice = IOUtils.getInputLine();
-            if(IOUtils.isChoiceToQuit(choice, quitGameChoice)) {
+            if(IOUtils.isChoiceToQuit(choice, QUIT_GAME_CHOICE)) {
                 System.exit(0);
             }
-        } while ((!choice.equals(newGameChoice)) && (!choice.equals(joinGameChoice)));
-        if (choice.equals(newGameChoice)) {
+        } while ((!choice.equals(NEW_GAME_CHOICE)) && (!choice.equals(JOIN_GAME_CHOICE)));
+        if (choice.equals(NEW_GAME_CHOICE)) {
             createNewGame();
         } else {
             joinExistingGame();
@@ -83,7 +83,7 @@ public class GameHandler {
                 );
         do {
             choice = IOUtils.getInputLine();
-            if(IOUtils.isChoiceToQuit(choice, quitGameChoice)) {
+            if(IOUtils.isChoiceToQuit(choice, QUIT_GAME_CHOICE)) {
                 System.exit(0);
             }
         } while (!IOUtils.isChoiceAValidInteger(choice) && (Integer.parseInt(choice) > allAvailableGames.size()));
