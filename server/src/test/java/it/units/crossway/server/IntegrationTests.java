@@ -141,9 +141,13 @@ public class IntegrationTests {
         mvc.perform(delete("/games/{uuid}", uuid))
 //                .andDo(print())
                 .andExpect(status().isOk());
-//                .andExpect(jsonPath("$", hasSize(1)))
-//                .andExpect(jsonPath("$[0].whitePlayerNickname", is("whiteP")));
         mvc.perform(get("/games/{uuid}", uuid))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void when_deleteGameAndGameDoesNotExist_then_404() throws Exception {
+        mvc.perform(delete("/games/{uuid}", UUID.randomUUID().toString()))
                 .andExpect(status().isNotFound());
     }
 
