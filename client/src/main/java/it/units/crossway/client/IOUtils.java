@@ -3,6 +3,7 @@ package it.units.crossway.client;
 import it.units.crossway.client.model.Turn;
 import lombok.Data;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 @Data
@@ -42,6 +43,10 @@ public class IOUtils {
 
 	public static boolean isChoiceAValidInteger(String choice) {
 		return choice.matches("\\d+");
+	}
+
+	public static void clearCLI() throws IOException, InterruptedException {
+		new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 	}
 
 	public static void printWinner(Turn turn) {

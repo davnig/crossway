@@ -19,6 +19,7 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -106,6 +107,11 @@ public class GameHandler {
         turn.initFirstTurn();
         System.out.println("Game start!!");
         while (true) {
+            try {
+                IOUtils.clearCLI();
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
             board.printBoard();
             IOUtils.printCurrentPlayer(turn);
             IOUtils.printAskNextMove();
