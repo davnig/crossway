@@ -1,0 +1,4 @@
+logging.level.root: OFF
+spring:
+  banner:
+    location: banner.txt
