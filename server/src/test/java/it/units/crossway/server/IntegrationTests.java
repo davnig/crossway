@@ -19,7 +19,6 @@ import java.util.UUID;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -111,10 +110,42 @@ public class IntegrationTests {
         gameRepository.save(game);
         mvc.perform(get("/games/")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
+//                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].whitePlayerNickname", is("whiteP")));
+    }
+
+    @Test
+    void when_getGameByUuid_then_200() throws Exception {
+        Game game = new Game();
+        String uuid = UUID.randomUUID().toString();
+        game.setUuid(uuid);
+        gameRepository.save(game);
+        mvc.perform(get("/games/{uuid}", uuid))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.uuid", is(uuid)));
+    }
+
+    @Test
+    void when_getGameByUuidAndGameDoesNotExist_then_404() throws Exception {
+        mvc.perform(get("/games/{uuid}", UUID.randomUUID().toString()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void when_deleteGame_then_200() throws Exception {
+        Game game = new Game();
+        String uuid = UUID.randomUUID().toString();
+        game.setUuid(uuid);
+        gameRepository.save(game);
+        mvc.perform(delete("/games/{uuid}", uuid))
+//                .andDo(print())
+                .andExpect(status().isOk());
+//                .andExpect(jsonPath("$", hasSize(1)))
+//                .andExpect(jsonPath("$[0].whitePlayerNickname", is("whiteP")));
+        mvc.perform(get("/games/{uuid}", uuid))
+                .andExpect(status().isNotFound());
     }
 
 }
