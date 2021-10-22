@@ -36,6 +36,14 @@ public class IOUtils {
 		}
 	}
 
+	public static boolean isChoiceToQuit(String choice) {
+		return choice.equals("q") || choice.equals("quit");
+	}
+
+	public static boolean isChoiceAValidInteger(String choice) {
+		return choice.matches("\\d+");
+	}
+
 	public static void printWinner(Turn turn) {
 		String currentPlayer = turn.getCurrentPlayer().toString();
 		System.out.println(currentPlayer + " has won!!!!");

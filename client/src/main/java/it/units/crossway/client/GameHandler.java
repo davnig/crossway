@@ -53,15 +53,13 @@ public class GameHandler {
         api.addPlayer(playerDto);
         System.out.println("1. Create a new game...\n" + "2. Join a game...\n" + "q. quit...");
         String choice;
-        int chosenNumber;
         do {
             choice = IOUtils.getInputLine();
-            if(choice.equals("q")) {
+            if(IOUtils.isChoiceToQuit(choice)) {
                 System.exit(0);
             }
-            chosenNumber = Integer.parseInt(choice);
-        } while ((chosenNumber != 1) && (chosenNumber != 2));
-        if (chosenNumber == 1) {
+        } while (!IOUtils.isChoiceAValidInteger(choice) && (Integer.parseInt(choice) != 1) && (Integer.parseInt(choice) != 2));
+        if (Integer.parseInt(choice) == 1) {
             createNewGame();
         } else {
             joinExistingGame();
@@ -71,7 +69,6 @@ public class GameHandler {
 
     private void joinExistingGame() {
         String choice;
-        int chosenNumber;
         List<GameDto> allAvailableGames = api.getAllAvailableGames();
         System.out.println("choose from the list of available games:");
         IntStream.range(0, allAvailableGames.size())
@@ -80,11 +77,10 @@ public class GameHandler {
                 );
         do {
             choice = IOUtils.getInputLine();
-            if(choice.equals("q")) {
+            if(IOUtils.isChoiceToQuit(choice)) {
                 System.exit(0);
             }
-            chosenNumber = Integer.parseInt(choice);
-        } while ((chosenNumber < 0) || (chosenNumber > allAvailableGames.size()));
+        } while (!IOUtils.isChoiceAValidInteger(choice) && ((Integer.parseInt(choice) < 0) || (Integer.parseInt(choice) > allAvailableGames.size())));
         api.joinGame(allAvailableGames.get(Integer.parseInt(choice)).getUuid(), new PlayerDto(player.getNickname()));
         player.setColor(PlayerColor.WHITE);
     }
