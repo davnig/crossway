@@ -51,37 +51,54 @@ public class GameHandler {
         player.setNickname(nickname);
         PlayerDto playerDto = new PlayerDto(nickname);
         api.addPlayer(playerDto);
-        System.out.println("1. Create a new game...\n" + "2. Join a game...");
-        int choice;
+        System.out.println("1. Create a new game...\n" + "2. Join a game...\n" + "q. quit...");
+        String choice;
+        int chosenNumber;
         do {
-            choice = IOUtils.scanner.nextInt();
-        } while ((choice != 1) && (choice != 2));
-        if (choice == 1) {
-            // create new game
-            GameDto gameDto = api.createGame(new GameCreationIntent(player.getNickname()));
-            stompClient.connect(WS_ENDPOINT, new StompSessionHandlerAdapter() {
-                @SneakyThrows
-                @Override
-                public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
-                    session.subscribe("/topic/" + gameDto.getUuid(), new StompMessageHandler());
-                }
-            });
-            player.setColor(PlayerColor.BLACK);
+            choice = IOUtils.getInputLine();
+            if(choice.equals("q")) {
+                System.exit(0);
+            }
+            chosenNumber = Integer.parseInt(choice);
+        } while ((chosenNumber != 1) && (chosenNumber != 2));
+        if (chosenNumber == 1) {
+            createNewGame();
         } else {
-            // enter existing game
-            List<GameDto> allAvailableGames = api.getAllAvailableGames();
-            System.out.println("choose from the list of available games:");
-            IntStream.range(0, allAvailableGames.size())
-                    .forEach(i ->
-                            System.out.println(i + " - opponent is " + allAvailableGames.get(i).getBlackPlayer())
-                    );
-            do {
-                choice = IOUtils.scanner.nextInt();
-            } while ((choice < 0) || (choice > allAvailableGames.size()));
-            api.joinGame(allAvailableGames.get(choice).getUuid(), new PlayerDto(player.getNickname()));
-            player.setColor(PlayerColor.WHITE);
+            joinExistingGame();
         }
         playGame();
+    }
+
+    private void joinExistingGame() {
+        String choice;
+        int chosenNumber;
+        List<GameDto> allAvailableGames = api.getAllAvailableGames();
+        System.out.println("choose from the list of available games:");
+        IntStream.range(0, allAvailableGames.size())
+                .forEach(i ->
+                        System.out.println(i + " - opponent is " + allAvailableGames.get(i).getBlackPlayer())
+                );
+        do {
+            choice = IOUtils.getInputLine();
+            if(choice.equals("q")) {
+                System.exit(0);
+            }
+            chosenNumber = Integer.parseInt(choice);
+        } while ((chosenNumber < 0) || (chosenNumber > allAvailableGames.size()));
+        api.joinGame(allAvailableGames.get(Integer.parseInt(choice)).getUuid(), new PlayerDto(player.getNickname()));
+        player.setColor(PlayerColor.WHITE);
+    }
+
+    private void createNewGame() {
+        GameDto gameDto = api.createGame(new GameCreationIntent(player.getNickname()));
+        stompClient.connect(WS_ENDPOINT, new StompSessionHandlerAdapter() {
+            @SneakyThrows
+            @Override
+            public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
+                session.subscribe("/topic/" + gameDto.getUuid(), new StompMessageHandler());
+            }
+        });
+        player.setColor(PlayerColor.BLACK);
     }
 
     private void playGame() {
