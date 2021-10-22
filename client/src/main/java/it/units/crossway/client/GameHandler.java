@@ -26,6 +26,10 @@ import java.util.stream.IntStream;
 @Data
 public class GameHandler {
 
+    private static final String newGameChoice = "1";
+    private static final String joinGameChoice = "2";
+    private static final String quitGameChoice = "q";
+
     private Player player;
     private Board board;
     private Turn turn;
@@ -51,15 +55,15 @@ public class GameHandler {
         player.setNickname(nickname);
         PlayerDto playerDto = new PlayerDto(nickname);
         api.addPlayer(playerDto);
-        System.out.println("1. Create a new game...\n" + "2. Join a game...\n" + "q. quit...");
+        System.out.println(newGameChoice + " -> Create a new game...\n" + joinGameChoice + " -> Join a game...\n" + quitGameChoice + " -> quit...");
         String choice;
         do {
             choice = IOUtils.getInputLine();
-            if(IOUtils.isChoiceToQuit(choice)) {
+            if(IOUtils.isChoiceToQuit(choice, quitGameChoice)) {
                 System.exit(0);
             }
-        } while (!IOUtils.isChoiceAValidInteger(choice) && (Integer.parseInt(choice) != 1) && (Integer.parseInt(choice) != 2));
-        if (Integer.parseInt(choice) == 1) {
+        } while ((!choice.equals(newGameChoice)) && (!choice.equals(joinGameChoice)));
+        if (choice.equals(newGameChoice)) {
             createNewGame();
         } else {
             joinExistingGame();
@@ -73,14 +77,14 @@ public class GameHandler {
         System.out.println("choose from the list of available games:");
         IntStream.range(0, allAvailableGames.size())
                 .forEach(i ->
-                        System.out.println(i + " - opponent is " + allAvailableGames.get(i).getBlackPlayer())
+                        System.out.println(i + " -> opponent is " + allAvailableGames.get(i).getBlackPlayer())
                 );
         do {
             choice = IOUtils.getInputLine();
-            if(IOUtils.isChoiceToQuit(choice)) {
+            if(IOUtils.isChoiceToQuit(choice, quitGameChoice)) {
                 System.exit(0);
             }
-        } while (!IOUtils.isChoiceAValidInteger(choice) && ((Integer.parseInt(choice) < 0) || (Integer.parseInt(choice) > allAvailableGames.size())));
+        } while (!IOUtils.isChoiceAValidInteger(choice) && (Integer.parseInt(choice) > allAvailableGames.size()));
         api.joinGame(allAvailableGames.get(Integer.parseInt(choice)).getUuid(), new PlayerDto(player.getNickname()));
         player.setColor(PlayerColor.WHITE);
     }

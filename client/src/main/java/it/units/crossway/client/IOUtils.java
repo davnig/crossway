@@ -36,8 +36,8 @@ public class IOUtils {
 		}
 	}
 
-	public static boolean isChoiceToQuit(String choice) {
-		return choice.equals("q") || choice.equals("quit");
+	public static boolean isChoiceToQuit(String choice, String quitString) {
+		return choice.equals(quitString);
 	}
 
 	public static boolean isChoiceAValidInteger(String choice) {
