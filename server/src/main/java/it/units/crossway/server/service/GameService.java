@@ -1,6 +1,7 @@
 package it.units.crossway.server.service;
 
 import it.units.crossway.server.exception.GameException;
+import it.units.crossway.server.exception.GameNotFoundException;
 import it.units.crossway.server.model.dto.GameCreationIntent;
 import it.units.crossway.server.model.dto.GameDto;
 import it.units.crossway.server.model.dto.PlayerDto;
@@ -28,6 +29,11 @@ public class GameService {
     public GameService(GameRepository gameRepository, SimpMessagingTemplate simpMessagingTemplate) {
         this.gameRepository = gameRepository;
         this.simpMessagingTemplate = simpMessagingTemplate;
+    }
+
+    public GameDto getGameByUuid(String uuid) {
+        return new GameDto(gameRepository.findByUuid(uuid)
+                .orElseThrow(() -> new GameNotFoundException("Game with {uuid = " + uuid + "} not found")));
     }
 
     public List<GameDto> getAllAvailableGames() {

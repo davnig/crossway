@@ -20,7 +20,12 @@ public class GameController {
         this.gameService = gameService;
     }
 
-    @GetMapping
+    @GetMapping("/{uuid}")
+    public ResponseEntity<GameDto> getGameByUuid(@PathVariable String uuid) {
+        return ResponseEntity.ok(gameService.getGameByUuid(uuid));
+    }
+
+    @GetMapping("?status=in_progress")
     public ResponseEntity<List<GameDto>> getAllAvailableGames() {
         return ResponseEntity.ok(gameService.getAllAvailableGames());
     }
