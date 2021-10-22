@@ -52,6 +52,7 @@ public class GameHandler {
         System.out.println("Welcome to crossway! \n");
         System.out.println("choose a nickname!");
         String nickname = IOUtils.getInputLine();
+        nickname = nickname.strip();
         player.setNickname(nickname);
         PlayerDto playerDto = new PlayerDto(nickname);
         api.addPlayer(playerDto);
