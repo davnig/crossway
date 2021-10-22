@@ -60,6 +60,10 @@ public class GameService {
         return new GameDto(gameToJoin);
     }
 
+    public void deleteGame(String uuid) {
+        gameRepository.deleteByUuid(uuid);
+    }
+
     private void checkIfGameIsJoinable(Game gameToJoin) {
         if (gameToJoin.getGameStatus() != GameStatus.CREATED || gameToJoin.getWhitePlayerNickname() != null) {
             throw new GameException("The game is not valid anymore");

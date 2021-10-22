@@ -46,4 +46,10 @@ public class GameController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/{uuid}")
+    public ResponseEntity<Void> deleteGame(@PathVariable String uuid) {
+        gameService.deleteGame(uuid);
+        return ResponseEntity.ok().build();
+    }
+
 }

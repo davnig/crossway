@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface GameRepository extends JpaRepository<Game, Integer> {
     Optional<Game> findByUuid(String uuid);
+
+    void deleteByUuid(String uuid);
 }
