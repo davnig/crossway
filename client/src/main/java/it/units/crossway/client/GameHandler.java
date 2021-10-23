@@ -50,7 +50,7 @@ public class GameHandler {
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
     }
 
-    public void startGame() {
+    private void chooseNickname() {
         System.out.println("Welcome to crossway! \n");
         System.out.println("choose a nickname!");
         String nickname = IOUtils.getInputLine();
@@ -58,11 +58,14 @@ public class GameHandler {
         player.setNickname(nickname);
         PlayerDto playerDto = new PlayerDto(nickname);
         api.addPlayer(playerDto);
+    }
+
+    public void startGame() {
         System.out.println(NEW_GAME_CHOICE + " -> Create a new game...\n" + JOIN_GAME_CHOICE + " -> Join a game...\n" + QUIT_GAME_CHOICE + " -> quit...");
         String choice;
         do {
             choice = IOUtils.getInputLine();
-            if(IOUtils.isChoiceToQuit(choice, QUIT_GAME_CHOICE)) {
+            if (IOUtils.isChoiceToQuit(choice, QUIT_GAME_CHOICE)) {
                 System.exit(0);
             }
         } while ((!choice.equals(NEW_GAME_CHOICE)) && (!choice.equals(JOIN_GAME_CHOICE)));
