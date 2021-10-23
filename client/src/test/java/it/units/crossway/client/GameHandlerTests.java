@@ -10,6 +10,7 @@ import it.units.crossway.client.model.Board;
 import it.units.crossway.client.model.Player;
 import it.units.crossway.client.model.PlayerColor;
 import it.units.crossway.client.model.Turn;
+import it.units.crossway.client.model.dto.GameCreationIntent;
 import it.units.crossway.client.model.dto.PlayerDto;
 import it.units.crossway.client.remote.Api;
 import org.junit.jupiter.api.Assertions;
@@ -83,20 +84,38 @@ public class GameHandlerTests {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withBody(jsonPlayerDto)));
-        String nicknameInput = nickname + System.getProperty("line.separator") + "q" + System.getProperty("line.separator");
+        String nicknameInput = nickname + System.getProperty("line.separator");
         System.setIn(new ByteArrayInputStream(nicknameInput.getBytes()));
         ReflectionTestUtils.invokeMethod(gameHandler, "chooseNickname");
         wireMockServer.verify(1, postRequestedFor(urlEqualTo("/players")));
     }
 
     @Test
-    void whenPlayerSelectsNewGameShouldSendCreateGameReq() {
-        // TODO
-        fail();
+    void whenPlayerSelectsNewGameShouldSendCreateGameReq() throws JsonProcessingException {
+        initWireMockServer();
+        Api api = buildAndReturnFeignClient();
+        String nickname = "playerXZX";
+        Player player = new Player(nickname, null);
+        Board board = new Board();
+        Turn turn = new Turn();
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        gameHandler.getPlayer().setNickname(nickname);
+        GameCreationIntent gameCreationIntent = new GameCreationIntent(nickname);
+        ObjectMapper om = new ObjectMapper();
+        String jsonGameCreationIntent = om.writeValueAsString(gameCreationIntent);
+        wireMockServer.stubFor(post(urlEqualTo("/games"))
+                .withRequestBody(equalToJson(jsonGameCreationIntent))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withBody(jsonGameCreationIntent)));
+        String createGameIntent = nickname + System.getProperty("line.separator") + "1" + System.getProperty("line.separator");
+        System.setIn(new ByteArrayInputStream(createGameIntent.getBytes()));
+        ReflectionTestUtils.invokeMethod(gameHandler, "createNewGame");
+        wireMockServer.verify(1, postRequestedFor(urlEqualTo("/games")));
     }
 
     @Test
-    void whenPlayerSelectsEnterGameShouldSendGetAvailableGamesReq() {
+    void whenPlayerSelectsJoinGameShouldSendGetAvailableGamesReq() {
         // TODO
         fail();
     }
