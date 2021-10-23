@@ -8,6 +8,7 @@ import it.units.crossway.client.model.dto.PlayerDto;
 import it.units.crossway.client.remote.Api;
 import it.units.crossway.client.remote.StompMessageHandler;
 import lombok.Data;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -96,7 +97,7 @@ public class GameHandler {
         stompClient.connect(WS_ENDPOINT, new StompSessionHandlerAdapter() {
             @SneakyThrows
             @Override
-            public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
+            public void afterConnected(@NonNull StompSession session, @NonNull StompHeaders connectedHeaders) {
                 session.subscribe("/topic/" + gameDto.getUuid(), new StompMessageHandler());
             }
         });

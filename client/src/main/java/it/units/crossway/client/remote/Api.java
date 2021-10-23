@@ -20,7 +20,7 @@ public interface Api {
     List<GameDto> getAllAvailableGames();
 
     @RequestMapping(method = RequestMethod.POST, value = "/players")
-    Response addPlayer(@RequestBody PlayerDto playerDto);
+    PlayerDto addPlayer(@RequestBody PlayerDto playerDto);
 
     @RequestMapping(method = RequestMethod.POST, value = "/games")
     GameDto createGame(@RequestBody GameCreationIntent gameCreationIntent);
