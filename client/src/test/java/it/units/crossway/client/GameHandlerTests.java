@@ -11,6 +11,7 @@ import it.units.crossway.client.model.Player;
 import it.units.crossway.client.model.PlayerColor;
 import it.units.crossway.client.model.Turn;
 import it.units.crossway.client.model.dto.GameCreationIntent;
+import it.units.crossway.client.model.dto.GameDto;
 import it.units.crossway.client.model.dto.PlayerDto;
 import it.units.crossway.client.remote.Api;
 import org.junit.jupiter.api.Assertions;
@@ -20,6 +21,8 @@ import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
@@ -115,9 +118,22 @@ public class GameHandlerTests {
     }
 
     @Test
-    void whenPlayerSelectsJoinGameShouldSendGetAvailableGamesReq() {
-        // TODO
-        fail();
+    void whenPlayerSelectsJoinGameShouldSendGetAvailableGamesReq() throws JsonProcessingException {
+        initWireMockServer();
+        Api api = buildAndReturnFeignClient();
+        Player player = new Player();
+        Board board = new Board();
+        Turn turn = new Turn();
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        ObjectMapper om = new ObjectMapper();
+        List<GameDto> listAvailableGames = new ArrayList<>();
+        String jsonAvailableGames = om.writeValueAsString(listAvailableGames);
+        wireMockServer.stubFor(get(urlEqualTo("/games"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withBody(jsonAvailableGames)));
+        ReflectionTestUtils.invokeMethod(gameHandler, "getAllAvailableGamesDto");
+        wireMockServer.verify(1, getRequestedFor(urlEqualTo("/games")));
     }
 
     @Test

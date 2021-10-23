@@ -80,12 +80,7 @@ public class GameHandler {
 
     private void joinExistingGame() {
         String choice;
-        List<GameDto> allAvailableGames = api.getAllAvailableGames();
-        System.out.println("choose from the list of available games:");
-        IntStream.range(0, allAvailableGames.size())
-                .forEach(i ->
-                        System.out.println(i + " -> opponent is " + allAvailableGames.get(i).getBlackPlayer())
-                );
+        List<GameDto> allAvailableGames = getAllAvailableGamesDto();
         do {
             choice = IOUtils.getInputLine();
             if(IOUtils.isChoiceToQuit(choice, QUIT_GAME_CHOICE)) {
@@ -94,6 +89,16 @@ public class GameHandler {
         } while (!IOUtils.isChoiceAValidInteger(choice) && (Integer.parseInt(choice) > allAvailableGames.size()));
         api.joinGame(allAvailableGames.get(Integer.parseInt(choice)).getUuid(), new PlayerDto(player.getNickname()));
         player.setColor(PlayerColor.WHITE);
+    }
+
+    private List<GameDto> getAllAvailableGamesDto() {
+        List<GameDto> allAvailableGames = api.getAllAvailableGames();
+        System.out.println("choose from the list of available games:");
+        IntStream.range(0, allAvailableGames.size())
+                .forEach(i ->
+                        System.out.println(i + " -> opponent is " + allAvailableGames.get(i).getBlackPlayer())
+                );
+        return allAvailableGames;
     }
 
     private void createNewGame() {
