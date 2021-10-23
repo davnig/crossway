@@ -61,6 +61,7 @@ public class GameHandler {
     }
 
     public void startGame() {
+        chooseNickname();
         System.out.println(NEW_GAME_CHOICE + " -> Create a new game...\n" + JOIN_GAME_CHOICE + " -> Join a game...\n" + QUIT_GAME_CHOICE + " -> quit...");
         String choice;
         do {
