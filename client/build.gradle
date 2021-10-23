@@ -20,6 +20,8 @@ dependencies {
     implementation 'org.projectlombok:lombok'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    testCompile "com.github.tomakehurst:wiremock-jre8:2.31.0"
+    testImplementation 'com.netflix.feign:feign-jackson:8.18.0'
 }
 
 test {
