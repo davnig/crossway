@@ -35,7 +35,7 @@ public class InputOutputTests {
         Board emptyBoard = new Board();
         emptyBoard.setLAST_COLUMN(2);
         emptyBoard.setLAST_ROW(2);
-        emptyBoard.printBoard();
+        IOUtils.printBoard(emptyBoard);
         String printedBoard = baos.toString();
         assertEquals(board2x2, printedBoard);
     }

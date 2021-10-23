@@ -1,5 +1,8 @@
 package it.units.crossway.client;
 
+import it.units.crossway.client.model.Board;
+import it.units.crossway.client.model.Intersection;
+import it.units.crossway.client.model.PlayerColor;
 import it.units.crossway.client.model.Turn;
 import lombok.Data;
 
@@ -53,4 +56,43 @@ public class IOUtils {
 		String currentPlayer = turn.getCurrentPlayer().toString();
 		System.out.println(currentPlayer + " has won!!!!");
 	}
+
+	public static void printBoard(Board board) {
+		printRowSeparator(board);
+		for (int row = board.getFIRST_ROW(); row <= board.getLAST_ROW(); row++) {
+			printRow(board,row);
+		}
+		printRowSeparator(board);
+	}
+
+	private static void printRowSeparator(Board board) {
+		System.out.print("-");
+		for (int col = board.getFIRST_ROW(); col <= board.getLAST_ROW(); col++) {
+			System.out.print("----");
+		}
+		System.out.println();
+	}
+
+	private static void printRow(Board board, int row) {
+		for (int col = board.getFIRST_ROW(); col <= board.getLAST_ROW(); col++) {
+			System.out.print("| " + getPrintSymbolForIntersection(board, new Intersection(row, col)) + " ");
+		}
+		System.out.println("|");
+	}
+
+	private static String getPrintSymbolForIntersection(Board board, Intersection intersection) {
+		PlayerColor playerColorAtIntersection = board.getBoardState().get(intersection);
+		if (playerColorAtIntersection != null) {
+			switch (playerColorAtIntersection) {
+				case BLACK:
+					return "O";
+				case WHITE:
+					return "x";
+				default:
+					return " ";
+			}
+		}
+		return " ";
+	}
+
 }

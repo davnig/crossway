@@ -150,45 +150,4 @@ public class Board {
         return row == FIRST_ROW;
     }
 
-    /**
-     * Print the current board state to the standard out
-     */
-    public void printBoard() {
-        printRowSeparator();
-        for (int row = FIRST_ROW; row <= LAST_ROW; row++) {
-            printRow(row);
-        }
-        printRowSeparator();
-    }
-
-    private void printRowSeparator() {
-        System.out.print("-");
-        for (int col = FIRST_COLUMN; col <= LAST_COLUMN; col++) {
-            System.out.print("----");
-        }
-        System.out.println();
-    }
-
-    private void printRow(int row) {
-        for (int col = FIRST_COLUMN; col <= LAST_COLUMN; col++) {
-            System.out.print("| " + getPrintSymbolForIntersection(new Intersection(row, col)) + " ");
-        }
-        System.out.println("|");
-    }
-
-    private String getPrintSymbolForIntersection(Intersection intersection) {
-        PlayerColor playerColorAtIntersection = boardState.get(intersection);
-        if (playerColorAtIntersection != null) {
-            switch (playerColorAtIntersection) {
-                case BLACK:
-                    return "O";
-                case WHITE:
-                    return "x";
-                default:
-                    return " ";
-            }
-        }
-        return " ";
-    }
-
 }

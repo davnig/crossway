@@ -23,7 +23,6 @@ public class RulesTests {
         Turn turn = new Turn(1, PlayerColor.BLACK);
         Board board = new Board();
         GameHandler gameHandler = new GameHandler(blackPlayer, board, turn, api);
-        gameHandler.startGameAtGivenState(new Board(), turn, blackPlayer);
         IOUtils.scanner =
                 getRedirectedScannerForSimulatedUserInput(
                         "1,1" + System.getProperty("line.separator")
@@ -44,7 +43,7 @@ public class RulesTests {
                 presetBoard.placeStone(new Intersection(5, i), playerColor);
             }
         }
-        presetBoard.printBoard();
+        IOUtils.printBoard(presetBoard);
         Assertions.assertTrue(Rules.checkWin(presetBoard, playerColor));
     }
 
@@ -55,7 +54,7 @@ public class RulesTests {
         for (int i = columnStartPath; i <= columnEndPath; i++) {
             presetBoard.placeStone(new Intersection(5, i), PlayerColor.WHITE);
         }
-        presetBoard.printBoard();
+        IOUtils.printBoard(presetBoard);
         Assertions.assertFalse(Rules.checkWin(presetBoard, PlayerColor.WHITE));
         Assertions.assertFalse(Rules.checkWin(presetBoard, PlayerColor.BLACK));
     }
@@ -67,7 +66,7 @@ public class RulesTests {
         for (int i = rowStartPath; i <= rowEndPath; i++) {
             presetBoard.placeStone(new Intersection(i, 7), PlayerColor.BLACK);
         }
-        presetBoard.printBoard();
+        IOUtils.printBoard(presetBoard);
         Assertions.assertFalse(Rules.checkWin(presetBoard, PlayerColor.WHITE));
         Assertions.assertFalse(Rules.checkWin(presetBoard, PlayerColor.BLACK));
     }
@@ -80,7 +79,7 @@ public class RulesTests {
             presetBoard.placeStone(new Intersection(i, i), playerColor);
         }
 
-        presetBoard.printBoard();
+        IOUtils.printBoard(presetBoard);
         Assertions.assertTrue(Rules.checkWin(presetBoard, playerColor));
     }
 
@@ -94,7 +93,7 @@ public class RulesTests {
             presetBoard.placeStone(new Intersection(9, i), PlayerColor.WHITE);
         }
         presetBoard.placeStone(new Intersection(10, 10), PlayerColor.WHITE);
-        presetBoard.printBoard();
+        IOUtils.printBoard(presetBoard);
         Assertions.assertTrue(Rules.checkWin(presetBoard, PlayerColor.WHITE));
     }
 
@@ -122,7 +121,7 @@ public class RulesTests {
             presetBoard.placeStone(new Intersection(i, 18), PlayerColor.WHITE);
         }
         presetBoard.placeStone(new Intersection(2, 19), PlayerColor.WHITE);
-        presetBoard.printBoard();
+        IOUtils.printBoard(presetBoard);
         Assertions.assertTrue(Rules.checkWin(presetBoard, PlayerColor.WHITE));
     }
 

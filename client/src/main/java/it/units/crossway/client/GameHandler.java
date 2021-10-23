@@ -50,18 +50,27 @@ public class GameHandler {
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
     }
 
-    private void chooseNickname() {
+    public void play() {
+        initGame();
+        chooseNickname();
+        chooseGameType();
+        playGame();
+    }
+
+    void initGame() {
         System.out.println("Welcome to crossway! \n");
+        turn.initFirstTurn();
+    }
+
+    void chooseNickname() {
         System.out.println("choose a nickname!");
         String nickname = IOUtils.getInputLine();
-        nickname = nickname.strip();
         player.setNickname(nickname);
         PlayerDto playerDto = new PlayerDto(nickname);
         api.addPlayer(playerDto);
     }
 
-    public void startGame() {
-        chooseNickname();
+    void chooseGameType() {
         System.out.println(NEW_GAME_CHOICE + " -> Create a new game...\n" + JOIN_GAME_CHOICE + " -> Join a game...\n" + QUIT_GAME_CHOICE + " -> quit...");
         String choice;
         do {
@@ -75,30 +84,21 @@ public class GameHandler {
         } else {
             joinExistingGame();
         }
-        playGame();
     }
 
-    private void joinExistingGame() {
-        String choice;
-        List<GameDto> allAvailableGames = getAllAvailableGamesDto();
-        do {
-            choice = IOUtils.getInputLine();
-            if(IOUtils.isChoiceToQuit(choice, QUIT_GAME_CHOICE)) {
-                System.exit(0);
+    void playGame() {
+        System.out.println("Game start!!");
+        while (true) {
+            try {
+                IOUtils.clearCLI();
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
             }
-        } while (!IOUtils.isChoiceAValidInteger(choice) && (Integer.parseInt(choice) > allAvailableGames.size()));
-        api.joinGame(allAvailableGames.get(Integer.parseInt(choice)).getUuid(), new PlayerDto(player.getNickname()));
-        player.setColor(PlayerColor.WHITE);
-    }
-
-    private List<GameDto> getAllAvailableGamesDto() {
-        List<GameDto> allAvailableGames = api.getAllAvailableGames();
-        System.out.println("choose from the list of available games:");
-        IntStream.range(0, allAvailableGames.size())
-                .forEach(i ->
-                        System.out.println(i + " -> opponent is " + allAvailableGames.get(i).getBlackPlayer())
-                );
-        return allAvailableGames;
+            IOUtils.printBoard(board);
+            IOUtils.printCurrentPlayer(turn);
+            IOUtils.printAskNextMove();
+            playTurn();
+        }
     }
 
     private void createNewGame() {
@@ -113,35 +113,38 @@ public class GameHandler {
         player.setColor(PlayerColor.BLACK);
     }
 
-    private void playGame() {
-        turn.initFirstTurn();
-        System.out.println("Game start!!");
-        while (true) {
-            try {
-                IOUtils.clearCLI();
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
+    private void joinExistingGame() {
+        String choice;
+        List<GameDto> allAvailableGames = getAllAvailableGamesDto();
+        do {
+            choice = IOUtils.getInputLine();
+            if(IOUtils.isChoiceToQuit(choice, QUIT_GAME_CHOICE)) {
+                System.exit(0);
             }
-            board.printBoard();
-            IOUtils.printCurrentPlayer(turn);
-            IOUtils.printAskNextMove();
-            playTurn();
-        }
+        } while (!IOUtils.isChoiceAValidInteger(choice) && (Integer.parseInt(choice) > allAvailableGames.size()));
+        String uuid = allAvailableGames.get(Integer.parseInt(choice)).getUuid();
+        api.joinGame(uuid, new PlayerDto(player.getNickname()));
+        stompClient.connect(WS_ENDPOINT, new StompSessionHandlerAdapter() {
+            @SneakyThrows
+            @Override
+            public void afterConnected(@NonNull StompSession session, @NonNull StompHeaders connectedHeaders) {
+                session.subscribe("/topic/" + uuid, new StompMessageHandler());
+            }
+        });
+        player.setColor(PlayerColor.WHITE);
     }
 
-    public void startGameAtGivenState(Board board, Turn turn) {
-        this.board = board;
-        this.turn = turn;
-        this.player = new Player();
+    private List<GameDto> getAllAvailableGamesDto() {
+        List<GameDto> allAvailableGames = api.getAllAvailableGames();
+        System.out.println("choose from the list of available games:");
+        IntStream.range(0, allAvailableGames.size())
+                .forEach(i ->
+                        System.out.println(i + " -> opponent is " + allAvailableGames.get(i).getBlackPlayer())
+                );
+        return allAvailableGames;
     }
 
-    public void startGameAtGivenState(Board board, Turn turn, Player player) {
-        this.board = board;
-        this.turn = turn;
-        this.player = player;
-    }
-
-    public void playTurn() {
+    void playTurn() {
         if (Rules.isPieRuleTurn(turn) && IOUtils.isPieRuleRequested()) {
             turn.applyPieRule();
             return;

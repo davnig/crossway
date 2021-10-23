@@ -14,6 +14,7 @@ import it.units.crossway.client.model.dto.GameCreationIntent;
 import it.units.crossway.client.model.dto.GameDto;
 import it.units.crossway.client.model.dto.PlayerDto;
 import it.units.crossway.client.remote.Api;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -135,6 +136,48 @@ public class GameHandlerTests {
         ReflectionTestUtils.invokeMethod(gameHandler, "getAllAvailableGamesDto");
         wireMockServer.verify(1, getRequestedFor(urlEqualTo("/games")));
     }
+
+    @Test
+    void whenInitGameShouldInitializeTurn() {
+        fail();
+    }
+
+    @Test
+    void whenChooseNicknameShouldSetPlayerNicknameAndSendAddPlayerReq() throws JsonProcessingException {
+        initWireMockServer();
+        Api api = buildAndReturnFeignClient();
+        String nickname = "playerXZX";
+        Player player = new Player(nickname, null);
+        Board board = new Board();
+        Turn turn = new Turn();
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        PlayerDto playerDto = new PlayerDto(nickname);
+        ObjectMapper om = new ObjectMapper();
+        String jsonPlayerDto = om.writeValueAsString(playerDto);
+        wireMockServer.stubFor(post(urlEqualTo("/players"))
+                .withRequestBody(equalToJson(jsonPlayerDto))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withBody(jsonPlayerDto)));
+        String input = nickname + System.lineSeparator();
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+        gameHandler.chooseNickname();
+        Assertions.assertEquals(nickname, gameHandler.getPlayer().getNickname());
+        wireMockServer.verify(1, postRequestedFor(urlEqualTo("/players")));
+    }
+
+    @Test
+    void whenChooseGameTypeAndPlayerSelectsChoice1ShouldSendCreateGameReq() {
+        // TODO
+        fail();
+    }
+
+    @Test
+    void whenChooseGameTypeAndPlayerSelectsChoice2ShouldSendJoinGameReq() {
+        // TODO
+        fail();
+    }
+
 
     @Test
     void whenPlayerSelectsAvailableGameShouldSendJoinGameReq() {

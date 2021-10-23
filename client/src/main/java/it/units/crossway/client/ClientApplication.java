@@ -21,7 +21,7 @@ public class ClientApplication {
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
         GameHandler gameHandler = (GameHandler) context.getBean("gameHandler");
-        gameHandler.startGame();
+        gameHandler.play();
     }
 
     @Autowired

@@ -74,7 +74,6 @@ public class TurnTests {
         presetBoard.placeStone(new Intersection(1, 4), PlayerColor.BLACK);
         Turn turn = new Turn(2, PlayerColor.WHITE);
         GameHandler gameHandler = new GameHandler(player, presetBoard, turn, api);
-        gameHandler.startGameAtGivenState(presetBoard, turn);
         IOUtils.scanner = getRedirectedScannerForSimulatedUserInput("Y");
         gameHandler.playTurn();
         assertEquals(PlayerColor.WHITE, gameHandler.getTurn().getCurrentPlayer());
@@ -87,7 +86,6 @@ public class TurnTests {
         presetBoard.placeStone(new Intersection(1, 4), PlayerColor.BLACK);
         Turn turn = new Turn(2, PlayerColor.WHITE);
         GameHandler gameHandler = new GameHandler(player, presetBoard, turn, api);
-        gameHandler.startGameAtGivenState(presetBoard, turn);
         IOUtils.scanner =
                 getRedirectedScannerForSimulatedUserInput(
                         "N" + System.getProperty("line.separator") + "6,6" + System.getProperty("line.separator")
@@ -103,7 +101,6 @@ public class TurnTests {
         Turn turn = new Turn(2, PlayerColor.WHITE);
         presetBoard.placeStone(new Intersection(1, 4), PlayerColor.BLACK);
         GameHandler gameHandler = new GameHandler(whitePlayer, presetBoard, turn, api);
-        gameHandler.startGameAtGivenState(presetBoard, turn, whitePlayer);
         IOUtils.scanner =
                 getRedirectedScannerForSimulatedUserInput(
                         "N" + System.getProperty("line.separator") + "6,6" + System.getProperty("line.separator")
@@ -142,7 +139,6 @@ public class TurnTests {
         Player blackPlayer = new Player("xxx", PlayerColor.BLACK);
         Turn turn = new Turn(1, PlayerColor.BLACK);
         GameHandler gameHandler = new GameHandler(blackPlayer, board, turn, api);
-        gameHandler.startGameAtGivenState(board, turn, blackPlayer);
         IOUtils.scanner = getRedirectedScannerForSimulatedUserInput("2,3");
         gameHandler.playTurn();
         assertEquals(PlayerColor.BLACK, gameHandler.getBoard().getStoneColorAt(new Intersection(2, 3)));
