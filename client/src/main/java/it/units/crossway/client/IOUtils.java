@@ -96,6 +96,13 @@ public class IOUtils {
 		return " ";
 	}
 
+	public static StonePlacementIntent getStonePlacementIntentFromInput(Player player) {
+		String input = IOUtils.getInputLine();
+		int row = IOUtils.getIntRowFromPlayerInput(input);
+		int column = IOUtils.getIntColumnFromPlayerInput(input);
+		return new StonePlacementIntent(row, column, player);
+	}
+
 	public static int getIntColumnFromPlayerInput(String input) {
 		return Integer.parseInt(input.substring(input.indexOf(",") + 1));
 	}

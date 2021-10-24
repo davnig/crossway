@@ -172,7 +172,7 @@ public class GameHandler {
 
     private StonePlacementIntent getValidStonePlacementIntent() {
         while (true) {
-            StonePlacementIntent stonePlacementIntent = StonePlacementIntent.getStonePlacementIntentFromInput(player);
+            StonePlacementIntent stonePlacementIntent = IOUtils.getStonePlacementIntentFromInput(player);
             try {
                 Rules.validatePlacementIntent(board, stonePlacementIntent);
                 return stonePlacementIntent;
