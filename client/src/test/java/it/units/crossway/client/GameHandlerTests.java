@@ -27,8 +27,7 @@ import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GameHandlerTests {
 
@@ -53,11 +52,20 @@ public class GameHandlerTests {
     }
 
     @Test
+    void whenInitGameShouldInitializeTurn() {
+        Board board = new Board();
+        Turn turn = new Turn();
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        gameHandler.initGame();
+        assertEquals(gameHandler.getTurn(), new Turn(1, PlayerColor.BLACK));
+    }
+
+    @Test
     void whenGameStartsBoardShouldBeEmpty() {
         Turn turn = new Turn();
         Board board = new Board();
         gameHandler = new GameHandler(player, board, turn, api);
-        gameHandler.getTurn().initFirstTurn();
+        gameHandler.initGame();
         assertTrue(gameHandler.getBoard().getBoardState().isEmpty());
     }
 
@@ -66,7 +74,7 @@ public class GameHandlerTests {
         Turn turn = new Turn();
         Board board = new Board();
         gameHandler = new GameHandler(player, board, turn, api);
-        gameHandler.getTurn().initFirstTurn();
+        gameHandler.initGame();
         Assertions.assertEquals(PlayerColor.BLACK, gameHandler.getTurn().getCurrentPlayer());
     }
 
@@ -138,11 +146,6 @@ public class GameHandlerTests {
     }
 
     @Test
-    void whenInitGameShouldInitializeTurn() {
-        fail();
-    }
-
-    @Test
     void whenChooseNicknameShouldSetPlayerNicknameAndSendAddPlayerReq() throws JsonProcessingException {
         initWireMockServer();
         Api api = buildAndReturnFeignClient();
@@ -167,13 +170,13 @@ public class GameHandlerTests {
     }
 
     @Test
-    void whenChooseGameTypeAndPlayerSelectsChoice1ShouldSendCreateGameReq() {
+    void whenChooseGameTypeAndPlayerSelectsCreateGameChoiceShouldSendCreateGameReq() {
         // TODO
         fail();
     }
 
     @Test
-    void whenChooseGameTypeAndPlayerSelectsChoice2ShouldSendJoinGameReq() {
+    void whenChooseGameTypeAndPlayerSelectsJoinGameChoiceShouldSendGetAllAvailableGamesReq() {
         // TODO
         fail();
     }
