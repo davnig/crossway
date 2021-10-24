@@ -139,11 +139,12 @@ public class GameHandler {
     }
 
     private void subscribeToTopic() {
+        StompMessageHandler stompMessageHandler = (StompMessageHandler) ApplicationContextUtils.getContext().getBean("stompMessageHandler");
         stompClient.connect(WS_ENDPOINT, new StompSessionHandlerAdapter() {
             @SneakyThrows
             @Override
             public void afterConnected(@NonNull StompSession session, @NonNull StompHeaders connectedHeaders) {
-                session.subscribe("/topic/" + uuid, new StompMessageHandler());
+                session.subscribe("/topic/" + uuid, stompMessageHandler);
             }
         });
     }

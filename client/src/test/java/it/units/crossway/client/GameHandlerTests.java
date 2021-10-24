@@ -6,20 +6,19 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
-import it.units.crossway.client.model.Board;
-import it.units.crossway.client.model.Player;
-import it.units.crossway.client.model.PlayerColor;
-import it.units.crossway.client.model.Turn;
+import it.units.crossway.client.model.*;
 import it.units.crossway.client.model.dto.GameCreationIntent;
 import it.units.crossway.client.model.dto.GameDto;
 import it.units.crossway.client.model.dto.PlayerDto;
 import it.units.crossway.client.remote.Api;
+import it.units.crossway.client.remote.StompMessageHandler;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;
+import org.springframework.messaging.simp.stomp.StompHeaders;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -275,5 +274,17 @@ public class GameHandlerTests {
         assertEquals(PlayerColor.WHITE, gameHandler.getPlayer().getColor());
     }
 
+    @Test
+    void whenStonePlacementIntentIsReceivedThenBoardShouldBeUpdated() {
+        Board board = new Board();
+        Player player = new Player("playerW", PlayerColor.WHITE);
+        Turn turn = new Turn(3, PlayerColor.BLACK);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler);
+        StonePlacementIntent stonePlacementIntent = new StonePlacementIntent();
+        stompMessageHandler.handleFrame(new StompHeaders(), stonePlacementIntent);
+        Intersection intersection = new Intersection(stonePlacementIntent.getRow(), stonePlacementIntent.getColumn());
+        assertEquals(PlayerColor.BLACK, gameHandler.getBoard().getStoneColorAt(intersection));
+    }
 
 }
