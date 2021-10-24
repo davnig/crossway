@@ -38,6 +38,7 @@ public class GameHandler {
     private WebSocketStompClient stompClient;
     private Api api;
     private final String WS_ENDPOINT = "ws://localhost:9111/endpoint";
+    private String uuid;
 
     public GameHandler(Player player, Board board, Turn turn, Api api) {
         this.player = player;
@@ -54,6 +55,7 @@ public class GameHandler {
         initGame();
         chooseNickname();
         chooseGameType();
+        subscribeToTopic();
         playGame();
     }
 
@@ -71,7 +73,11 @@ public class GameHandler {
     }
 
     void chooseGameType() {
-        System.out.println(NEW_GAME_CHOICE + " -> Create a new game...\n" + JOIN_GAME_CHOICE + " -> Join a game...\n" + QUIT_GAME_CHOICE + " -> quit...");
+        System.out.println(
+                NEW_GAME_CHOICE + " -> Create a new game...\n" +
+                        JOIN_GAME_CHOICE + " -> Join a game...\n" +
+                        QUIT_GAME_CHOICE + " -> quit..."
+        );
         String choice;
         do {
             choice = IOUtils.getInputLine();
@@ -103,13 +109,7 @@ public class GameHandler {
 
     private void createNewGame() {
         GameDto gameDto = api.createGame(new GameCreationIntent(player.getNickname()));
-        stompClient.connect(WS_ENDPOINT, new StompSessionHandlerAdapter() {
-            @SneakyThrows
-            @Override
-            public void afterConnected(@NonNull StompSession session, @NonNull StompHeaders connectedHeaders) {
-                session.subscribe("/topic/" + gameDto.getUuid(), new StompMessageHandler());
-            }
-        });
+        this.uuid = gameDto.getUuid();
         player.setColor(PlayerColor.BLACK);
     }
 
@@ -118,19 +118,13 @@ public class GameHandler {
         List<GameDto> allAvailableGames = getAllAvailableGamesDto();
         do {
             choice = IOUtils.getInputLine();
-            if(IOUtils.isChoiceToQuit(choice, QUIT_GAME_CHOICE)) {
+            if (IOUtils.isChoiceToQuit(choice, QUIT_GAME_CHOICE)) {
                 System.exit(0);
             }
         } while (!IOUtils.isChoiceAValidInteger(choice) && (Integer.parseInt(choice) > allAvailableGames.size()));
         String uuid = allAvailableGames.get(Integer.parseInt(choice)).getUuid();
-        api.joinGame(uuid, new PlayerDto(player.getNickname()));
-        stompClient.connect(WS_ENDPOINT, new StompSessionHandlerAdapter() {
-            @SneakyThrows
-            @Override
-            public void afterConnected(@NonNull StompSession session, @NonNull StompHeaders connectedHeaders) {
-                session.subscribe("/topic/" + uuid, new StompMessageHandler());
-            }
-        });
+        GameDto gameDto = api.joinGame(uuid, new PlayerDto(player.getNickname()));
+        this.uuid = gameDto.getUuid();
         player.setColor(PlayerColor.WHITE);
     }
 
@@ -142,6 +136,16 @@ public class GameHandler {
                         System.out.println(i + " -> opponent is " + allAvailableGames.get(i).getBlackPlayer())
                 );
         return allAvailableGames;
+    }
+
+    private void subscribeToTopic() {
+        stompClient.connect(WS_ENDPOINT, new StompSessionHandlerAdapter() {
+            @SneakyThrows
+            @Override
+            public void afterConnected(@NonNull StompSession session, @NonNull StompHeaders connectedHeaders) {
+                session.subscribe("/topic/" + uuid, new StompMessageHandler());
+            }
+        });
     }
 
     void playTurn() {

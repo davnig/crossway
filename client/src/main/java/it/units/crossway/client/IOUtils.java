@@ -6,23 +6,27 @@ import it.units.crossway.client.model.PlayerColor;
 import it.units.crossway.client.model.Turn;
 import lombok.Data;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Scanner;
 
 @Data
 public class IOUtils {
 
-    public static Scanner scanner = new Scanner(System.in);
+	public static Scanner scanner = new Scanner(System.in);
 
-    public static void printCurrentPlayer(Turn turn) {
-        String currentPlayer = turn.getCurrentPlayer().toString();
-        System.out.println("It is the turn of the " + currentPlayer + " player!");
-    }
+	public static void redirectScannerToSimulatedInput(String input) {
+		scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));
+	}
 
-    public static void printAskNextMove() {
-        System.out.println("insert a valid placement for your stone...");
-    }
+	public static void printCurrentPlayer(Turn turn) {
+		String currentPlayer = turn.getCurrentPlayer().toString();
+		System.out.println("It is the turn of the " + currentPlayer + " player!");
+	}
 
+	public static void printAskNextMove() {
+		System.out.println("insert a valid placement for your stone...");
+	}
 
     public static String getInputLine() {
         return scanner.nextLine();

@@ -9,9 +9,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 
-import java.io.ByteArrayInputStream;
-import java.util.Scanner;
-
 public class RulesTests {
 
     @Mock
@@ -23,10 +20,7 @@ public class RulesTests {
         Turn turn = new Turn(1, PlayerColor.BLACK);
         Board board = new Board();
         GameHandler gameHandler = new GameHandler(blackPlayer, board, turn, api);
-        IOUtils.scanner =
-                getRedirectedScannerForSimulatedUserInput(
-                        "1,1" + System.getProperty("line.separator")
-                );
+        IOUtils.redirectScannerToSimulatedInput("1,1" + System.getProperty("line.separator"));
         gameHandler.placeStone();
         Assertions.assertFalse(gameHandler.getBoard().getBoardState().isEmpty());
         Assertions.assertEquals(PlayerColor.BLACK, gameHandler.getBoard().getBoardState().get(new Intersection(1, 1)));
@@ -123,12 +117,6 @@ public class RulesTests {
         presetBoard.placeStone(new Intersection(2, 19), PlayerColor.WHITE);
         IOUtils.printBoard(presetBoard);
         Assertions.assertTrue(Rules.checkWin(presetBoard, PlayerColor.WHITE));
-    }
-
-    Scanner getRedirectedScannerForSimulatedUserInput(String input) {
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(input.getBytes());
-        System.setIn(byteArrayInputStream);
-        return new Scanner(System.in);
     }
 
 }

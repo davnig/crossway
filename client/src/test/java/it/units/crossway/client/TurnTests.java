@@ -8,9 +8,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 
-import java.io.ByteArrayInputStream;
-import java.util.Scanner;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -74,7 +71,7 @@ public class TurnTests {
         presetBoard.placeStone(new Intersection(1, 4), PlayerColor.BLACK);
         Turn turn = new Turn(2, PlayerColor.WHITE);
         GameHandler gameHandler = new GameHandler(player, presetBoard, turn, api);
-        IOUtils.scanner = getRedirectedScannerForSimulatedUserInput("Y");
+        IOUtils.redirectScannerToSimulatedInput("Y");
         gameHandler.playTurn();
         assertEquals(PlayerColor.WHITE, gameHandler.getTurn().getCurrentPlayer());
     }
@@ -86,10 +83,7 @@ public class TurnTests {
         presetBoard.placeStone(new Intersection(1, 4), PlayerColor.BLACK);
         Turn turn = new Turn(2, PlayerColor.WHITE);
         GameHandler gameHandler = new GameHandler(player, presetBoard, turn, api);
-        IOUtils.scanner =
-                getRedirectedScannerForSimulatedUserInput(
-                        "N" + System.getProperty("line.separator") + "6,6" + System.getProperty("line.separator")
-                );
+        IOUtils.redirectScannerToSimulatedInput("N" + System.lineSeparator() + "6,6" + System.lineSeparator());
         gameHandler.playTurn();
         assertEquals(PlayerColor.BLACK, gameHandler.getTurn().getCurrentPlayer());
     }
@@ -101,10 +95,7 @@ public class TurnTests {
         Turn turn = new Turn(2, PlayerColor.WHITE);
         presetBoard.placeStone(new Intersection(1, 4), PlayerColor.BLACK);
         GameHandler gameHandler = new GameHandler(whitePlayer, presetBoard, turn, api);
-        IOUtils.scanner =
-                getRedirectedScannerForSimulatedUserInput(
-                        "N" + System.getProperty("line.separator") + "6,6" + System.getProperty("line.separator")
-                );
+        IOUtils.redirectScannerToSimulatedInput("N" + System.lineSeparator() + "6,6" + System.lineSeparator());
         gameHandler.playTurn();
         assertEquals(PlayerColor.WHITE, presetBoard.getStoneColorAt(new Intersection(6, 6)));
     }
@@ -116,7 +107,7 @@ public class TurnTests {
         Turn turn = new Turn();
         GameHandler gameHandler = new GameHandler(player, board, turn, api);
         gameHandler.getTurn().initFirstTurn();
-        IOUtils.scanner = getRedirectedScannerForSimulatedUserInput("2,1");
+        IOUtils.redirectScannerToSimulatedInput("2,1");
         gameHandler.playTurn();
         assertEquals(PlayerColor.WHITE, gameHandler.getTurn().getCurrentPlayer());
     }
@@ -128,7 +119,7 @@ public class TurnTests {
         Turn turn = new Turn();
         GameHandler gameHandler = new GameHandler(player, board, turn, api);
         gameHandler.getTurn().initFirstTurn();
-        IOUtils.scanner = getRedirectedScannerForSimulatedUserInput("1,1");
+        IOUtils.redirectScannerToSimulatedInput("1,1");
         gameHandler.playTurn();
         assertEquals(2, gameHandler.getTurn().getTurnNumber());
     }
@@ -139,7 +130,7 @@ public class TurnTests {
         Player blackPlayer = new Player("xxx", PlayerColor.BLACK);
         Turn turn = new Turn(1, PlayerColor.BLACK);
         GameHandler gameHandler = new GameHandler(blackPlayer, board, turn, api);
-        IOUtils.scanner = getRedirectedScannerForSimulatedUserInput("2,3");
+        IOUtils.redirectScannerToSimulatedInput("2,3");
         gameHandler.playTurn();
         assertEquals(PlayerColor.BLACK, gameHandler.getBoard().getStoneColorAt(new Intersection(2, 3)));
     }
@@ -151,9 +142,4 @@ public class TurnTests {
         assertThrows(PlacementViolationException.class, () -> Rules.validatePlacementIntent(new Board(), stonePlacementIntent));
     }
 
-    Scanner getRedirectedScannerForSimulatedUserInput(String input) {
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(input.getBytes());
-        System.setIn(byteArrayInputStream);
-        return new Scanner(System.in);
-    }
 }
