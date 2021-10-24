@@ -275,34 +275,5 @@ public class GameHandlerTests {
         assertEquals(PlayerColor.WHITE, gameHandler.getPlayer().getColor());
     }
 
-//
-//    @Test
-//    void whenPlayerPlaysTurnShouldSendStonePlacementIntent() {
-//        fail();
-//    }
-//
-//    @Test
-//    void whenStonePlacementIntentIsReceivedThenBoardShouldBeUpdated() {
-//        fail();
-//    }
-
-//    @Test
-//    void whenGameStartsBoardShouldBeEmpty() {
-//        Turn turn = new Turn();
-//        Board board = new Board();
-//        gameHandler = new GameHandler(player, board, turn, api);
-//        gameHandler.getTurn().initFirstTurn();
-//        assertTrue(gameHandler.getBoard().getBoardState().isEmpty());
-//    }
-//
-//    @Test
-//    void whenGameStartsTurnShouldBeBlack() {
-//        Turn turn = new Turn();
-//        Board board = new Board();
-//        gameHandler = new GameHandler(player, board, turn, api);
-//        gameHandler.getTurn().initFirstTurn();
-//        assertEquals(PlayerColor.BLACK, gameHandler.getTurn().getCurrentPlayer());
-//    }
-
 
 }
