@@ -1,9 +1,6 @@
 package it.units.crossway.client;
 
-import it.units.crossway.client.model.Board;
-import it.units.crossway.client.model.Intersection;
-import it.units.crossway.client.model.PlayerColor;
-import it.units.crossway.client.model.Turn;
+import it.units.crossway.client.model.*;
 import lombok.Data;
 
 import java.io.ByteArrayInputStream;
@@ -97,6 +94,14 @@ public class IOUtils {
 			}
 		}
 		return " ";
+	}
+
+	public static int getIntColumnFromPlayerInput(String input) {
+		return Integer.parseInt(input.substring(input.indexOf(",") + 1));
+	}
+
+	public static int getIntRowFromPlayerInput(String input) {
+		return Integer.parseInt(input.substring(0, input.indexOf(",")));
 	}
 
 }

@@ -172,7 +172,7 @@ public class GameHandler {
 
     private StonePlacementIntent getValidStonePlacementIntent() {
         while (true) {
-            StonePlacementIntent stonePlacementIntent = getStonePlacementIntent();
+            StonePlacementIntent stonePlacementIntent = StonePlacementIntent.getStonePlacementIntentFromInput(player);
             try {
                 Rules.validatePlacementIntent(board, stonePlacementIntent);
                 return stonePlacementIntent;
@@ -180,13 +180,6 @@ public class GameHandler {
                 System.out.println(e.getMessage());
             }
         }
-    }
-
-    private StonePlacementIntent getStonePlacementIntent() {
-        String input = IOUtils.getInputLine();
-        int row = getIntRowFromPlayerInput(input);
-        int column = getIntColumnFromPlayerInput(input);
-        return new StonePlacementIntent(row, column, player);
     }
 
     private void endTurnChecks() {
@@ -200,13 +193,5 @@ public class GameHandler {
         System.exit(0);
     }
 
-
-    private int getIntColumnFromPlayerInput(String input) {
-        return Integer.parseInt(input.substring(input.indexOf(",") + 1));
-    }
-
-    private int getIntRowFromPlayerInput(String input) {
-        return Integer.parseInt(input.substring(0, input.indexOf(",")));
-    }
 }
 
