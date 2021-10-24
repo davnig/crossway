@@ -15,6 +15,7 @@ import it.units.crossway.client.model.dto.GameDto;
 import it.units.crossway.client.model.dto.PlayerDto;
 import it.units.crossway.client.remote.Api;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -45,6 +46,11 @@ public class GameHandlerTests {
     static void initWireMockServer() {
         wireMockServer = new WireMockServer(wireMockConfig().port(9111));
         wireMockServer.start();
+    }
+
+    @AfterEach
+    void reset() {
+        wireMockServer.resetAll();
     }
 
     @AfterAll
@@ -90,7 +96,8 @@ public class GameHandlerTests {
         IOUtils.scanner = new Scanner(System.in);
         gameHandler.chooseNickname();
         assertEquals(nickname, gameHandler.getPlayer().getNickname());
-        wireMockServer.verify(1, postRequestedFor(urlEqualTo("/players")));
+        wireMockServer.verify(1, postRequestedFor(urlEqualTo("/players"))
+                .withRequestBody(equalToJson(jsonPlayerDto)));
     }
 
     @Test
@@ -105,15 +112,43 @@ public class GameHandlerTests {
         GameCreationIntent gameCreationIntent = new GameCreationIntent(nickname);
         ObjectMapper om = new ObjectMapper();
         String jsonGameCreationIntent = om.writeValueAsString(gameCreationIntent);
+        String uuid = UUID.randomUUID().toString();
+        GameDto gameDto = new GameDto(uuid, null, nickname);
         wireMockServer.stubFor(post(urlEqualTo("/games"))
                 .withRequestBody(equalToJson(jsonGameCreationIntent))
                 .willReturn(aResponse()
                         .withStatus(200)
-                        .withBody(jsonGameCreationIntent)));
+                        .withBody(om.writeValueAsString(gameDto))));
         String createGameIntent = "1" + System.getProperty("line.separator");
         IOUtils.scanner = new Scanner(new ByteArrayInputStream(createGameIntent.getBytes()));
         gameHandler.chooseGameType();
-        wireMockServer.verify(1, postRequestedFor(urlEqualTo("/games")));
+        wireMockServer.verify(1, postRequestedFor(urlEqualTo("/games"))
+                .withRequestBody(equalToJson(jsonGameCreationIntent)));
+    }
+
+    @Test
+    void whenPlayerCreatesNewGameShouldSetUuidAndBlackPlayerColor() throws JsonProcessingException {
+        Api api = buildAndReturnFeignClient();
+        String nickname = "playerXZX";
+        Player player = new Player(nickname, null);
+        Board board = new Board();
+        Turn turn = new Turn();
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        gameHandler.getPlayer().setNickname(nickname);
+        GameCreationIntent gameCreationIntent = new GameCreationIntent(nickname);
+        ObjectMapper om = new ObjectMapper();
+        String uuid = UUID.randomUUID().toString();
+        GameDto gameDto = new GameDto(uuid, null, nickname);
+        wireMockServer.stubFor(post(urlEqualTo("/games"))
+                .withRequestBody(equalToJson(om.writeValueAsString(gameCreationIntent)))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withBody(om.writeValueAsString(gameDto))));
+        String createGameIntent = "1" + System.getProperty("line.separator");
+        IOUtils.scanner = new Scanner(new ByteArrayInputStream(createGameIntent.getBytes()));
+        gameHandler.chooseGameType();
+        assertEquals(uuid, gameHandler.getUuid());
+        assertEquals(PlayerColor.BLACK, gameHandler.getPlayer().getColor());
     }
 
     @Test
@@ -240,29 +275,14 @@ public class GameHandlerTests {
         assertEquals(PlayerColor.WHITE, gameHandler.getPlayer().getColor());
     }
 
-
-//
-//    @Test
-//    void whenCreateGameAndGameStartsThenPlayerShouldBeBlack() {
-//        // TODO
-//        fail();
-//    }
-//
-//    @Test
-//    void whenJoinGameAndGameStartsThenPlayerShouldBeWhite() {
-//        // TODO
-//        fail();
-//    }
 //
 //    @Test
 //    void whenPlayerPlaysTurnShouldSendStonePlacementIntent() {
-//        // TODO
 //        fail();
 //    }
 //
 //    @Test
 //    void whenStonePlacementIntentIsReceivedThenBoardShouldBeUpdated() {
-//        // TODO
 //        fail();
 //    }
 
@@ -282,30 +302,6 @@ public class GameHandlerTests {
 //        gameHandler = new GameHandler(player, board, turn, api);
 //        gameHandler.getTurn().initFirstTurn();
 //        assertEquals(PlayerColor.BLACK, gameHandler.getTurn().getCurrentPlayer());
-//    }
-
-//    @Test
-//    void whenPlayerSelectsNewGameShouldSendCreateGameReq() throws JsonProcessingException {
-//        initWireMockServer();
-//        Api api = buildAndReturnFeignClient();
-//        String nickname = "playerXZX";
-//        Player player = new Player(nickname, null);
-//        Board board = new Board();
-//        Turn turn = new Turn();
-//        GameHandler gameHandler = new GameHandler(player, board, turn, api);
-//        gameHandler.getPlayer().setNickname(nickname);
-//        GameCreationIntent gameCreationIntent = new GameCreationIntent(nickname);
-//        ObjectMapper om = new ObjectMapper();
-//        String jsonGameCreationIntent = om.writeValueAsString(gameCreationIntent);
-//        wireMockServer.stubFor(post(urlEqualTo("/games"))
-//                .withRequestBody(equalToJson(jsonGameCreationIntent))
-//                .willReturn(aResponse()
-//                        .withStatus(200)
-//                        .withBody(jsonGameCreationIntent)));
-//        String createGameIntent = nickname + System.getProperty("line.separator") + "1" + System.getProperty("line.separator");
-//        System.setIn(new ByteArrayInputStream(createGameIntent.getBytes()));
-//        ReflectionTestUtils.invokeMethod(gameHandler, "createNewGame");
-//        wireMockServer.verify(1, postRequestedFor(urlEqualTo("/games")));
 //    }
 
 
