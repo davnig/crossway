@@ -107,6 +107,16 @@ public class GameHandler {
         }
     }
 
+    void playTurn() {
+        if (Rules.isPieRuleTurn(turn) && IOUtils.isPieRuleRequested()) {
+            turn.applyPieRule();
+            return;
+        }
+        placeStone();
+        endTurnChecks();
+        turn.nextTurn();
+    }
+
     private void createNewGame() {
         GameDto gameDto = api.createGame(new GameCreationIntent(player.getNickname()));
         this.uuid = gameDto.getUuid();
@@ -149,23 +159,11 @@ public class GameHandler {
         });
     }
 
-    void playTurn() {
-        if (Rules.isPieRuleTurn(turn) && IOUtils.isPieRuleRequested()) {
-            turn.applyPieRule();
-            return;
-        }
-        placeStone();
-        endTurnChecks();
-        turn.nextTurn();
-    }
-
     public void placeStone() {
         StonePlacementIntent stonePlacementIntent = getValidStonePlacementIntent();
         board.placeStone(
-                new Intersection(
-                        stonePlacementIntent.getRow(),
-                        stonePlacementIntent.getColumn()
-                ),
+                stonePlacementIntent.getRow(),
+                stonePlacementIntent.getColumn(),
                 stonePlacementIntent.getPlayer().getColor()
         );
         // todo: send to server

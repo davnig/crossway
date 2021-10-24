@@ -32,12 +32,13 @@ public class InputOutputTests {
         PrintStream ps = new PrintStream(baos);
         System.setOut(ps);
 
-        Board emptyBoard = new Board();
-        emptyBoard.setLAST_COLUMN(2);
-        emptyBoard.setLAST_ROW(2);
-        IOUtils.printBoard(emptyBoard);
+        Board board = new Board();
+        Board.LAST_COLUMN = 2;
+        Board.LAST_ROW = 2;
+        IOUtils.printBoard(board);
         String printedBoard = baos.toString();
         assertEquals(board2x2, printedBoard);
+        board.resetBoard();
     }
 
 }

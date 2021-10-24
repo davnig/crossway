@@ -60,29 +60,29 @@ public class IOUtils {
 
 	public static void printBoard(Board board) {
 		printRowSeparator(board);
-		for (int row = board.getFIRST_ROW(); row <= board.getLAST_ROW(); row++) {
-			printRow(board,row);
+		for (int row = Board.FIRST_ROW; row <= Board.LAST_ROW; row++) {
+			printRow(board, row);
 		}
 		printRowSeparator(board);
 	}
 
 	private static void printRowSeparator(Board board) {
 		System.out.print("-");
-		for (int col = board.getFIRST_ROW(); col <= board.getLAST_ROW(); col++) {
+		for (int col = Board.FIRST_ROW; col <= Board.LAST_ROW; col++) {
 			System.out.print("----");
 		}
 		System.out.println();
 	}
 
 	private static void printRow(Board board, int row) {
-		for (int col = board.getFIRST_ROW(); col <= board.getLAST_ROW(); col++) {
-			System.out.print("| " + getPrintSymbolForIntersection(board, new Intersection(row, col)) + " ");
+		for (int col = Board.FIRST_ROW; col <= Board.LAST_ROW; col++) {
+			System.out.print("| " + getPrintSymbolForIntersection(board, row, col) + " ");
 		}
 		System.out.println("|");
 	}
 
-	private static String getPrintSymbolForIntersection(Board board, Intersection intersection) {
-		PlayerColor playerColorAtIntersection = board.getBoardState().get(intersection);
+	private static String getPrintSymbolForIntersection(Board board, int row, int column) {
+		PlayerColor playerColorAtIntersection = board.getStoneColorAt(row, column);
 		if (playerColorAtIntersection != null) {
 			switch (playerColorAtIntersection) {
 				case BLACK:

@@ -21,9 +21,9 @@ public class TurnTests {
     @CsvSource({"BLACK,WHITE", "WHITE,BLACK"})
     void whenSouthWestDiagonalViolationShouldThrowException(PlayerColor player1, PlayerColor player2) {
         Board presetBoard = new Board();
-        presetBoard.placeStone(new Intersection(1, 2), player1);
-        presetBoard.placeStone(new Intersection(2, 3), player1);
-        presetBoard.placeStone(new Intersection(2, 2), player2);
+        presetBoard.placeStone(1, 2, player1);
+        presetBoard.placeStone(2, 3, player1);
+        presetBoard.placeStone(2, 2, player2);
         StonePlacementIntent stonePlacementIntent = new StonePlacementIntent(1, 3, new Player("xxx", player2));
         assertThrows(PlacementViolationException.class, () -> Rules.validatePlacementIntent(presetBoard, stonePlacementIntent));
     }
@@ -33,9 +33,9 @@ public class TurnTests {
     @CsvSource({"BLACK,WHITE", "WHITE,BLACK"})
     void whenNorthWestDiagonalViolationShouldThrowException(PlayerColor player1, PlayerColor player2) {
         Board presetBoard = new Board();
-        presetBoard.placeStone(new Intersection(1, 4), player1);
-        presetBoard.placeStone(new Intersection(2, 3), player1);
-        presetBoard.placeStone(new Intersection(1, 3), player2);
+        presetBoard.placeStone(1, 4, player1);
+        presetBoard.placeStone(2, 3, player1);
+        presetBoard.placeStone(1, 3, player2);
         StonePlacementIntent stonePlacementIntent = new StonePlacementIntent(2, 4, new Player("xxx", player2));
         assertThrows(PlacementViolationException.class, () -> Rules.validatePlacementIntent(presetBoard, stonePlacementIntent));
     }
@@ -45,9 +45,9 @@ public class TurnTests {
     @CsvSource({"BLACK,WHITE", "WHITE,BLACK"})
     void whenNorthEstDiagonalViolationShouldThrowException(PlayerColor player1, PlayerColor player2) {
         Board presetBoard = new Board();
-        presetBoard.placeStone(new Intersection(3, 4), player1);
-        presetBoard.placeStone(new Intersection(2, 3), player1);
-        presetBoard.placeStone(new Intersection(2, 4), player2);
+        presetBoard.placeStone(3, 4, player1);
+        presetBoard.placeStone(2, 3, player1);
+        presetBoard.placeStone(2, 4, player2);
         StonePlacementIntent stonePlacementIntent = new StonePlacementIntent(3, 3, new Player("xxx", player2));
         assertThrows(PlacementViolationException.class, () -> Rules.validatePlacementIntent(presetBoard, stonePlacementIntent));
     }
@@ -57,9 +57,9 @@ public class TurnTests {
     @CsvSource({"BLACK,WHITE", "WHITE,BLACK"})
     void whenSouthEstDiagonalViolationShouldThrowException(PlayerColor player1, PlayerColor player2) {
         Board presetBoard = new Board();
-        presetBoard.placeStone(new Intersection(2, 5), player1);
-        presetBoard.placeStone(new Intersection(3, 4), player1);
-        presetBoard.placeStone(new Intersection(3, 5), player2);
+        presetBoard.placeStone(2, 5, player1);
+        presetBoard.placeStone(3, 4, player1);
+        presetBoard.placeStone(3, 5, player2);
         StonePlacementIntent stonePlacementIntent = new StonePlacementIntent(2, 4, new Player("xxx", player2));
         assertThrows(PlacementViolationException.class, () -> Rules.validatePlacementIntent(presetBoard, stonePlacementIntent));
     }
@@ -68,7 +68,7 @@ public class TurnTests {
     void whenIsSecondTurnAndPieRuleAcceptedPlayersShouldSwitchColors() {
         Player player = new Player();
         Board presetBoard = new Board();
-        presetBoard.placeStone(new Intersection(1, 4), PlayerColor.BLACK);
+        presetBoard.placeStone(1, 4, PlayerColor.BLACK);
         Turn turn = new Turn(2, PlayerColor.WHITE);
         GameHandler gameHandler = new GameHandler(player, presetBoard, turn, api);
         IOUtils.redirectScannerToSimulatedInput("Y");
@@ -80,7 +80,7 @@ public class TurnTests {
     void whenIsSecondTurnAndPieRuleNotAcceptedPlayersShouldNotSwitchColors() {
         Player player = new Player();
         Board presetBoard = new Board();
-        presetBoard.placeStone(new Intersection(1, 4), PlayerColor.BLACK);
+        presetBoard.placeStone(1, 4, PlayerColor.BLACK);
         Turn turn = new Turn(2, PlayerColor.WHITE);
         GameHandler gameHandler = new GameHandler(player, presetBoard, turn, api);
         IOUtils.redirectScannerToSimulatedInput("N" + System.lineSeparator() + "6,6" + System.lineSeparator());
@@ -93,11 +93,11 @@ public class TurnTests {
         Board presetBoard = new Board();
         Player whitePlayer = new Player("xxx", PlayerColor.WHITE);
         Turn turn = new Turn(2, PlayerColor.WHITE);
-        presetBoard.placeStone(new Intersection(1, 4), PlayerColor.BLACK);
+        presetBoard.placeStone(1, 4, PlayerColor.BLACK);
         GameHandler gameHandler = new GameHandler(whitePlayer, presetBoard, turn, api);
         IOUtils.redirectScannerToSimulatedInput("N" + System.lineSeparator() + "6,6" + System.lineSeparator());
         gameHandler.playTurn();
-        assertEquals(PlayerColor.WHITE, presetBoard.getStoneColorAt(new Intersection(6, 6)));
+        assertEquals(PlayerColor.WHITE, presetBoard.getStoneColorAt(6, 6));
     }
 
     @Test
@@ -132,7 +132,7 @@ public class TurnTests {
         GameHandler gameHandler = new GameHandler(blackPlayer, board, turn, api);
         IOUtils.redirectScannerToSimulatedInput("2,3");
         gameHandler.playTurn();
-        assertEquals(PlayerColor.BLACK, gameHandler.getBoard().getStoneColorAt(new Intersection(2, 3)));
+        assertEquals(PlayerColor.BLACK, gameHandler.getBoard().getStoneColorAt(2, 3));
     }
 
     @ParameterizedTest

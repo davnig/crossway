@@ -66,7 +66,7 @@ public class GameHandlerTests {
     }
 
     @Test
-    void whenInitGameShouldInitializeTurn() {
+    void whenInitGameShouldSetFirstTurnBlack() {
         Board board = new Board();
         Turn turn = new Turn();
         GameHandler gameHandler = new GameHandler(player, board, turn, api);
@@ -283,8 +283,9 @@ public class GameHandlerTests {
         StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler);
         StonePlacementIntent stonePlacementIntent = new StonePlacementIntent();
         stompMessageHandler.handleFrame(new StompHeaders(), stonePlacementIntent);
-        Intersection intersection = new Intersection(stonePlacementIntent.getRow(), stonePlacementIntent.getColumn());
-        assertEquals(PlayerColor.BLACK, gameHandler.getBoard().getStoneColorAt(intersection));
+        assertEquals(PlayerColor.BLACK,
+                gameHandler.getBoard().getStoneColorAt(stonePlacementIntent.getRow(), stonePlacementIntent.getColumn())
+        );
     }
 
 }
