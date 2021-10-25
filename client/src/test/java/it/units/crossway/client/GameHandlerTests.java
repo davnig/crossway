@@ -12,10 +12,9 @@ import it.units.crossway.client.model.dto.GameDto;
 import it.units.crossway.client.model.dto.PlayerDto;
 import it.units.crossway.client.remote.Api;
 import it.units.crossway.client.remote.StompMessageHandler;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -286,6 +285,16 @@ public class GameHandlerTests {
         assertEquals(PlayerColor.BLACK,
                 gameHandler.getBoard().getStoneColorAt(stonePlacementIntent.getRow(), stonePlacementIntent.getColumn())
         );
+    }
+
+    @Test
+    void whenGameIsCreatedAndJoinGameIsReceivedThenGameShouldStart() {
+        Assertions.fail();
+    }
+
+    @Test
+    void whenGameIsStartedAndQuitGameIsReceivedThenShouldQuitGame() {
+        Assertions.fail();
     }
 
 }

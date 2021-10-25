@@ -121,6 +121,7 @@ public class GameHandler {
         GameDto gameDto = api.createGame(new GameCreationIntent(player.getNickname()));
         this.uuid = gameDto.getUuid();
         player.setColor(PlayerColor.BLACK);
+        // todo: wait for someone to join the game
     }
 
     private void joinExistingGame() {
