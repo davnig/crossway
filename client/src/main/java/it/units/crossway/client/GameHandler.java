@@ -90,6 +90,7 @@ public class GameHandler {
 
     void startGame() {
         System.out.println("Game start!!");
+        System.out.println("You play as " + player.getColor());
         turn.initFirstTurn();
         playTurnIfSupposedTo();
     }
