@@ -21,7 +21,7 @@ public class Rules {
         return turn.getTurnNumber() == 2;
     }
 
-    public static boolean isWinValidTurn(Turn turn) {
+    public static boolean couldExistsWinner(Turn turn) {
         return turn.getTurnNumber() >= 19;
     }
 

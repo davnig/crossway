@@ -91,26 +91,8 @@ public class GameHandler {
     void startGame() {
         System.out.println("Game start!!");
         turn.initFirstTurn();
-        if (isPlayerTurn()) {
-            playTurn();
-        } else {
-            System.out.println("Waiting for opponent move...");
-        }
+        playTurnIfSupposedTo();
     }
-
-//    void playGame() {
-//        while (true) {
-//            try {
-//                IOUtils.clearCLI();
-//            } catch (IOException | InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            IOUtils.printBoard(board);
-//            IOUtils.printCurrentPlayer(turn);
-//            IOUtils.printAskNextMove();
-//            playTurn();
-//        }
-//    }
 
     void playTurn() {
         if (Rules.isPieRuleTurn(turn) && IOUtils.isPieRuleRequested()) {
@@ -119,7 +101,19 @@ public class GameHandler {
             return;
         }
         createAndSendStonePlacementIntent();
-        endTurnChecks();
+        checkWinIfCouldExist();
+    }
+
+    public void playTurnIfSupposedTo() {
+        if (isPlayerTurn()) {
+            playTurn();
+        } else {
+            System.out.println("Waiting for opponent move...");
+        }
+    }
+
+    public void endTurn() {
+        turn.nextTurn();
     }
 
     private void createNewGame() {
@@ -165,7 +159,7 @@ public class GameHandler {
         });
     }
 
-    public void createAndSendStonePlacementIntent() {
+    private void createAndSendStonePlacementIntent() {
         StonePlacementIntent stonePlacementIntent = getValidStonePlacementIntent();
         api.placeStone(uuid, new StonePlacementIntentDto(stonePlacementIntent));
     }
@@ -182,8 +176,8 @@ public class GameHandler {
         }
     }
 
-    private void endTurnChecks() {
-        if (Rules.isWinValidTurn(turn) && Rules.checkWin(board, turn.getTurnColor())) {
+    private void checkWinIfCouldExist() {
+        if (Rules.couldExistsWinner(turn) && Rules.checkWin(board, turn.getTurnColor())) {
             endGame();
         }
     }

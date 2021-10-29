@@ -3,6 +3,7 @@ package it.units.crossway.client;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
@@ -10,6 +11,7 @@ import it.units.crossway.client.model.*;
 import it.units.crossway.client.model.dto.GameCreationIntent;
 import it.units.crossway.client.model.dto.GameDto;
 import it.units.crossway.client.model.dto.PlayerDto;
+import it.units.crossway.client.model.dto.StonePlacementIntentDto;
 import it.units.crossway.client.remote.Api;
 import it.units.crossway.client.remote.StompMessageHandler;
 import org.junit.jupiter.api.*;
@@ -29,7 +31,8 @@ import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GameHandlerTests {
 
@@ -318,7 +321,7 @@ public class GameHandlerTests {
     @Test
     void whenStonePlacementIntentIsReceivedThenBoardShouldBeUpdated() {
         Board board = new Board();
-        Player player = new Player("playerW", PlayerColor.WHITE);
+        Player player = new Player("playerB", PlayerColor.BLACK);
         Turn turn = new Turn(3, PlayerColor.BLACK);
         GameHandler gameHandler = new GameHandler(player, board, turn, api);
         StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler);
@@ -331,22 +334,61 @@ public class GameHandlerTests {
 
     @Test
     void whenStonePlacementIntentIsReceivedShouldGoToNextTurn() {
-        fail();
+        Board board = new Board();
+        Player player = new Player("playerW", PlayerColor.WHITE);
+        Turn turn = new Turn(4, PlayerColor.WHITE);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler);
+        StonePlacementIntent stonePlacementIntent = new StonePlacementIntent();
+        stompMessageHandler.handleFrame(new StompHeaders(), stonePlacementIntent);
+        assertEquals(5, gameHandler.getTurn().getTurnNumber());
+        assertEquals(PlayerColor.BLACK, gameHandler.getTurn().getTurnColor());
     }
 
     @Test
     void givenBlackPlayerWhenGameStartsShouldPlayTurn() {
-        fail();
+        Api api = buildAndReturnFeignClient();
+        Board board = new Board();
+        Player player = new Player("playerB", PlayerColor.BLACK);
+        Turn turn = new Turn(3, PlayerColor.BLACK);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
+        IOUtils.redirectScannerToSimulatedInput("6,6" + System.lineSeparator());
+        wireMockServer.stubFor(post(anyUrl()));
+        gameHandler.startGame();
+        assertTrue(byteArrayOutputStream.toString().contains("Insert a valid placement for your stone..."));
     }
 
     @Test
     void givenWhitePlayerWhenGameStartsShouldWaitForOpponentMove() {
-        fail();
+        Api api = buildAndReturnFeignClient();
+        Board board = new Board();
+        Player player = new Player("playerW", PlayerColor.WHITE);
+        Turn turn = new Turn(3, PlayerColor.BLACK);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        String uuid = UUID.randomUUID().toString();
+        gameHandler.setUuid(uuid);
+        ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
+        gameHandler.startGame();
+        assertTrue(byteArrayOutputStream.toString().contains("Waiting for opponent move..."));
     }
 
     @Test
-    void whenPlayTurnShouldSendStonePlacementIntentReq() {
-        fail();
+    void whenPlayTurnShouldSendStonePlacementIntentReq() throws JsonProcessingException {
+        Api api = buildAndReturnFeignClient();
+        Board board = new Board();
+        Player player = new Player("playerB", PlayerColor.BLACK);
+        Turn turn = new Turn(3, PlayerColor.BLACK);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        String uuid = UUID.randomUUID().toString();
+        gameHandler.setUuid(uuid);
+        IOUtils.redirectScannerToSimulatedInput("6,6" + System.lineSeparator());
+        UrlPattern urlPattern = urlEqualTo("/games/" + uuid + "/play");
+        StonePlacementIntentDto body = new StonePlacementIntentDto(6, 6, player.getNickname());
+        String jsonBody = new ObjectMapper().writeValueAsString(body);
+        wireMockServer.stubFor(post(urlPattern).withRequestBody(equalToJson(jsonBody)));
+        gameHandler.startGame();
+        wireMockServer.verify(1, postRequestedFor(urlPattern).withRequestBody(equalToJson(jsonBody)));
     }
 
     @Test
