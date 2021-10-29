@@ -1,9 +1,10 @@
 package it.units.crossway.client;
 
+import it.units.crossway.client.exception.PlacementViolationException;
 import it.units.crossway.client.model.Board;
 import it.units.crossway.client.model.Player;
 import it.units.crossway.client.model.PlayerColor;
-import it.units.crossway.client.model.Turn;
+import it.units.crossway.client.model.StonePlacementIntent;
 import it.units.crossway.client.remote.Api;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,21 +13,60 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class RulesTests {
 
     @Mock
     private Api api;
 
-    @Test
-    void whenStoneIsPlacedThenBoardShouldNotBeEmpty() {
-        Player blackPlayer = new Player("xxx", PlayerColor.BLACK);
-        Turn turn = new Turn(1, PlayerColor.BLACK);
-        Board board = new Board();
-        GameHandler gameHandler = new GameHandler(blackPlayer, board, turn, api);
-        IOUtils.redirectScannerToSimulatedInput("1,1" + System.getProperty("line.separator"));
-        gameHandler.placeStone();
-        Assertions.assertFalse(gameHandler.getBoard().isBoardEmpty());
-        Assertions.assertEquals(PlayerColor.BLACK, gameHandler.getBoard().getStoneColorAt(1, 1));
+
+    //test south-west violation
+    @ParameterizedTest
+    @CsvSource({"BLACK,WHITE", "WHITE,BLACK"})
+    void whenSouthWestDiagonalViolationShouldThrowException(PlayerColor player1, PlayerColor player2) {
+        Board presetBoard = new Board();
+        presetBoard.placeStone(1, 2, player1);
+        presetBoard.placeStone(2, 3, player1);
+        presetBoard.placeStone(2, 2, player2);
+        StonePlacementIntent stonePlacementIntent = new StonePlacementIntent(1, 3, new Player("xxx", player2));
+        assertThrows(PlacementViolationException.class, () -> Rules.validatePlacementIntent(presetBoard, stonePlacementIntent));
+    }
+
+    //test north-west violation
+    @ParameterizedTest
+    @CsvSource({"BLACK,WHITE", "WHITE,BLACK"})
+    void whenNorthWestDiagonalViolationShouldThrowException(PlayerColor player1, PlayerColor player2) {
+        Board presetBoard = new Board();
+        presetBoard.placeStone(1, 4, player1);
+        presetBoard.placeStone(2, 3, player1);
+        presetBoard.placeStone(1, 3, player2);
+        StonePlacementIntent stonePlacementIntent = new StonePlacementIntent(2, 4, new Player("xxx", player2));
+        assertThrows(PlacementViolationException.class, () -> Rules.validatePlacementIntent(presetBoard, stonePlacementIntent));
+    }
+
+    //test north-east violation
+    @ParameterizedTest
+    @CsvSource({"BLACK,WHITE", "WHITE,BLACK"})
+    void whenNorthEstDiagonalViolationShouldThrowException(PlayerColor player1, PlayerColor player2) {
+        Board presetBoard = new Board();
+        presetBoard.placeStone(3, 4, player1);
+        presetBoard.placeStone(2, 3, player1);
+        presetBoard.placeStone(2, 4, player2);
+        StonePlacementIntent stonePlacementIntent = new StonePlacementIntent(3, 3, new Player("xxx", player2));
+        assertThrows(PlacementViolationException.class, () -> Rules.validatePlacementIntent(presetBoard, stonePlacementIntent));
+    }
+
+    //test south-east violation
+    @ParameterizedTest
+    @CsvSource({"BLACK,WHITE", "WHITE,BLACK"})
+    void whenSouthEstDiagonalViolationShouldThrowException(PlayerColor player1, PlayerColor player2) {
+        Board presetBoard = new Board();
+        presetBoard.placeStone(2, 5, player1);
+        presetBoard.placeStone(3, 4, player1);
+        presetBoard.placeStone(3, 5, player2);
+        StonePlacementIntent stonePlacementIntent = new StonePlacementIntent(2, 4, new Player("xxx", player2));
+        assertThrows(PlacementViolationException.class, () -> Rules.validatePlacementIntent(presetBoard, stonePlacementIntent));
     }
 
     @ParameterizedTest
@@ -120,6 +160,13 @@ public class RulesTests {
         presetBoard.placeStone(2, 19, PlayerColor.WHITE);
         IOUtils.printBoard(presetBoard);
         Assertions.assertTrue(Rules.checkWin(presetBoard, PlayerColor.WHITE));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"-1, -1", "30, 30", "-1, 30", "30, -1"})
+    void whenPlacementIsOutsideOfBoardShouldThrowException(int row, int column) {
+        StonePlacementIntent stonePlacementIntent = new StonePlacementIntent(row, column, new Player("xxx", PlayerColor.WHITE));
+        assertThrows(PlacementViolationException.class, () -> Rules.validatePlacementIntent(new Board(), stonePlacementIntent));
     }
 
 }

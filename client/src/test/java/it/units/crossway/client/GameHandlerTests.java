@@ -29,13 +29,10 @@ import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GameHandlerTests {
 
-    @Mock
-    private Player player;
     @Mock
     private Api api;
     private static WireMockServer wireMockServer;
@@ -64,13 +61,58 @@ public class GameHandlerTests {
                 .target(Api.class, "http://localhost:9111");
     }
 
+//    @Test
+//    void whenInitGameShouldSetFirstTurnBlack() {
+//        Board board = new Board();
+//        Turn turn = new Turn();
+//        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+//        gameHandler.initGame();
+//        assertEquals(gameHandler.getTurn(), new Turn(1, PlayerColor.BLACK));
+//    }
+
     @Test
-    void whenInitGameShouldSetFirstTurnBlack() {
+    void givenWhitePlayerWhenIsSecondTurnShouldAskForPieRule() {
+        Api api = buildAndReturnFeignClient();
+        Player player = new Player("whiteP", PlayerColor.WHITE);
         Board board = new Board();
-        Turn turn = new Turn();
+        Turn turn = new Turn(2, PlayerColor.WHITE);
         GameHandler gameHandler = new GameHandler(player, board, turn, api);
-        gameHandler.initGame();
-        assertEquals(gameHandler.getTurn(), new Turn(1, PlayerColor.BLACK));
+        ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
+        String input = "N" + System.lineSeparator() + "6,6" + System.lineSeparator();
+        IOUtils.scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));
+        wireMockServer.stubFor(post(anyUrl()));
+        gameHandler.playTurn();
+        assertTrue(byteArrayOutputStream.toString().contains("Do you Want to switch colors? Y-yes N-No"));
+    }
+
+    @Test
+    void givenWhitePlayerWhenIsSecondTurnAndPieRuleAcceptedPlayerAndTurnColorShouldBecomeBlack() {
+        Api api = buildAndReturnFeignClient();
+        wireMockServer.stubFor(post(anyUrl()));
+        Player player = new Player("whiteP", PlayerColor.WHITE);
+        Board board = new Board();
+        board.placeStone(1, 4, PlayerColor.BLACK);
+        Turn turn = new Turn(2, PlayerColor.WHITE);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        IOUtils.redirectScannerToSimulatedInput("Y" + System.lineSeparator());
+        gameHandler.playTurn();
+        assertEquals(PlayerColor.BLACK, gameHandler.getTurn().getTurnColor());
+        assertEquals(PlayerColor.BLACK, gameHandler.getPlayer().getColor());
+    }
+
+    @Test
+    void whenIsSecondTurnAndPieRuleNotAcceptedPlayersShouldAskForStonePlacement() {
+        Api api = buildAndReturnFeignClient();
+        wireMockServer.stubFor(post(anyUrl()));
+        Player player = new Player("whiteP", PlayerColor.WHITE);
+        Board board = new Board();
+        Turn turn = new Turn(2, PlayerColor.WHITE);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
+        IOUtils.redirectScannerToSimulatedInput("N" + System.lineSeparator() + "6,6" + System.lineSeparator());
+        gameHandler.playTurn();
+        assertTrue(byteArrayOutputStream.toString().contains("Insert a valid placement for your stone..."));
+        assertEquals(PlayerColor.WHITE, gameHandler.getPlayer().getColor());
     }
 
     @Test
@@ -285,6 +327,26 @@ public class GameHandlerTests {
         assertEquals(PlayerColor.BLACK,
                 gameHandler.getBoard().getStoneColorAt(stonePlacementIntent.getRow(), stonePlacementIntent.getColumn())
         );
+    }
+
+    @Test
+    void whenStonePlacementIntentIsReceivedShouldGoToNextTurn() {
+        fail();
+    }
+
+    @Test
+    void givenBlackPlayerWhenGameStartsShouldPlayTurn() {
+        fail();
+    }
+
+    @Test
+    void givenWhitePlayerWhenGameStartsShouldWaitForOpponentMove() {
+        fail();
+    }
+
+    @Test
+    void whenPlayTurnShouldSendStonePlacementIntentReq() {
+        fail();
     }
 
     @Test

@@ -4,7 +4,9 @@ import it.units.crossway.client.model.*;
 import lombok.Data;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Scanner;
 
 @Data
@@ -16,13 +18,19 @@ public class IOUtils {
 		scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));
 	}
 
+	public static ByteArrayOutputStream redirectSystemOutToByteArrayOS() {
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		System.setOut(new PrintStream(byteArrayOutputStream));
+		return byteArrayOutputStream;
+	}
+
 	public static void printCurrentPlayer(Turn turn) {
-		String currentPlayer = turn.getCurrentPlayer().toString();
+		String currentPlayer = turn.getTurnColor().toString();
 		System.out.println("It is the turn of the " + currentPlayer + " player!");
 	}
 
 	public static void printAskNextMove() {
-		System.out.println("insert a valid placement for your stone...");
+		System.out.println("Insert a valid placement for your stone...");
 	}
 
     public static String getInputLine() {
@@ -54,7 +62,7 @@ public class IOUtils {
 	}
 
 	public static void printWinner(Turn turn) {
-		String currentPlayer = turn.getCurrentPlayer().toString();
+		String currentPlayer = turn.getTurnColor().toString();
 		System.out.println(currentPlayer + " has won!!!!");
 	}
 
@@ -97,6 +105,7 @@ public class IOUtils {
 	}
 
 	public static StonePlacementIntent getStonePlacementIntentFromInput(Player player) {
+		printAskNextMove();
 		String input = IOUtils.getInputLine();
 		int row = IOUtils.getIntRowFromPlayerInput(input);
 		int column = IOUtils.getIntColumnFromPlayerInput(input);

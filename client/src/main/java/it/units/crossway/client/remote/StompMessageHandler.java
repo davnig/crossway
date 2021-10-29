@@ -30,7 +30,7 @@ public class StompMessageHandler implements StompFrameHandler {
         gameHandler.getBoard().placeStone(
                 stonePlacementIntent.getRow(),
                 stonePlacementIntent.getColumn(),
-                gameHandler.getTurn().getCurrentPlayer()
+                gameHandler.getTurn().getTurnColor()
         );
     }
 }

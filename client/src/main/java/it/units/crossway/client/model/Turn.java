@@ -12,38 +12,36 @@ import org.springframework.stereotype.Component;
 public class Turn {
 
     private int turnNumber;
-    private PlayerColor currentPlayer;
+    private PlayerColor turnColor;
 
     public void initFirstTurn() {
         turnNumber = 1;
-        currentPlayer = PlayerColor.BLACK;
+        turnColor = PlayerColor.BLACK;
         printTurnInfo();
     }
 
     public void nextTurn() {
         turnNumber++;
-        switchCurrentPlayer();
+        switchTurnColor();
         printTurnInfo();
     }
 
-    public void switchCurrentPlayer() {
-        currentPlayer = getCurrentPlayerOpponent();
-    }
-
-    public void applyPieRule() {
-        switchCurrentPlayer();
-        nextTurn();
+    public void switchTurnColor() {
+        turnColor = getCurrentPlayerOpponent();
     }
 
     public PlayerColor getCurrentPlayerOpponent() {
-        switch (currentPlayer) {
-            case BLACK: return PlayerColor.WHITE;
-            case WHITE: return PlayerColor.BLACK;
-            default: return PlayerColor.NONE;
+        switch (turnColor) {
+            case BLACK:
+                return PlayerColor.WHITE;
+            case WHITE:
+                return PlayerColor.BLACK;
+            default:
+                return PlayerColor.NONE;
         }
     }
 
     private void printTurnInfo() {
-        System.out.printf("Turn %d: %s plays%n", turnNumber, currentPlayer);
+        System.out.printf("Turn %d: %s plays%n", turnNumber, turnColor);
     }
 }

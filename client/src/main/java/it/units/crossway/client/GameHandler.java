@@ -5,6 +5,7 @@ import it.units.crossway.client.model.*;
 import it.units.crossway.client.model.dto.GameCreationIntent;
 import it.units.crossway.client.model.dto.GameDto;
 import it.units.crossway.client.model.dto.PlayerDto;
+import it.units.crossway.client.model.dto.StonePlacementIntentDto;
 import it.units.crossway.client.remote.Api;
 import it.units.crossway.client.remote.StompMessageHandler;
 import lombok.Data;
@@ -20,7 +21,6 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -51,17 +51,11 @@ public class GameHandler {
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
     }
 
-    public void play() {
-        initGame();
+    public void init() {
+        System.out.println("Welcome to crossway! \n");
         chooseNickname();
         chooseGameType();
         subscribeToTopic();
-        playGame();
-    }
-
-    void initGame() {
-        System.out.println("Welcome to crossway! \n");
-        turn.initFirstTurn();
     }
 
     void chooseNickname() {
@@ -87,34 +81,45 @@ public class GameHandler {
         } while ((!choice.equals(NEW_GAME_CHOICE)) && (!choice.equals(JOIN_GAME_CHOICE)));
         if (choice.equals(NEW_GAME_CHOICE)) {
             createNewGame();
+            System.out.println("Waiting for an opponent...");
         } else {
             joinExistingGame();
+            startGame();
         }
     }
 
-    void playGame() {
+    void startGame() {
         System.out.println("Game start!!");
-        while (true) {
-            try {
-                IOUtils.clearCLI();
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
-            IOUtils.printBoard(board);
-            IOUtils.printCurrentPlayer(turn);
-            IOUtils.printAskNextMove();
+        turn.initFirstTurn();
+        if (isPlayerTurn()) {
             playTurn();
+        } else {
+            System.out.println("Waiting for opponent move...");
         }
     }
+
+//    void playGame() {
+//        while (true) {
+//            try {
+//                IOUtils.clearCLI();
+//            } catch (IOException | InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            IOUtils.printBoard(board);
+//            IOUtils.printCurrentPlayer(turn);
+//            IOUtils.printAskNextMove();
+//            playTurn();
+//        }
+//    }
 
     void playTurn() {
         if (Rules.isPieRuleTurn(turn) && IOUtils.isPieRuleRequested()) {
-            turn.applyPieRule();
+            player.setColor(PlayerColor.BLACK);
+            turn.setTurnColor(PlayerColor.BLACK);
             return;
         }
-        placeStone();
+        createAndSendStonePlacementIntent();
         endTurnChecks();
-        turn.nextTurn();
     }
 
     private void createNewGame() {
@@ -160,14 +165,9 @@ public class GameHandler {
         });
     }
 
-    public void placeStone() {
+    public void createAndSendStonePlacementIntent() {
         StonePlacementIntent stonePlacementIntent = getValidStonePlacementIntent();
-        board.placeStone(
-                stonePlacementIntent.getRow(),
-                stonePlacementIntent.getColumn(),
-                stonePlacementIntent.getPlayer().getColor()
-        );
-        // todo: send to server
+        api.placeStone(uuid, new StonePlacementIntentDto(stonePlacementIntent));
     }
 
     private StonePlacementIntent getValidStonePlacementIntent() {
@@ -183,7 +183,7 @@ public class GameHandler {
     }
 
     private void endTurnChecks() {
-        if (Rules.isWinValidTurn(turn) && Rules.checkWin(board, turn.getCurrentPlayer())) {
+        if (Rules.isWinValidTurn(turn) && Rules.checkWin(board, turn.getTurnColor())) {
             endGame();
         }
     }
@@ -191,6 +191,10 @@ public class GameHandler {
     private void endGame() {
         IOUtils.printWinner(turn);
         System.exit(0);
+    }
+
+    private boolean isPlayerTurn() {
+        return player.getColor().equals(turn.getTurnColor());
     }
 
 }

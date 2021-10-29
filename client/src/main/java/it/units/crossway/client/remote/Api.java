@@ -4,7 +4,7 @@ import feign.Response;
 import it.units.crossway.client.model.dto.GameCreationIntent;
 import it.units.crossway.client.model.dto.GameDto;
 import it.units.crossway.client.model.dto.PlayerDto;
-import it.units.crossway.client.model.dto.StonePlacementIntent;
+import it.units.crossway.client.model.dto.StonePlacementIntentDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +29,6 @@ public interface Api {
     GameDto joinGame(@PathVariable String uuid, @RequestBody PlayerDto playerDto);
 
     @RequestMapping(method = RequestMethod.POST, value = "/games/{uuid}/play")
-    Response placeStone(@PathVariable String uuid, @RequestBody StonePlacementIntent stonePlacementIntent);
+    Response placeStone(@PathVariable String uuid, @RequestBody StonePlacementIntentDto stonePlacementIntentDto);
 
 }
