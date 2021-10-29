@@ -19,6 +19,7 @@ import java.util.UUID;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -108,8 +109,8 @@ public class IntegrationTests {
         game.setBlackPlayerNickname("blackP");
         game.setGameStatus(GameStatus.CREATED);
         gameRepository.save(game);
-        mvc.perform(get("/games/new"))
-//                .andDo(print())
+        mvc.perform(get("/games/available"))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].whitePlayerNickname", is("whiteP")));

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class GameDto {
 
     private String uuid;
-    private String whitePlayer;
-    private String blackPlayer;
+    private String whitePlayerNickname;
+    private String blackPlayerNickname;
 
 }

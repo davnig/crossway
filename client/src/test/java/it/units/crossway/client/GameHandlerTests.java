@@ -165,7 +165,7 @@ public class GameHandlerTests {
         availableGames.add(gameDto1);
         availableGames.add(gameDto2);
         String jsonAvailableGames = om.writeValueAsString(availableGames);
-        wireMockServer.stubFor(get(urlEqualTo("/games"))
+        wireMockServer.stubFor(get(urlEqualTo("/games/available"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withBody(jsonAvailableGames)));
@@ -176,7 +176,7 @@ public class GameHandlerTests {
         String input = "2" + System.lineSeparator() + "0" + System.lineSeparator();
         IOUtils.redirectScannerToSimulatedInput(input);
         gameHandler.chooseGameType();
-        wireMockServer.verify(1, getRequestedFor(urlEqualTo("/games")));
+        wireMockServer.verify(1, getRequestedFor(urlEqualTo("/games/available")));
     }
 
     @Test
@@ -195,7 +195,7 @@ public class GameHandlerTests {
         availableGames.add(gameDto1);
         availableGames.add(gameDto2);
         String jsonAvailableGames = om.writeValueAsString(availableGames);
-        wireMockServer.stubFor(get(urlEqualTo("/games"))
+        wireMockServer.stubFor(get(urlEqualTo("/games/available"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withBody(jsonAvailableGames)));
@@ -228,7 +228,7 @@ public class GameHandlerTests {
         availableGames.add(gameDto1);
         availableGames.add(gameDto2);
         String jsonAvailableGames = om.writeValueAsString(availableGames);
-        wireMockServer.stubFor(get(urlEqualTo("/games"))
+        wireMockServer.stubFor(get(urlEqualTo("/games/available"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withBody(jsonAvailableGames)));
@@ -258,7 +258,7 @@ public class GameHandlerTests {
         availableGames.add(gameDto1);
         availableGames.add(gameDto2);
         String jsonAvailableGames = om.writeValueAsString(availableGames);
-        wireMockServer.stubFor(get(urlEqualTo("/games"))
+        wireMockServer.stubFor(get(urlEqualTo("/games/available"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withBody(jsonAvailableGames)));

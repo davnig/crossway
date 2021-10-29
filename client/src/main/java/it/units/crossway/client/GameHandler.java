@@ -144,7 +144,7 @@ public class GameHandler {
         System.out.println("choose from the list of available games:");
         IntStream.range(0, allAvailableGames.size())
                 .forEach(i ->
-                        System.out.println(i + " -> opponent is " + allAvailableGames.get(i).getBlackPlayer())
+                        System.out.println(i + " -> opponent is " + allAvailableGames.get(i).getBlackPlayerNickname())
                 );
         return allAvailableGames;
     }

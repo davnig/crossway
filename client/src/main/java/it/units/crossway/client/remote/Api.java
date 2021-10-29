@@ -16,7 +16,7 @@ import java.util.List;
 @FeignClient(name = "api", url = "http://localhost:9111")
 public interface Api {
 
-    @RequestMapping(method = RequestMethod.GET, value = "/games")
+    @RequestMapping(method = RequestMethod.GET, value = "/games/available")
     List<GameDto> getAllAvailableGames();
 
     @RequestMapping(method = RequestMethod.POST, value = "/players")

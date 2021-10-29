@@ -25,7 +25,7 @@ public class GameController {
         return ResponseEntity.ok(gameService.getGameByUuid(uuid));
     }
 
-    @GetMapping("/new")
+    @GetMapping("/available")
     public ResponseEntity<List<GameDto>> getAllAvailableGames() {
         return ResponseEntity.ok(gameService.getAllAvailableGames());
     }
