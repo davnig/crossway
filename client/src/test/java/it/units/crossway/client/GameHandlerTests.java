@@ -15,8 +15,6 @@ import it.units.crossway.client.model.dto.StonePlacementIntentDto;
 import it.units.crossway.client.remote.Api;
 import it.units.crossway.client.remote.StompMessageHandler;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -390,6 +388,16 @@ public class GameHandlerTests {
         wireMockServer.stubFor(post(urlPattern).withRequestBody(equalToJson(jsonBody)));
         gameHandler.startGame();
         wireMockServer.verify(1, postRequestedFor(urlPattern).withRequestBody(equalToJson(jsonBody)));
+    }
+
+    @Test
+    void whenChooseNicknameAlreadyUsedShouldWarnAndAskForNickname() {
+        Assertions.fail();
+    }
+
+    @Test
+    void whenStonePlacementIntentIsNotValidShouldWarnAndAskForNewPlacement() {
+        Assertions.fail();
     }
 
 }
