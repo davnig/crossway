@@ -67,18 +67,41 @@ public class IOUtils {
 	}
 
 	public static void printBoard(Board board) {
-		printRowSeparator(board);
+		printRowSeparator();
 		for (int row = Board.FIRST_ROW; row <= Board.LAST_ROW; row++) {
+			System.out.print(row);
+			if (row < 10) {
+				System.out.print("  ");
+			}
+			else {
+				System.out.print(" ");
+			}
 			printRow(board, row);
 		}
-		printRowSeparator(board);
+		printRowSeparator();
+		printColumnEnumeration();
 	}
 
-	private static void printRowSeparator(Board board) {
-		System.out.print("-");
+	private static void printColumnEnumeration() {
+		System.out.print("     ");
+		for (int col = Board.FIRST_ROW; col <= Board.LAST_ROW; col++) {
+			System.out.print(col);
+			if(col < 10) {
+				System.out.print("   ");
+			}
+			else {
+				System.out.print("  ");
+			}
+		}
+		System.out.println();
+	}
+
+	private static void printRowSeparator() {
+		System.out.print("   -");
 		for (int col = Board.FIRST_ROW; col <= Board.LAST_ROW; col++) {
 			System.out.print("----");
 		}
+		System.out.print(" ");
 		System.out.println();
 	}
 
@@ -86,7 +109,7 @@ public class IOUtils {
 		for (int col = Board.FIRST_ROW; col <= Board.LAST_ROW; col++) {
 			System.out.print("| " + getPrintSymbolForIntersection(board, row, col) + " ");
 		}
-		System.out.println("|");
+		System.out.println("| ");
 	}
 
 	private static String getPrintSymbolForIntersection(Board board, int row, int column) {

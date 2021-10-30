@@ -23,14 +23,13 @@ public class InputOutputTests {
     @Test
     void print2x2EmptyBoard() {
         String board2x2 =
-                "---------" + System.lineSeparator() +
-                        "|   |   |" + System.lineSeparator() +
-                        "|   |   |" + System.lineSeparator() +
-                        "---------" + System.lineSeparator();
+                        "   --------- " + System.lineSeparator() +
+                        "1  |   |   | " + System.lineSeparator() +
+                        "2  |   |   | " + System.lineSeparator() +
+                        "   --------- " + System.lineSeparator() +
+                        "     1   2   " + System.lineSeparator();
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(baos);
-        System.setOut(ps);
+        ByteArrayOutputStream baos = IOUtils.redirectSystemOutToByteArrayOS();
 
         Board board = new Board();
         Board.LAST_COLUMN = 2;
