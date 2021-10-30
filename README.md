@@ -1,3 +1,3 @@
 # Crossway multiplayer game
 
-This is a simple multiplayer version of the Crossway game.
+This is a simple command-line multiplayer version of the Crossway game.

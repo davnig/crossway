@@ -3,3 +3,5 @@ spring:
     active: dev
 
 server.port: 0
+
+ws-endpoint: ws://localhost:9111/endpoint
