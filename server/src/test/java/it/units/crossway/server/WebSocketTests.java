@@ -147,7 +147,6 @@ public class WebSocketTests {
                                     .content(om.writeValueAsString(whiteP))
                                     .contentType(MediaType.APPLICATION_JSON))
                             .andReturn();
-                    System.out.println(mvcResult[0].getResponse().getContentAsString());
                 } catch (Exception e) {
                     System.err.println(e.getMessage());
                 }
@@ -158,6 +157,56 @@ public class WebSocketTests {
         assertNotNull(responseHeaders);
         assertTrue(responseHeaders.containsKey("join-event"));
         assertEquals(whiteP.getNickname(), responseHeaders.getFirst("join-event"));
+        assertEquals(200, mvcResult[0].getResponse().getStatus());
+    }
+
+    @Test
+    void when_winGame_should_sendMessageToSubscribedClients() throws InterruptedException {
+        BlockingQueue<StompHeaders> blockingQueue = new ArrayBlockingQueue<>(1);
+        String uuid = UUID.randomUUID().toString();
+        Player whiteP = new Player("whiteP");
+        Player blackP = new Player("blackP");
+        Game game = new Game();
+        game.setUuid(uuid);
+        game.setWhitePlayerNickname(whiteP.getNickname());
+        game.setBlackPlayerNickname(blackP.getNickname());
+        game.setGameStatus(GameStatus.IN_PROGRESS);
+        gameRepository.save(game);
+        PlayerDto playerDto = new PlayerDto(whiteP.getNickname());
+        final MvcResult[] mvcResult = new MvcResult[1];
+        StompSessionHandler stompSessionHandler = new StompSessionHandlerAdapter() {
+            @Override
+            public void afterConnected(StompSession session, @NonNull StompHeaders connectedHeaders) {
+                session.subscribe("/topic/" + uuid, new StompFrameHandler() {
+                    @Override
+                    @NonNull
+                    public Type getPayloadType(@NonNull StompHeaders headers) {
+                        return StonePlacementIntent.class;
+                    }
+
+                    @Override
+                    public void handleFrame(@NonNull StompHeaders headers, Object payload) {
+                        blockingQueue.add(headers);
+                    }
+                });
+                ObjectMapper om = new ObjectMapper();
+                try {
+                    mvcResult[0] = mvc.perform(put("/games/{uuid}/win", uuid)
+                                    .content(om.writeValueAsString(playerDto))
+                                    .contentType(MediaType.APPLICATION_JSON))
+                            .andReturn();
+                    System.out.println(mvcResult[0].getResponse().getContentAsString());
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                }
+            }
+        };
+        stompClient.connect(getWsEndpoint(), stompSessionHandler);
+        // block until available or expired timeout
+        StompHeaders responseHeaders = blockingQueue.poll(2, TimeUnit.SECONDS);
+        assertNotNull(responseHeaders);
+        assertTrue(responseHeaders.containsKey("win-event"));
+        assertEquals(whiteP.getNickname(), responseHeaders.getFirst("win-event"));
         assertEquals(200, mvcResult[0].getResponse().getStatus());
     }
 

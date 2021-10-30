@@ -62,7 +62,15 @@ public class GameService {
         MessageHeaderAccessor accessor = new MessageHeaderAccessor();
         accessor.setHeader("join-event", playerDto.getNickname());
         simpMessagingTemplate.convertAndSend("/topic/" + gameToJoin.getUuid(), "", accessor.getMessageHeaders());
-        return new GameDto(gameToJoin);
+        return new GameDto(gameRepository.save(gameToJoin));
+    }
+
+    @Transactional
+    public void winGame(String uuid, PlayerDto playerDto) {
+        deleteGame(uuid);
+        MessageHeaderAccessor accessor = new MessageHeaderAccessor();
+        accessor.setHeader("win-event", playerDto.getNickname());
+        simpMessagingTemplate.convertAndSend("/topic/" + uuid, "", accessor.getMessageHeaders());
     }
 
     @Transactional

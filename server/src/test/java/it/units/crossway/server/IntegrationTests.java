@@ -152,4 +152,21 @@ public class IntegrationTests {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    void when_winGame_shouldDeleteGame() throws Exception {
+        Game game = new Game();
+        String uuid = UUID.randomUUID().toString();
+        game.setUuid(uuid);
+        gameRepository.save(game);
+        PlayerDto playerDto = new PlayerDto("xxx");
+        ObjectMapper om = new ObjectMapper();
+        mvc.perform(put("/games/{uuid}/win", uuid)
+                        .content(om.writeValueAsString(playerDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+//                .andDo(print())
+                .andExpect(status().isOk());
+        mvc.perform(get("/games/{uuid}", uuid))
+                .andExpect(status().isNotFound());
+    }
+
 }

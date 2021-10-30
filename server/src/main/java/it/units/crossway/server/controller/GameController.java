@@ -46,6 +46,12 @@ public class GameController {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/{uuid}/win")
+    public ResponseEntity<Void> winGame(@PathVariable String uuid, @RequestBody PlayerDto playerDto) {
+        gameService.winGame(uuid, playerDto);
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Void> deleteGame(@PathVariable String uuid) {
         gameService.deleteGame(uuid);
