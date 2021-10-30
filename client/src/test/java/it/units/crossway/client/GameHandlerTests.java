@@ -454,7 +454,6 @@ public class GameHandlerTests {
         StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler);
         StompHeaders stompHeaders = new StompHeaders();
         stompHeaders.set("win-event", "playerW");
-        PrintStream out = System.out;
         ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
         stompMessageHandler.handleFrame(stompHeaders, "");
         assertTrue(byteArrayOutputStream.toString().contains("You lose :(\nplayerW win"));
