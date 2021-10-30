@@ -12,9 +12,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiFunction;
 
-/**
- * This class contains all the game rules logic
- */
 public class Rules {
 
     public static boolean isPieRuleTurn(Turn turn) {
@@ -22,7 +19,7 @@ public class Rules {
     }
 
     public static boolean couldExistsWinner(Turn turn) {
-        return turn.getTurnNumber() >= 19;
+        return turn.getTurnNumber() >= Board.LAST_ROW;
     }
 
     public static void validatePlacementIntent(Board board, StonePlacementIntent stonePlacementIntent)
