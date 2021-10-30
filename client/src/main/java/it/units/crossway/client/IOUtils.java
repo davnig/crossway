@@ -53,16 +53,16 @@ public class IOUtils {
 		return choice.equals(quitString);
 	}
 
-    public static boolean isChoiceAValidInteger(String choice) {
-        return choice.matches("\\d+");
-    }
+	public static boolean isChoiceAValidInteger(String choice) {
+		return choice.matches("\\d+");
+	}
 
 	public static void clearCLI() throws IOException, InterruptedException {
 		new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 	}
 
-	public static void printWinner(Turn turn) {
-		String currentPlayer = turn.getTurnColor().toString();
+	public static void printWinner(PlayerColor playerColor) {
+		String currentPlayer = playerColor.toString();
 		System.out.println(currentPlayer + " has won!!!!");
 	}
 

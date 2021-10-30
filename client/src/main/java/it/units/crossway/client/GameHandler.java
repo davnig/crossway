@@ -182,7 +182,7 @@ public class GameHandler {
     }
 
     private void endGame() {
-        IOUtils.printWinner(turn);
+        IOUtils.printWinner(player.getColor());
         // TODO api
         System.exit(0);
     }
