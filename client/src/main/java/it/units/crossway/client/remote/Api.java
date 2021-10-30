@@ -31,4 +31,7 @@ public interface Api {
     @RequestMapping(method = RequestMethod.POST, value = "/games/{uuid}/play")
     Response placeStone(@PathVariable String uuid, @RequestBody StonePlacementIntentDto stonePlacementIntentDto);
 
+    @RequestMapping(method = RequestMethod.PUT, value = "/games/{uuid}/win")
+    Response winGame(@PathVariable String uuid, @RequestBody PlayerDto playerDto);
+
 }

@@ -419,7 +419,29 @@ public class GameHandlerTests {
         assertTrue(byteArrayOutputStream.toString().contains("Insert a valid placement for your stone..."));
     }
 
-//    @Test
-//    void whenPlayerWinsShouldSend
+    @Test
+    void whenPlayerWinsShouldSendWinGameReq() throws JsonProcessingException {
+        Api api = buildAndReturnFeignClient();
+        Player player = new Player("playerB", PlayerColor.BLACK);
+        Board board = new Board();
+        for (int i = Board.FIRST_ROW; i <= Board.LAST_ROW; i++) {
+            board.placeStone(i, 3, player.getColor());
+        }
+        Turn turn = new Turn(20, PlayerColor.BLACK);
+        String uuid = UUID.randomUUID().toString();
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        gameHandler.setUuid(uuid);
+        PlayerDto playerDto = new PlayerDto(player.getNickname());
+        ObjectMapper om = new ObjectMapper();
+        wireMockServer.stubFor(post(urlEqualTo("/games/" + uuid + "/play")));
+        wireMockServer.stubFor(put(urlEqualTo("/games/" + uuid + "/win"))
+                .withRequestBody(equalToJson(om.writeValueAsString(playerDto)))
+                .willReturn(aResponse()
+                        .withStatus(200)));
+        IOUtils.redirectScannerToSimulatedInput(Board.LAST_ROW + ",4" + System.lineSeparator());
+        gameHandler.playTurnIfSupposedTo();
+        wireMockServer.verify(1, putRequestedFor(urlEqualTo("/games/" + uuid + "/win"))
+                .withRequestBody(equalToJson(om.writeValueAsString(playerDto))));
+    }
 
 }

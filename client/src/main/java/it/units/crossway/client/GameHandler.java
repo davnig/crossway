@@ -182,9 +182,9 @@ public class GameHandler {
     }
 
     private void endGame() {
-        IOUtils.printWinner(player.getColor());
-        // TODO api
-        System.exit(0);
+        api.winGame(uuid, new PlayerDto(player.getNickname()));
+        System.out.println("YOU WIN!!!");
+//        System.exit(0);
     }
 
     private boolean isPlayerTurn() {
