@@ -161,10 +161,6 @@ public class Board {
         return row == FIRST_ROW;
     }
 
-    public boolean isBoardEmpty() {
-        return boardState.isEmpty();
-    }
-
     public void resetBoard() {
         FIRST_ROW = 1;
         FIRST_COLUMN = 1;

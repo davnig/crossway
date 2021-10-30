@@ -64,14 +64,15 @@ public class GameHandlerTests {
                 .target(Api.class, "http://localhost:9111");
     }
 
-//    @Test
-//    void whenInitGameShouldSetFirstTurnBlack() {
-//        Board board = new Board();
-//        Turn turn = new Turn();
-//        GameHandler gameHandler = new GameHandler(player, board, turn, api);
-//        gameHandler.initGame();
-//        assertEquals(gameHandler.getTurn(), new Turn(1, PlayerColor.BLACK));
-//    }
+    @Test
+    void whenStartGameShouldSetFirstTurnBlack() {
+        Board board = new Board();
+        Turn turn = new Turn();
+        Player player = new Player("whiteP", PlayerColor.WHITE);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        gameHandler.startGame();
+        assertEquals(gameHandler.getTurn(), new Turn(1, PlayerColor.BLACK));
+    }
 
     @Test
     void givenWhitePlayerWhenIsSecondTurnShouldAskForPieRule() {
@@ -389,16 +390,6 @@ public class GameHandlerTests {
         wireMockServer.stubFor(post(urlPattern).withRequestBody(equalToJson(jsonBody)));
         gameHandler.startGame();
         wireMockServer.verify(1, postRequestedFor(urlPattern).withRequestBody(equalToJson(jsonBody)));
-    }
-
-    @Test
-    void whenGameIsCreatedAndJoinGameIsReceivedThenGameShouldStart() {
-        Assertions.fail();
-    }
-
-    @Test
-    void whenGameIsStartedAndQuitGameIsReceivedThenShouldQuitGame() {
-        Assertions.fail();
     }
 
 }

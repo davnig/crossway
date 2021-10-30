@@ -45,9 +45,7 @@ public class GameHandler {
         this.board = board;
         this.turn = turn;
         this.api = api;
-//        stompClient = new WebSocketStompClient(new StandardWebSocketClient());
-        stompClient = new WebSocketStompClient(new SockJsClient(
-                List.of(new WebSocketTransport(new StandardWebSocketClient()))));
+        stompClient = new WebSocketStompClient(new StandardWebSocketClient());
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
     }
 
@@ -121,7 +119,6 @@ public class GameHandler {
         GameDto gameDto = api.createGame(new GameCreationIntent(player.getNickname()));
         this.uuid = gameDto.getUuid();
         player.setColor(PlayerColor.BLACK);
-        // todo: wait for someone to join the game
     }
 
     private void joinExistingGame() {
