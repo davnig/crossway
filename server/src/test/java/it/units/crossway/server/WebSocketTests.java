@@ -1,12 +1,14 @@
 package it.units.crossway.server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.units.crossway.server.model.dto.PlayerDto;
 import it.units.crossway.server.model.dto.StonePlacementIntent;
 import it.units.crossway.server.model.entity.Game;
 import it.units.crossway.server.model.entity.GameStatus;
 import it.units.crossway.server.model.entity.Player;
 import it.units.crossway.server.repository.GameRepository;
 import it.units.crossway.server.repository.PlayerRepository;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,8 +33,9 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -77,15 +80,16 @@ public class WebSocketTests {
         StompSessionHandler stompSessionHandler = new StompSessionHandlerAdapter() {
             @SneakyThrows
             @Override
-            public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
+            public void afterConnected(StompSession session, @NonNull StompHeaders connectedHeaders) {
                 session.subscribe("/topic/" + uuid, new StompFrameHandler() {
                     @Override
-                    public Type getPayloadType(StompHeaders headers) {
+                    @NonNull
+                    public Type getPayloadType(@NonNull StompHeaders headers) {
                         return StonePlacementIntent.class;
                     }
 
                     @Override
-                    public void handleFrame(StompHeaders headers, Object payload) {
+                    public void handleFrame(@NonNull StompHeaders headers, Object payload) {
                         blockingQueue.add((StonePlacementIntent) payload);
                     }
                 });
@@ -105,6 +109,55 @@ public class WebSocketTests {
         // block until available or expired timeout
         StonePlacementIntent response = blockingQueue.poll(2, TimeUnit.SECONDS);
         assertEquals(stonePlacementIntent, response);
+        assertEquals(200, mvcResult[0].getResponse().getStatus());
+    }
+
+    @Test
+    void when_putJoinGameIntent_should_sendMessageToOpponent() throws InterruptedException {
+        BlockingQueue<StompHeaders> blockingQueue = new ArrayBlockingQueue<>(1);
+        String uuid = UUID.randomUUID().toString();
+        Player blackP = new Player("blackP");
+        Game game = new Game();
+        game.setUuid(uuid);
+        game.setBlackPlayerNickname(blackP.getNickname());
+        game.setGameStatus(GameStatus.CREATED);
+        playerRepository.save(blackP);
+        gameRepository.save(game);
+        PlayerDto whiteP = new PlayerDto("whiteP");
+        final MvcResult[] mvcResult = new MvcResult[1];
+        StompSessionHandler stompSessionHandler = new StompSessionHandlerAdapter() {
+            @SneakyThrows
+            @Override
+            public void afterConnected(StompSession session, @NonNull StompHeaders connectedHeaders) {
+                session.subscribe("/topic/" + uuid, new StompFrameHandler() {
+                    @Override
+                    @NonNull
+                    public Type getPayloadType(@NonNull StompHeaders headers) {
+                        return String.class;
+                    }
+
+                    @Override
+                    public void handleFrame(@NonNull StompHeaders headers, Object payload) {
+                        blockingQueue.add(headers);
+                    }
+                });
+                ObjectMapper om = new ObjectMapper();
+                try {
+                    mvcResult[0] = mvc.perform(put("/games/{uuid}", uuid)
+                                    .content(om.writeValueAsString(whiteP))
+                                    .contentType(MediaType.APPLICATION_JSON))
+                            .andReturn();
+                    System.out.println(mvcResult[0].getResponse().getContentAsString());
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                }
+            }
+        };
+        stompClient.connect(getWsEndpoint(), stompSessionHandler);
+        StompHeaders responseHeaders = blockingQueue.poll(2, TimeUnit.SECONDS);
+        assertNotNull(responseHeaders);
+        assertTrue(responseHeaders.containsKey("join-event"));
+        assertEquals(whiteP.getNickname(), responseHeaders.getFirst("join-event"));
         assertEquals(200, mvcResult[0].getResponse().getStatus());
     }
 

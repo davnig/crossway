@@ -12,6 +12,7 @@ import it.units.crossway.server.repository.GameRepository;
 import it.units.crossway.server.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -58,6 +59,9 @@ public class GameService {
         checkIfGameIsJoinable(gameToJoin);
         gameToJoin.setWhitePlayerNickname(playerDto.getNickname());
         gameToJoin.setGameStatus(GameStatus.IN_PROGRESS);
+        MessageHeaderAccessor accessor = new MessageHeaderAccessor();
+        accessor.setHeader("join-event", playerDto.getNickname());
+        simpMessagingTemplate.convertAndSend("/topic/" + gameToJoin.getUuid(), "", accessor.getMessageHeaders());
         return new GameDto(gameToJoin);
     }
 
