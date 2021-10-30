@@ -10,7 +10,6 @@ import it.units.crossway.client.remote.Api;
 import it.units.crossway.client.remote.StompMessageHandler;
 import lombok.Data;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -19,6 +18,8 @@ import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
+import org.springframework.web.socket.sockjs.client.SockJsClient;
+import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -45,7 +46,8 @@ public class GameHandler {
         this.board = board;
         this.turn = turn;
         this.api = api;
-        stompClient = new WebSocketStompClient(new StandardWebSocketClient());
+        stompClient = new WebSocketStompClient(new SockJsClient(
+                List.of(new WebSocketTransport(new StandardWebSocketClient()))));
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
     }
 
@@ -86,7 +88,7 @@ public class GameHandler {
         }
     }
 
-    void startGame() {
+    public void startGame() {
         System.out.println("Game start!!");
         System.out.println("You play as " + player.getColor());
         turn.initFirstTurn();
@@ -149,7 +151,6 @@ public class GameHandler {
     private void subscribeToTopic() {
         StompMessageHandler stompMessageHandler = (StompMessageHandler) ApplicationContextUtils.getContext().getBean("stompMessageHandler");
         stompClient.connect(WS_ENDPOINT, new StompSessionHandlerAdapter() {
-            @SneakyThrows
             @Override
             public void afterConnected(@NonNull StompSession session, @NonNull StompHeaders connectedHeaders) {
                 session.subscribe("/topic/" + uuid, stompMessageHandler);
@@ -175,13 +176,14 @@ public class GameHandler {
     }
 
     private void checkWinnerIfCouldExist() {
-        if (Rules.couldExistsWinner(turn) && Rules.checkWin(board, turn.getTurnColor())) {
+        if (Rules.couldExistsWinner(turn) && Rules.checkWin(board, player.getColor())) {
             endGame();
         }
     }
 
     private void endGame() {
         IOUtils.printWinner(turn);
+        // TODO api
         System.exit(0);
     }
 

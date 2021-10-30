@@ -400,4 +400,26 @@ public class GameHandlerTests {
         Assertions.fail();
     }
 
+    @Test
+    void whenOpponentJoinsShouldStartGameAndPlayFirstTurn() {
+        Api api = buildAndReturnFeignClient();
+        Board board = new Board();
+        Player player = new Player("playerB", PlayerColor.BLACK);
+        Turn turn = new Turn(1, PlayerColor.BLACK);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler);
+        StompHeaders stompHeaders = new StompHeaders();
+        stompHeaders.set("join-event", "playerW");
+        wireMockServer.stubFor(post(anyUrl()));
+        ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
+        IOUtils.redirectScannerToSimulatedInput("6,6" + System.lineSeparator());
+        stompMessageHandler.handleFrame(stompHeaders, "");
+        assertTrue(byteArrayOutputStream.toString().contains("Game start!!"));
+        assertEquals(1, gameHandler.getTurn().getTurnNumber());
+        assertTrue(byteArrayOutputStream.toString().contains("Insert a valid placement for your stone..."));
+    }
+
+//    @Test
+//    void whenPlayerWinsShouldSend
+
 }

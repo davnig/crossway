@@ -26,6 +26,11 @@ public class StompMessageHandler implements StompFrameHandler {
 
     @Override
     public void handleFrame(@NonNull StompHeaders headers, Object payload) {
+        if (headers.containsKey("join-event")) {
+            System.out.println(headers.getFirst("join-event") + " joined the game");
+            gameHandler.startGame();
+            return;
+        }
         StonePlacementIntent stonePlacementIntent = (StonePlacementIntent) payload;
         gameHandler.getBoard().placeStone(
                 stonePlacementIntent.getRow(),
