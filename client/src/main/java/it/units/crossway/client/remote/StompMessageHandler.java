@@ -31,6 +31,10 @@ public class StompMessageHandler implements StompFrameHandler {
             gameHandler.startGame();
             return;
         }
+        if (headers.containsKey("win-event")) {
+            System.out.println("You lose :(\n" + headers.getFirst("win-event") + " win");
+            return;
+        }
         StonePlacementIntent stonePlacementIntent = (StonePlacementIntent) payload;
         gameHandler.getBoard().placeStone(
                 stonePlacementIntent.getRow(),

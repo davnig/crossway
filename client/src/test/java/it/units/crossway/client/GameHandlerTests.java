@@ -444,4 +444,20 @@ public class GameHandlerTests {
                 .withRequestBody(equalToJson(om.writeValueAsString(playerDto))));
     }
 
+    @Test
+    void whenWinGameEventIsReceivedShouldShowMessageAndEndGame() {
+        Api api = buildAndReturnFeignClient();
+        Board board = new Board();
+        Player player = new Player("playerB", PlayerColor.BLACK);
+        Turn turn = new Turn(20, PlayerColor.WHITE);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler);
+        StompHeaders stompHeaders = new StompHeaders();
+        stompHeaders.set("win-event", "playerW");
+        PrintStream out = System.out;
+        ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
+        stompMessageHandler.handleFrame(stompHeaders, "");
+        assertTrue(byteArrayOutputStream.toString().contains("You lose :(\nplayerW win"));
+    }
+
 }
