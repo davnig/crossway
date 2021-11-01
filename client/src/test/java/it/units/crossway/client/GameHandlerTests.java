@@ -423,8 +423,34 @@ public class GameHandlerTests {
     }
 
     @Test
-    void whenStonePlacementIntentIsNotValidShouldWarnAndAskForNewStonePlacement() {
-        Assertions.fail();
+    void whenStonePlacementIntentIsNotValidShouldWarnAndAskForNewStonePlacement() throws JsonProcessingException {
+        Api api = buildAndReturnFeignClient();
+        Board board = new Board();
+        Player player = new Player("playerB", PlayerColor.BLACK);
+        Turn turn = new Turn(3, PlayerColor.BLACK);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        String uuid = UUID.randomUUID().toString();
+        gameHandler.setUuid(uuid);
+        UrlPattern urlPattern = urlEqualTo("/games/" + uuid + "/events/placement");
+        StonePlacementIntentDto placementDto = new StonePlacementIntentDto(-6, 100, player.getNickname());
+        String jsonBody = new ObjectMapper().writeValueAsString(placementDto);
+        StonePlacementIntentDto newPlacementDto = new StonePlacementIntentDto(10, 1, player.getNickname());
+        String newJsonBody = new ObjectMapper().writeValueAsString(newPlacementDto);
+        ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
+        wireMockServer.stubFor(post(urlPattern).inScenario("fail/success scenario")
+                .whenScenarioStateIs(Scenario.STARTED)
+                .withRequestBody(equalToJson(jsonBody))
+                .willReturn(aResponse()
+                        .withStatus(400)).willSetStateTo("success"));
+        wireMockServer.stubFor(post(urlPattern).inScenario("fail/success scenario")
+                .whenScenarioStateIs("success")
+                .withRequestBody(equalToJson(newJsonBody))
+                .willReturn(aResponse()
+                        .withStatus(200)));
+        String input = "-6,100" + System.lineSeparator() + "10,1" + System.lineSeparator();
+        IOUtils.redirectScannerToSimulatedInput(input);
+        gameHandler.playTurn();
+        assertTrue(byteArrayOutputStream.toString().contains("Placement violation exception!"));
     }
 
     @Test

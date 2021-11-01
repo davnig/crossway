@@ -180,7 +180,7 @@ public class GameHandler {
                 Rules.validatePlacementIntent(board, stonePlacementIntent);
                 return stonePlacementIntent;
             } catch (PlacementViolationException e) {
-                System.out.println(e.getMessage());
+                System.out.println("Placement violation exception!");
             }
         }
     }
