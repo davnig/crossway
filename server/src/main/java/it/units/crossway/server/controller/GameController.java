@@ -35,20 +35,20 @@ public class GameController {
         return ResponseEntity.ok(gameService.createGame(gameCreationIntent));
     }
 
-    @PostMapping("/{uuid}/events/join")
-    public ResponseEntity<GameDto> joinGame(@PathVariable String uuid, @RequestBody PlayerDto playerDto) {
-        return ResponseEntity.ok(gameService.joinGame(uuid, playerDto));
+    @PostMapping("/{uuid}/events/joining")
+    public ResponseEntity<GameDto> handleJoiningEvent(@PathVariable String uuid, @RequestBody PlayerDto playerDto) {
+        return ResponseEntity.ok(gameService.handleJoiningEvent(uuid, playerDto));
     }
 
-    @PostMapping("/{uuid}/events/place")
-    public ResponseEntity<Void> placeStone(@PathVariable String uuid, @RequestBody StonePlacementIntent stonePlacementIntent) {
-        gameService.placeStone(uuid, stonePlacementIntent);
+    @PostMapping("/{uuid}/events/placement")
+    public ResponseEntity<Void> handlePlacementEvent(@PathVariable String uuid, @RequestBody StonePlacementIntent stonePlacementIntent) {
+        gameService.handlePlacementEvent(uuid, stonePlacementIntent);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{uuid}/events/win")
-    public ResponseEntity<Void> winGame(@PathVariable String uuid, @RequestBody PlayerDto playerDto) {
-        gameService.winGame(uuid, playerDto);
+    public ResponseEntity<Void> handleWinEvent(@PathVariable String uuid, @RequestBody PlayerDto playerDto) {
+        gameService.handleWinEvent(uuid, playerDto);
         return ResponseEntity.ok().build();
     }
 

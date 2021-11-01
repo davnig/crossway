@@ -53,7 +53,7 @@ public class GameService {
         return new GameDto(gameRepository.save(game));
     }
 
-    public GameDto joinGame(String uuid, PlayerDto playerDto) {
+    public GameDto handleJoiningEvent(String uuid, PlayerDto playerDto) {
         Game gameToJoin = gameRepository.findByUuid(uuid)
                 .orElseThrow(() -> new GameException("The game does not exist"));
         checkIfGameIsJoinable(gameToJoin);
@@ -66,7 +66,7 @@ public class GameService {
     }
 
     @Transactional
-    public void winGame(String uuid, PlayerDto playerDto) {
+    public void handleWinEvent(String uuid, PlayerDto playerDto) {
         deleteGame(uuid);
         MessageHeaderAccessor accessor = new MessageHeaderAccessor();
         accessor.setHeader("win-event", playerDto.getNickname());
@@ -86,7 +86,7 @@ public class GameService {
         }
     }
 
-    public void placeStone(String uuid, StonePlacementIntent stonePlacementIntent) {
+    public void handlePlacementEvent(String uuid, StonePlacementIntent stonePlacementIntent) {
         validateStonePlacementIntent(uuid, stonePlacementIntent);
         simpMessagingTemplate.convertAndSend("/topic/" + uuid, stonePlacementIntent);
     }

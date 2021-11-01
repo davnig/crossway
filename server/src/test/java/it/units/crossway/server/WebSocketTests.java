@@ -95,7 +95,7 @@ public class WebSocketTests {
                 });
                 ObjectMapper om = new ObjectMapper();
                 try {
-                    mvcResult[0] = mvc.perform(post("/games/{uuid}/events/place", uuid)
+                    mvcResult[0] = mvc.perform(post("/games/{uuid}/events/placement", uuid)
                                     .content(om.writeValueAsString(stonePlacementIntent))
                                     .contentType(MediaType.APPLICATION_JSON))
                             .andDo(print())
@@ -144,7 +144,7 @@ public class WebSocketTests {
                 });
                 ObjectMapper om = new ObjectMapper();
                 try {
-                    mvcResult[0] = mvc.perform(post("/games/{uuid}/events/join", uuid)
+                    mvcResult[0] = mvc.perform(post("/games/{uuid}/events/joining", uuid)
                                     .content(om.writeValueAsString(whiteP))
                                     .contentType(MediaType.APPLICATION_JSON))
                             .andReturn();

@@ -81,7 +81,7 @@ public class IntegrationTests {
         gameRepository.save(game);
         PlayerDto player2 = new PlayerDto("player2");
         ObjectMapper om = new ObjectMapper();
-        mvc.perform(post("/games/{uuid}/events/join", uuid)
+        mvc.perform(post("/games/{uuid}/events/joining", uuid)
                         .content(om.writeValueAsString(player2))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -94,7 +94,7 @@ public class IntegrationTests {
         String uuid = "fake-uuid";
         PlayerDto player0 = new PlayerDto("player0");
         ObjectMapper om = new ObjectMapper();
-        mvc.perform(post("/games/{uuid}/events/join", uuid)
+        mvc.perform(post("/games/{uuid}/events/joining", uuid)
                         .content(om.writeValueAsString(player0))
                         .contentType(MediaType.APPLICATION_JSON))
 //                .andDo(print())
