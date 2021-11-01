@@ -1,5 +1,6 @@
 package it.units.crossway.client;
 
+import feign.FeignException;
 import it.units.crossway.client.exception.PlacementViolationException;
 import it.units.crossway.client.model.*;
 import it.units.crossway.client.model.dto.GameCreationIntent;
@@ -59,11 +60,20 @@ public class GameHandler {
     }
 
     void chooseNickname() {
-        System.out.println("choose a nickname!");
-        String nickname = IOUtils.getInputLine();
-        player.setNickname(nickname);
-        PlayerDto playerDto = new PlayerDto(nickname);
-        api.addPlayer(playerDto);
+        while(true) {
+            System.out.println("choose a nickname!");
+            String nickname = IOUtils.getInputLine();
+            player.setNickname(nickname);
+            PlayerDto playerDto = new PlayerDto(nickname);
+            try {
+                api.addPlayer(playerDto);
+                return;
+            }
+            catch(FeignException e) {
+                System.out.println("Duplicate Player Exception!");
+            }
+        }
+
     }
 
     void chooseGameType() {

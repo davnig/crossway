@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
+import com.github.tomakehurst.wiremock.stubbing.Scenario;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
@@ -391,12 +392,38 @@ public class GameHandlerTests {
     }
 
     @Test
-    void whenChooseNicknameAlreadyUsedShouldWarnAndAskForNickname() {
-        Assertions.fail();
+    void whenChooseNicknameAlreadyUsedShouldWarnAndAskForNewNickname() throws JsonProcessingException {
+        Api api = buildAndReturnFeignClient();
+        String nickname = "playerXZX";
+        String newNickname = "abc";
+        Player player = new Player(nickname, null);
+        Board board = new Board();
+        Turn turn = new Turn();
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        PlayerDto playerDto = new PlayerDto(nickname);
+        PlayerDto NewPlayerDto = new PlayerDto(newNickname);
+        ObjectMapper om = new ObjectMapper();
+        String jsonPlayerDto = om.writeValueAsString(playerDto);
+        String newJsonPlayerDto = om.writeValueAsString(NewPlayerDto);
+        ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
+        wireMockServer.stubFor(post(urlEqualTo("/players")).inScenario("fail/success scenario")
+                .whenScenarioStateIs(Scenario.STARTED)
+                .withRequestBody(equalToJson(jsonPlayerDto))
+                .willReturn(aResponse()
+                        .withStatus(400)).willSetStateTo("success"));
+        wireMockServer.stubFor(post(urlEqualTo("/players")).inScenario("fail/success scenario")
+                .whenScenarioStateIs("success")
+                .withRequestBody(equalToJson(newJsonPlayerDto))
+                .willReturn(aResponse()
+                        .withStatus(200)));
+        String input = nickname + System.lineSeparator() + newNickname + System.lineSeparator();
+        IOUtils.redirectScannerToSimulatedInput(input);
+        gameHandler.chooseNickname();
+        assertTrue(byteArrayOutputStream.toString().contains("Duplicate Player Exception!"));
     }
 
     @Test
-    void whenStonePlacementIntentIsNotValidShouldWarnAndAskForNewPlacement() {
+    void whenStonePlacementIntentIsNotValidShouldWarnAndAskForNewStonePlacement() throws JsonProcessingException {
         Assertions.fail();
     }
 
