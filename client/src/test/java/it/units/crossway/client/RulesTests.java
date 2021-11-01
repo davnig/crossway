@@ -14,7 +14,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class RulesTests {
 
@@ -171,8 +170,15 @@ public class RulesTests {
     }
 
     @Test
-    void whenPlayerTriesToPlaceStoneInOccupiedIntersectionShouldAskForNewMove() {
-        fail();
+    void whenPlayerTriesToPlaceStoneInOccupiedIntersectionShouldThrowException() {
+        int row = 1;
+        int column = 1;
+        Board board = new Board();
+        board.placeStone(row, column, PlayerColor.WHITE);
+        StonePlacementIntent stonePlacementIntent =
+                new StonePlacementIntent(row, column, new Player("whiteP", PlayerColor.WHITE));
+        assertThrows(PlacementViolationException.class, () ->
+                Rules.validatePlacementIntent(board, stonePlacementIntent));
     }
 
 }

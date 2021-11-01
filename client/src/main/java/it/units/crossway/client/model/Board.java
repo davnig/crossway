@@ -168,4 +168,7 @@ public class Board {
         LAST_COLUMN = 19;
     }
 
+    public boolean isIntersectionOccupied(int row, int column) {
+        return !getStoneColorAt(row, column).equals(PlayerColor.NONE);
+    }
 }

@@ -24,6 +24,8 @@ public class Rules {
 
     public static void validatePlacementIntent(Board board, StonePlacementIntent stonePlacementIntent)
             throws PlacementViolationException {
+        if (board.isIntersectionOccupied(stonePlacementIntent.getRow(), stonePlacementIntent.getColumn()))
+            throw new PlacementViolationException("Placement not allowed: intersection already occupied");
         if (board.isPlacementOutOfBoardBoundaries(stonePlacementIntent.getRow(), stonePlacementIntent.getColumn()))
             throw new PlacementViolationException("Placement not allowed: out of board violation");
         if (isDiagonalViolation(board, stonePlacementIntent))

@@ -1,6 +1,5 @@
 package it.units.crossway.client.model;
 
-import it.units.crossway.client.IOUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
