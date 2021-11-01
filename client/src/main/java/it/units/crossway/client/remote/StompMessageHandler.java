@@ -1,6 +1,7 @@
 package it.units.crossway.client.remote;
 
 import it.units.crossway.client.GameHandler;
+import it.units.crossway.client.model.PlayerColor;
 import it.units.crossway.client.model.StonePlacementIntent;
 import lombok.NonNull;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -35,12 +36,18 @@ public class StompMessageHandler implements StompFrameHandler {
             System.out.println("You lose :(\n" + headers.getFirst("win-event") + " win");
             return;
         }
-        StonePlacementIntent stonePlacementIntent = (StonePlacementIntent) payload;
-        gameHandler.getBoard().placeStone(
-                stonePlacementIntent.getRow(),
-                stonePlacementIntent.getColumn(),
-                gameHandler.getTurn().getTurnColor()
-        );
+        if (headers.containsKey("pie-rule-event") && gameHandler.getPlayer().getColor().equals(PlayerColor.BLACK)) {
+            gameHandler.getPlayer().setColor(PlayerColor.WHITE);
+            gameHandler.getTurn().setTurnColor(PlayerColor.BLACK);
+        }
+        if (payload instanceof StonePlacementIntent) {
+            StonePlacementIntent stonePlacementIntent = (StonePlacementIntent) payload;
+            gameHandler.getBoard().placeStone(
+                    stonePlacementIntent.getRow(),
+                    stonePlacementIntent.getColumn(),
+                    gameHandler.getTurn().getTurnColor()
+            );
+        }
         gameHandler.endTurn();
         gameHandler.playTurnIfSupposedTo();
     }

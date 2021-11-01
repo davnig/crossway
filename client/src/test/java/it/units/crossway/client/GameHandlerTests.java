@@ -15,7 +15,10 @@ import it.units.crossway.client.model.dto.PlayerDto;
 import it.units.crossway.client.model.dto.StonePlacementIntentDto;
 import it.units.crossway.client.remote.Api;
 import it.units.crossway.client.remote.StompMessageHandler;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -510,6 +513,25 @@ public class GameHandlerTests {
         ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
         stompMessageHandler.handleFrame(stompHeaders, "");
         assertTrue(byteArrayOutputStream.toString().contains("You lose :(\nplayerW win"));
+    }
+
+    @Test
+    void whenPieRuleEventIsReceivedThenBlackPlayerShouldApplyPieRuleAndPlayNextTurn() {
+        Api api = buildAndReturnFeignClient();
+        Board board = new Board();
+        Player player = new Player("playerB", PlayerColor.BLACK);
+        Turn turn = new Turn(2, PlayerColor.WHITE);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        wireMockServer.stubFor(post(anyUrl()));
+        ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
+        IOUtils.redirectScannerToSimulatedInput("6,6" + System.lineSeparator());
+        StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler);
+        StompHeaders stompHeaders = new StompHeaders();
+        stompHeaders.set("pie-rule-event", "true");
+        stompMessageHandler.handleFrame(stompHeaders, "");
+        assertEquals(3, gameHandler.getTurn().getTurnNumber());
+        assertEquals(PlayerColor.WHITE, gameHandler.getTurn().getTurnColor());
+        assertTrue(byteArrayOutputStream.toString().contains("Insert a valid placement for your stone..."));
     }
 
 }
