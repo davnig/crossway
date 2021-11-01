@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -95,9 +95,10 @@ public class WebSocketTests {
                 });
                 ObjectMapper om = new ObjectMapper();
                 try {
-                    mvcResult[0] = mvc.perform(post("/games/{uuid}/play", uuid)
+                    mvcResult[0] = mvc.perform(post("/games/{uuid}/events/place", uuid)
                                     .content(om.writeValueAsString(stonePlacementIntent))
                                     .contentType(MediaType.APPLICATION_JSON))
+                            .andDo(print())
                             .andReturn();
                     System.out.println(mvcResult[0].getResponse().getContentAsString());
                 } catch (Exception e) {
@@ -107,13 +108,13 @@ public class WebSocketTests {
         };
         stompClient.connect(getWsEndpoint(), stompSessionHandler);
         // block until available or expired timeout
-        StonePlacementIntent response = blockingQueue.poll(2, TimeUnit.SECONDS);
-        assertEquals(stonePlacementIntent, response);
+        StonePlacementIntent event = blockingQueue.poll(2, TimeUnit.SECONDS);
+        assertEquals(stonePlacementIntent, event);
         assertEquals(200, mvcResult[0].getResponse().getStatus());
     }
 
     @Test
-    void when_putJoinGameIntent_should_sendMessageToOpponent() throws InterruptedException {
+    void when_postJoinGameIntent_should_sendMessageToOpponent() throws InterruptedException {
         BlockingQueue<StompHeaders> blockingQueue = new ArrayBlockingQueue<>(1);
         String uuid = UUID.randomUUID().toString();
         Player blackP = new Player("blackP");
@@ -143,7 +144,7 @@ public class WebSocketTests {
                 });
                 ObjectMapper om = new ObjectMapper();
                 try {
-                    mvcResult[0] = mvc.perform(put("/games/{uuid}", uuid)
+                    mvcResult[0] = mvc.perform(post("/games/{uuid}/events/join", uuid)
                                     .content(om.writeValueAsString(whiteP))
                                     .contentType(MediaType.APPLICATION_JSON))
                             .andReturn();
@@ -191,7 +192,7 @@ public class WebSocketTests {
                 });
                 ObjectMapper om = new ObjectMapper();
                 try {
-                    mvcResult[0] = mvc.perform(put("/games/{uuid}/win", uuid)
+                    mvcResult[0] = mvc.perform(post("/games/{uuid}/events/win", uuid)
                                     .content(om.writeValueAsString(playerDto))
                                     .contentType(MediaType.APPLICATION_JSON))
                             .andReturn();

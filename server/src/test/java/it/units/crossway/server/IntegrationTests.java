@@ -72,7 +72,7 @@ public class IntegrationTests {
     }
 
     @Test
-    void given_previouslyCreatedGame_when_putGameJoiningIntent_should_setWhitePlayer() throws Exception {
+    void given_previouslyCreatedGame_when_postGameJoiningIntent_should_setWhitePlayer() throws Exception {
         Game game = new Game();
         String uuid = UUID.randomUUID().toString();
         game.setUuid(uuid);
@@ -81,7 +81,7 @@ public class IntegrationTests {
         gameRepository.save(game);
         PlayerDto player2 = new PlayerDto("player2");
         ObjectMapper om = new ObjectMapper();
-        mvc.perform(put("/games/{uuid}", uuid)
+        mvc.perform(post("/games/{uuid}/events/join", uuid)
                         .content(om.writeValueAsString(player2))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -90,11 +90,11 @@ public class IntegrationTests {
     }
 
     @Test
-    void when_putGameJoiningIntentAndGameDoesNotExists_then_401() throws Exception {
+    void when_postGameJoiningIntentAndGameDoesNotExists_then_401() throws Exception {
         String uuid = "fake-uuid";
         PlayerDto player0 = new PlayerDto("player0");
         ObjectMapper om = new ObjectMapper();
-        mvc.perform(put("/games/{uuid}", uuid)
+        mvc.perform(post("/games/{uuid}/events/join", uuid)
                         .content(om.writeValueAsString(player0))
                         .contentType(MediaType.APPLICATION_JSON))
 //                .andDo(print())
@@ -160,7 +160,7 @@ public class IntegrationTests {
         gameRepository.save(game);
         PlayerDto playerDto = new PlayerDto("xxx");
         ObjectMapper om = new ObjectMapper();
-        mvc.perform(put("/games/{uuid}/win", uuid)
+        mvc.perform(post("/games/{uuid}/events/win", uuid)
                         .content(om.writeValueAsString(playerDto))
                         .contentType(MediaType.APPLICATION_JSON))
 //                .andDo(print())
@@ -168,5 +168,10 @@ public class IntegrationTests {
         mvc.perform(get("/games/{uuid}", uuid))
                 .andExpect(status().isNotFound());
     }
+
+//    @Test
+//    void when_applyPieRule_should() {
+//
+//    }
 
 }
