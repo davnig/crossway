@@ -25,13 +25,13 @@ public interface Api {
     @RequestMapping(method = RequestMethod.POST, value = "/games")
     GameDto createGame(@RequestBody GameCreationIntent gameCreationIntent);
 
-    @RequestMapping(method = RequestMethod.PUT, value = "/games/{uuid}")
+    @RequestMapping(method = RequestMethod.POST, value = "/games/{uuid}/events/join")
     GameDto joinGame(@PathVariable String uuid, @RequestBody PlayerDto playerDto);
 
-    @RequestMapping(method = RequestMethod.POST, value = "/games/{uuid}/play")
+    @RequestMapping(method = RequestMethod.POST, value = "/games/{uuid}/events/place")
     Response placeStone(@PathVariable String uuid, @RequestBody StonePlacementIntentDto stonePlacementIntentDto);
 
-    @RequestMapping(method = RequestMethod.PUT, value = "/games/{uuid}/win")
+    @RequestMapping(method = RequestMethod.POST, value = "/games/{uuid}/events/win")
     Response winGame(@PathVariable String uuid, @RequestBody PlayerDto playerDto);
 
 }
