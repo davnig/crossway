@@ -214,7 +214,7 @@ public class GameHandlerTests {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withBody(jsonAvailableGames)));
-        wireMockServer.stubFor(post(urlEqualTo("/games/" + uuid1 + "/events/join"))
+        wireMockServer.stubFor(post(urlEqualTo("/games/" + uuid1 + "/events/joining"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withBody(om.writeValueAsString(gameDto1))));
@@ -244,7 +244,7 @@ public class GameHandlerTests {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withBody(jsonAvailableGames)));
-        wireMockServer.stubFor(post(urlEqualTo("/games/" + uuid1 + "/events/join"))
+        wireMockServer.stubFor(post(urlEqualTo("/games/" + uuid1 + "/events/joining"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withBody(om.writeValueAsString(gameDto1))));
@@ -277,14 +277,14 @@ public class GameHandlerTests {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withBody(jsonAvailableGames)));
-        wireMockServer.stubFor(post(urlEqualTo("/games/" + uuid1 + "/events/join"))
+        wireMockServer.stubFor(post(urlEqualTo("/games/" + uuid1 + "/events/joining"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withBody(om.writeValueAsString(gameDto1))));
         String input = "2" + System.lineSeparator() + "0" + System.lineSeparator();
         IOUtils.redirectScannerToSimulatedInput(input);
         gameHandler.chooseGameType();
-        wireMockServer.verify(1, postRequestedFor(urlEqualTo("/games/" + uuid1 + "/events/join")));
+        wireMockServer.verify(1, postRequestedFor(urlEqualTo("/games/" + uuid1 + "/events/joining")));
     }
 
     @Test
@@ -307,7 +307,7 @@ public class GameHandlerTests {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withBody(jsonAvailableGames)));
-        wireMockServer.stubFor(post(urlEqualTo("/games/" + uuid1 + "/events/join"))
+        wireMockServer.stubFor(post(urlEqualTo("/games/" + uuid1 + "/events/joining"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withBody(om.writeValueAsString(gameDto1))));
@@ -383,7 +383,7 @@ public class GameHandlerTests {
         String uuid = UUID.randomUUID().toString();
         gameHandler.setUuid(uuid);
         IOUtils.redirectScannerToSimulatedInput("6,6" + System.lineSeparator());
-        UrlPattern urlPattern = urlEqualTo("/games/" + uuid + "/events/place");
+        UrlPattern urlPattern = urlEqualTo("/games/" + uuid + "/events/placement");
         StonePlacementIntentDto body = new StonePlacementIntentDto(6, 6, player.getNickname());
         String jsonBody = new ObjectMapper().writeValueAsString(body);
         wireMockServer.stubFor(post(urlPattern).withRequestBody(equalToJson(jsonBody)));

@@ -25,10 +25,10 @@ public interface Api {
     @RequestMapping(method = RequestMethod.POST, value = "/games")
     GameDto createGame(@RequestBody GameCreationIntent gameCreationIntent);
 
-    @RequestMapping(method = RequestMethod.POST, value = "/games/{uuid}/events/join")
+    @RequestMapping(method = RequestMethod.POST, value = "/games/{uuid}/events/joining")
     GameDto joinGame(@PathVariable String uuid, @RequestBody PlayerDto playerDto);
 
-    @RequestMapping(method = RequestMethod.POST, value = "/games/{uuid}/events/place")
+    @RequestMapping(method = RequestMethod.POST, value = "/games/{uuid}/events/placement")
     Response placeStone(@PathVariable String uuid, @RequestBody StonePlacementIntentDto stonePlacementIntentDto);
 
     @RequestMapping(method = RequestMethod.POST, value = "/games/{uuid}/events/win")
