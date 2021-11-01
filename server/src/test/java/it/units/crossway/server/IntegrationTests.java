@@ -90,7 +90,7 @@ public class IntegrationTests {
     }
 
     @Test
-    void when_postGameJoiningIntentAndGameDoesNotExists_then_401() throws Exception {
+    void when_handlePlacementEventAndGameDoesNotExists_then_401() throws Exception {
         String uuid = "fake-uuid";
         PlayerDto player0 = new PlayerDto("player0");
         ObjectMapper om = new ObjectMapper();
@@ -153,7 +153,7 @@ public class IntegrationTests {
     }
 
     @Test
-    void when_winGame_shouldDeleteGame() throws Exception {
+    void when_handleWinEvent_shouldDeleteGame() throws Exception {
         Game game = new Game();
         String uuid = UUID.randomUUID().toString();
         game.setUuid(uuid);
@@ -169,9 +169,9 @@ public class IntegrationTests {
                 .andExpect(status().isNotFound());
     }
 
-//    @Test
-//    void when_applyPieRule_should() {
-//
-//    }
+    @Test
+    void when_handlePieRuleEvent_should() {
+
+    }
 
 }

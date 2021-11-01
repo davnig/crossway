@@ -59,7 +59,7 @@ public class WebSocketTests {
     }
 
     @Test
-    void when_postStonePlacementIntent_should_respondWith200AndSendMessageToSubscribedClients() throws Exception {
+    void when_handlePlacementEvent_should_respondWith200AndSendMessageToSubscribedClients() throws Exception {
         BlockingQueue<StonePlacementIntent> blockingQueue = new ArrayBlockingQueue<>(1);
         String uuid = UUID.randomUUID().toString();
         Player whiteP = new Player("whiteP");
@@ -114,7 +114,7 @@ public class WebSocketTests {
     }
 
     @Test
-    void when_postJoinGameIntent_should_sendMessageToOpponent() throws InterruptedException {
+    void when_handleJoiningEvent_should_sendMessageToOpponent() throws InterruptedException {
         BlockingQueue<StompHeaders> blockingQueue = new ArrayBlockingQueue<>(1);
         String uuid = UUID.randomUUID().toString();
         Player blackP = new Player("blackP");
@@ -162,7 +162,7 @@ public class WebSocketTests {
     }
 
     @Test
-    void when_winGame_should_sendMessageToSubscribedClients() throws InterruptedException {
+    void when_handleWinEvent_should_sendMessageToSubscribedClients() throws InterruptedException {
         BlockingQueue<StompHeaders> blockingQueue = new ArrayBlockingQueue<>(1);
         String uuid = UUID.randomUUID().toString();
         Player whiteP = new Player("whiteP");
