@@ -169,9 +169,4 @@ public class IntegrationTests {
                 .andExpect(status().isNotFound());
     }
 
-    @Test
-    void when_handlePieRuleEvent_should() {
-
-    }
-
 }

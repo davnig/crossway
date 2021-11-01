@@ -52,6 +52,12 @@ public class GameController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/{uuid}/events/pie-rule")
+    public ResponseEntity<Void> handlePieRuleEvent(@PathVariable String uuid) {
+        gameService.handlePieRuleEvent(uuid);
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Void> deleteGame(@PathVariable String uuid) {
         gameService.deleteGame(uuid);

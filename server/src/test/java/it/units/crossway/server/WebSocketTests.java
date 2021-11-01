@@ -211,6 +211,48 @@ public class WebSocketTests {
         assertEquals(200, mvcResult[0].getResponse().getStatus());
     }
 
+    @Test
+    void when_handlePieRuleEvent_should_sendMessageToSubscribedClients() throws InterruptedException {
+        BlockingQueue<StompHeaders> blockingQueue = new ArrayBlockingQueue<>(1);
+        String uuid = UUID.randomUUID().toString();
+        Game game = new Game();
+        game.setUuid(uuid);
+        game.setGameStatus(GameStatus.IN_PROGRESS);
+        gameRepository.save(game);
+        final MvcResult[] mvcResult = new MvcResult[1];
+        StompSessionHandler stompSessionHandler = new StompSessionHandlerAdapter() {
+            @Override
+            public void afterConnected(StompSession session, @NonNull StompHeaders connectedHeaders) {
+                session.subscribe("/topic/" + uuid, new StompFrameHandler() {
+                    @Override
+                    @NonNull
+                    public Type getPayloadType(@NonNull StompHeaders headers) {
+                        return StonePlacementIntent.class;
+                    }
+
+                    @Override
+                    public void handleFrame(@NonNull StompHeaders headers, Object payload) {
+                        blockingQueue.add(headers);
+                    }
+                });
+                try {
+                    mvcResult[0] = mvc.perform(post("/games/{uuid}/events/pie-rule", uuid)
+                                    .contentType(MediaType.APPLICATION_JSON))
+                            .andReturn();
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                }
+            }
+        };
+        stompClient.connect(getWsEndpoint(), stompSessionHandler);
+        // block until available or expired timeout
+        StompHeaders responseHeaders = blockingQueue.poll(2, TimeUnit.SECONDS);
+        assertNotNull(responseHeaders);
+        assertTrue(responseHeaders.containsKey("pie-rule-event"));
+        assertEquals("true", responseHeaders.getFirst("pie-rule-event"));
+        assertEquals(200, mvcResult[0].getResponse().getStatus());
+    }
+
     private String getWsEndpoint() {
         return String.format("ws://localhost:%d/endpoint", port);
     }

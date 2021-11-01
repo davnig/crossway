@@ -91,6 +91,12 @@ public class GameService {
         simpMessagingTemplate.convertAndSend("/topic/" + uuid, stonePlacementIntent);
     }
 
+    public void handlePieRuleEvent(String uuid) {
+        MessageHeaderAccessor accessor = new MessageHeaderAccessor();
+        accessor.setHeader("pie-rule-event", "true");
+        simpMessagingTemplate.convertAndSend("/topic/" + uuid, "", accessor.getMessageHeaders());
+    }
+
     private void validateStonePlacementIntent(String uuid, StonePlacementIntent stonePlacementIntent) {
         String nickname = stonePlacementIntent.getNickname();
         Game game = gameRepository.findByUuid(uuid)
@@ -117,7 +123,6 @@ public class GameService {
             throw new GameException("The player with {nickname = " + nickname + "} does belong to this game");
         }
     }
-
 
     @Autowired
     public void setPlayerRepository(PlayerRepository playerRepository) {
