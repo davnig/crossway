@@ -42,7 +42,6 @@ public class IntegrationTests {
                         .content(om.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-//                .andDo(print())
                 .andExpect(jsonPath("$.nickname", is("player1")));
     }
 
@@ -66,7 +65,6 @@ public class IntegrationTests {
                         .content(om.writeValueAsString(gameCreationIntent))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-//                .andDo(print())
                 .andExpect(jsonPath("$.uuid", matchesRegex("\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b")))
                 .andExpect(jsonPath("$.blackPlayerNickname", is("player1")));
     }
@@ -140,7 +138,6 @@ public class IntegrationTests {
         game.setUuid(uuid);
         gameRepository.save(game);
         mvc.perform(delete("/games/{uuid}", uuid))
-//                .andDo(print())
                 .andExpect(status().isOk());
         mvc.perform(get("/games/{uuid}", uuid))
                 .andExpect(status().isNotFound());
@@ -149,6 +146,23 @@ public class IntegrationTests {
     @Test
     void when_deleteGameAndGameDoesNotExist_then_404() throws Exception {
         mvc.perform(delete("/games/{uuid}", UUID.randomUUID().toString()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void when_deletePlayer_then_200() throws Exception {
+        String nickname = "PlayerXYZ";
+        Player player = new Player(nickname);
+        playerRepository.save(player);
+        mvc.perform(delete("/players/{nickname}", nickname))
+                        .andExpect(status().isOk());
+        mvc.perform(get("/players/{nickname}", nickname))
+                        .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void when_deletePlayerAndPlayerDoesNotExist_then_404() throws Exception {
+        mvc.perform(delete("/players/{nickname}", "PlayerXYZ"))
                 .andExpect(status().isNotFound());
     }
 

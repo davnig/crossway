@@ -14,6 +14,11 @@ public class ServerExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
+    @ExceptionHandler({PlayerNotFoundException.class})
+    protected ResponseEntity<String> handlePlayerNotFoundException(PlayerNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
     @ExceptionHandler({GameException.class})
     protected ResponseEntity<String> handleGameException(GameException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());

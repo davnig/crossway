@@ -22,6 +22,9 @@ public interface Api {
     @RequestMapping(method = RequestMethod.POST, value = "/players")
     PlayerDto addPlayer(@RequestBody PlayerDto playerDto);
 
+    @RequestMapping(method = RequestMethod.DELETE, value = "/players")
+    PlayerDto deletePlayer(@RequestBody PlayerDto playerDto);
+
     @RequestMapping(method = RequestMethod.POST, value = "/games")
     GameDto createGame(@RequestBody GameCreationIntent gameCreationIntent);
 
