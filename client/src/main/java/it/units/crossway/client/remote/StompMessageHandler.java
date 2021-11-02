@@ -1,6 +1,7 @@
 package it.units.crossway.client.remote;
 
 import it.units.crossway.client.GameHandler;
+import it.units.crossway.client.Rules;
 import it.units.crossway.client.model.PlayerColor;
 import it.units.crossway.client.model.StonePlacementIntent;
 import lombok.NonNull;
@@ -37,17 +38,16 @@ public class StompMessageHandler implements StompFrameHandler {
             return;
         }
         if (headers.containsKey("pie-rule-event") && gameHandler.getPlayer().getColor().equals(PlayerColor.BLACK)) {
-            gameHandler.getPlayer().setColor(PlayerColor.WHITE);
-            gameHandler.getTurn().setTurnColor(PlayerColor.BLACK);
+            Rules.applyPieRule(gameHandler.getPlayer(), gameHandler.getTurn());
+            gameHandler.playTurnIfSupposedTo();
+            return;
         }
-        if (payload instanceof StonePlacementIntent) {
-            StonePlacementIntent stonePlacementIntent = (StonePlacementIntent) payload;
-            gameHandler.getBoard().placeStone(
-                    stonePlacementIntent.getRow(),
-                    stonePlacementIntent.getColumn(),
-                    gameHandler.getTurn().getTurnColor()
-            );
-        }
+        StonePlacementIntent stonePlacementIntent = (StonePlacementIntent) payload;
+        gameHandler.getBoard().placeStone(
+                stonePlacementIntent.getRow(),
+                stonePlacementIntent.getColumn(),
+                gameHandler.getTurn().getTurnColor()
+        );
         gameHandler.endTurn();
         gameHandler.playTurnIfSupposedTo();
     }

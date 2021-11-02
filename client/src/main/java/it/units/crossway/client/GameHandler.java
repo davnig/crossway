@@ -106,9 +106,9 @@ public class GameHandler {
     }
 
     void playTurn() {
-        if (Rules.isPieRuleTurn(turn) && IOUtils.isPieRuleRequested()) {
-            player.setColor(PlayerColor.BLACK);
-            turn.setTurnColor(PlayerColor.BLACK);
+        if (Rules.isPieRuleTurn(turn) && Rules.isPieRuleNotAlreadyAccepted() && IOUtils.isPieRuleRequested()) {
+            Rules.applyPieRule(player, turn);
+            api.acceptPieRule(uuid);
             return;
         }
         createAndSendStonePlacementIntent();

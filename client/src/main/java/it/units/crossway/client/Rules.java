@@ -1,10 +1,7 @@
 package it.units.crossway.client;
 
 import it.units.crossway.client.exception.PlacementViolationException;
-import it.units.crossway.client.model.Board;
-import it.units.crossway.client.model.PlayerColor;
-import it.units.crossway.client.model.StonePlacementIntent;
-import it.units.crossway.client.model.Turn;
+import it.units.crossway.client.model.*;
 import org.javatuples.Pair;
 
 import java.util.Arrays;
@@ -13,6 +10,23 @@ import java.util.Set;
 import java.util.function.BiFunction;
 
 public class Rules {
+
+    static boolean isPieRuleAccepted = false;
+
+    public static void applyPieRule(Player player, Turn turn) {
+        if (player.getColor().equals(PlayerColor.WHITE)) {
+            player.setColor(PlayerColor.BLACK);
+            turn.setTurnColor(PlayerColor.BLACK);
+        } else {
+            player.setColor(PlayerColor.WHITE);
+            turn.setTurnColor(PlayerColor.WHITE);
+        }
+        isPieRuleAccepted = true;
+    }
+
+    public static boolean isPieRuleNotAlreadyAccepted() {
+        return !isPieRuleAccepted;
+    }
 
     public static boolean isPieRuleTurn(Turn turn) {
         return turn.getTurnNumber() == 2;

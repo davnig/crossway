@@ -51,6 +51,7 @@ public class GameHandlerTests {
     @AfterEach
     void reset() {
         wireMockServer.resetAll();
+        Rules.isPieRuleAccepted = false;
     }
 
     @AfterAll
@@ -92,7 +93,7 @@ public class GameHandlerTests {
     }
 
     @Test
-    void givenWhitePlayerWhenIsSecondTurnAndPieRuleAcceptedPlayerAndTurnColorShouldBecomeBlack() {
+    void givenWhitePlayerWhenIsSecondTurnAndPieRuleAcceptedThenPlayerAndTurnColorShouldBecomeBlack() {
         Api api = buildAndReturnFeignClient();
         wireMockServer.stubFor(post(anyUrl()));
         Player player = new Player("whiteP", PlayerColor.WHITE);
@@ -104,6 +105,22 @@ public class GameHandlerTests {
         gameHandler.playTurn();
         assertEquals(PlayerColor.BLACK, gameHandler.getTurn().getTurnColor());
         assertEquals(PlayerColor.BLACK, gameHandler.getPlayer().getColor());
+    }
+
+    @Test
+    void givenWhitePlayerWhenIsSecondTurnAndPieRuleAcceptedShouldSendPieRuleReq() {
+        Api api = buildAndReturnFeignClient();
+        Player player = new Player("whiteP", PlayerColor.WHITE);
+        Board board = new Board();
+        Turn turn = new Turn(2, PlayerColor.WHITE);
+        String uuid = UUID.randomUUID().toString();
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        gameHandler.setUuid(uuid);
+        wireMockServer.stubFor(post(urlEqualTo("/games/" + uuid + "/events/pie-rule")));
+        IOUtils.redirectScannerToSimulatedInput("Y" + System.lineSeparator());
+        gameHandler.playTurn();
+        wireMockServer.verify(1, postRequestedFor(
+                urlEqualTo("/games/" + uuid + "/events/pie-rule")));
     }
 
     @Test
@@ -516,7 +533,7 @@ public class GameHandlerTests {
     }
 
     @Test
-    void whenPieRuleEventIsReceivedThenBlackPlayerShouldApplyPieRuleAndPlayNextTurn() {
+    void whenPieRuleEventIsReceivedThenBlackPlayerShouldApplyPieRuleAndPlaySecondTurnAsWhite() {
         Api api = buildAndReturnFeignClient();
         Board board = new Board();
         Player player = new Player("playerB", PlayerColor.BLACK);
@@ -529,7 +546,7 @@ public class GameHandlerTests {
         StompHeaders stompHeaders = new StompHeaders();
         stompHeaders.set("pie-rule-event", "true");
         stompMessageHandler.handleFrame(stompHeaders, "");
-        assertEquals(3, gameHandler.getTurn().getTurnNumber());
+        assertEquals(2, gameHandler.getTurn().getTurnNumber());
         assertEquals(PlayerColor.WHITE, gameHandler.getTurn().getTurnColor());
         assertTrue(byteArrayOutputStream.toString().contains("Insert a valid placement for your stone..."));
     }
