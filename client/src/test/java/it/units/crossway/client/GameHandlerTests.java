@@ -33,6 +33,8 @@ import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static it.units.crossway.client.IOUtils.JOIN_GAME_CHOICE;
+import static it.units.crossway.client.IOUtils.NEW_GAME_CHOICE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -183,7 +185,7 @@ public class GameHandlerTests {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withBody(om.writeValueAsString(gameDto))));
-        String createGameIntent = "1" + System.getProperty("line.separator");
+        String createGameIntent = NEW_GAME_CHOICE + System.getProperty("line.separator");
         IOUtils.scanner = new Scanner(new ByteArrayInputStream(createGameIntent.getBytes()));
         gameHandler.chooseGameType();
         wireMockServer.verify(1, postRequestedFor(urlEqualTo("/games"))
@@ -208,7 +210,7 @@ public class GameHandlerTests {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withBody(om.writeValueAsString(gameDto))));
-        String createGameIntent = "1" + System.getProperty("line.separator");
+        String createGameIntent = NEW_GAME_CHOICE + System.getProperty("line.separator");
         IOUtils.scanner = new Scanner(new ByteArrayInputStream(createGameIntent.getBytes()));
         gameHandler.chooseGameType();
         assertEquals(uuid, gameHandler.getUuid());
@@ -239,7 +241,7 @@ public class GameHandlerTests {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withBody(om.writeValueAsString(gameDto1))));
-        String input = "2" + System.lineSeparator() + "0" + System.lineSeparator();
+        String input = JOIN_GAME_CHOICE + System.lineSeparator() + "1" + System.lineSeparator();
         IOUtils.redirectScannerToSimulatedInput(input);
         gameHandler.chooseGameType();
         wireMockServer.verify(1, getRequestedFor(urlEqualTo("/games/available")));
@@ -269,7 +271,7 @@ public class GameHandlerTests {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withBody(om.writeValueAsString(gameDto1))));
-        String input = "2" + System.lineSeparator() + "0" + System.lineSeparator();
+        String input = JOIN_GAME_CHOICE + System.lineSeparator() + "1" + System.lineSeparator();
         IOUtils.redirectScannerToSimulatedInput(input);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         System.setOut(new PrintStream(byteArrayOutputStream));
@@ -302,7 +304,7 @@ public class GameHandlerTests {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withBody(om.writeValueAsString(gameDto1))));
-        String input = "2" + System.lineSeparator() + "0" + System.lineSeparator();
+        String input = JOIN_GAME_CHOICE + System.lineSeparator() + "1" + System.lineSeparator();
         IOUtils.redirectScannerToSimulatedInput(input);
         gameHandler.chooseGameType();
         wireMockServer.verify(1, postRequestedFor(urlEqualTo("/games/" + uuid1 + "/events/joining")));
@@ -332,7 +334,7 @@ public class GameHandlerTests {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withBody(om.writeValueAsString(gameDto1))));
-        String input = "2" + System.lineSeparator() + "0" + System.lineSeparator();
+        String input = JOIN_GAME_CHOICE + System.lineSeparator() + "1" + System.lineSeparator();
         IOUtils.redirectScannerToSimulatedInput(input);
         gameHandler.chooseGameType();
         assertEquals(uuid1, gameHandler.getUuid());
@@ -440,7 +442,7 @@ public class GameHandlerTests {
         String input = nickname + System.lineSeparator() + newNickname + System.lineSeparator();
         IOUtils.redirectScannerToSimulatedInput(input);
         gameHandler.chooseNickname();
-        assertTrue(byteArrayOutputStream.toString().contains("Duplicate Player Exception!"));
+        assertTrue(byteArrayOutputStream.toString().contains("A player with that nickname already exists!"));
     }
 
     @Test

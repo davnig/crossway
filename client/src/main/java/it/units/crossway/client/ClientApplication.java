@@ -7,8 +7,8 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
-import org.springframework.web.socket.messaging.SessionConnectEvent;
-import org.springframework.web.socket.messaging.SessionConnectedEvent;
+
+import static it.units.crossway.client.IOUtils.clearConsole;
 
 @SpringBootApplication
 @EnableFeignClients
@@ -17,6 +17,7 @@ public class ClientApplication {
     private ApplicationContext context;
 
     public static void main(String[] args) {
+        clearConsole();
         SpringApplication.run(ClientApplication.class, args);
     }
 
@@ -24,16 +25,6 @@ public class ClientApplication {
     public void onApplicationReady() {
         GameHandler gameHandler = (GameHandler) context.getBean("gameHandler");
         gameHandler.init();
-    }
-
-    @EventListener(SessionConnectedEvent.class)
-    public void handleSessionConnected() {
-        System.out.println("connesso");
-    }
-
-    @EventListener(SessionConnectEvent.class)
-    public void handleSessionDisconnect() {
-        System.out.println("disconnesso");
     }
 
     @Autowired

@@ -25,13 +25,11 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static it.units.crossway.client.IOUtils.*;
+
 @Component
 @Data
 public class GameHandler {
-
-    private static final String NEW_GAME_CHOICE = "1";
-    private static final String JOIN_GAME_CHOICE = "2";
-    private static final String QUIT_GAME_CHOICE = "q";
 
     private Player player;
     private Board board;
@@ -53,7 +51,6 @@ public class GameHandler {
     }
 
     public void init() {
-        System.out.println("Welcome to Crossway!\n");
         chooseNickname();
         chooseGameType();
         subscribeToTopic();
@@ -67,13 +64,13 @@ public class GameHandler {
             PlayerDto playerDto = new PlayerDto(nickname);
             try {
                 api.addPlayer(playerDto);
+                clearConsole();
+                printBanner();
                 return;
-            }
-            catch(FeignException e) {
-                System.out.println("Duplicate Player Exception!");
+            } catch (FeignException.BadRequest e) {
+                System.out.println("A player with that nickname already exists!");
             }
         }
-
     }
 
     void chooseGameType() {
@@ -94,6 +91,8 @@ public class GameHandler {
             System.out.println("Waiting for an opponent...");
         } else {
             joinExistingGame();
+            clearConsole();
+            printBanner();
             startGame();
         }
     }
@@ -117,6 +116,7 @@ public class GameHandler {
     }
 
     public void playTurnIfSupposedTo() {
+        printBoard(board, player);
         if (isPlayerTurn()) {
             playTurn();
         } else {
@@ -125,6 +125,8 @@ public class GameHandler {
     }
 
     public void endTurn() {
+        clearConsole();
+        printBanner();
         turn.nextTurn();
     }
 
@@ -143,7 +145,7 @@ public class GameHandler {
                 System.exit(0);
             }
         } while (!IOUtils.isChoiceAValidInteger(choice) && (Integer.parseInt(choice) > allAvailableGames.size()));
-        String uuid = allAvailableGames.get(Integer.parseInt(choice)).getUuid();
+        String uuid = allAvailableGames.get(Integer.parseInt(choice) - 1).getUuid();
         GameDto gameDto = api.joinGame(uuid, new PlayerDto(player.getNickname()));
         this.uuid = gameDto.getUuid();
         player.setColor(PlayerColor.WHITE);
@@ -154,7 +156,7 @@ public class GameHandler {
         System.out.println("\nChoose from the list of available games:");
         IntStream.range(0, allAvailableGames.size())
                 .forEach(i ->
-                        System.out.println(i + " -> opponent is " + allAvailableGames.get(i).getBlackPlayerNickname())
+                        System.out.println(i + 1 + " -> opponent is " + allAvailableGames.get(i).getBlackPlayerNickname())
                 );
         return allAvailableGames;
     }

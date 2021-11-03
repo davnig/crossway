@@ -16,11 +16,10 @@ public class Rules {
     public static void applyPieRule(Player player, Turn turn) {
         if (player.getColor().equals(PlayerColor.WHITE)) {
             player.setColor(PlayerColor.BLACK);
-            turn.setTurnColor(PlayerColor.WHITE);
         } else {
             player.setColor(PlayerColor.WHITE);
-            turn.setTurnColor(PlayerColor.WHITE);
         }
+        turn.setTurnColor(PlayerColor.WHITE);
         isPieRuleAccepted = true;
     }
 

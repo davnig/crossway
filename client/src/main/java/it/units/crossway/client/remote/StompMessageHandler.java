@@ -1,7 +1,6 @@
 package it.units.crossway.client.remote;
 
 import it.units.crossway.client.GameHandler;
-import it.units.crossway.client.IOUtils;
 import it.units.crossway.client.Rules;
 import it.units.crossway.client.model.StonePlacementIntent;
 import lombok.NonNull;
@@ -10,6 +9,9 @@ import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
+
+import static it.units.crossway.client.IOUtils.clearConsole;
+import static it.units.crossway.client.IOUtils.printBanner;
 
 @Component
 public class StompMessageHandler implements StompFrameHandler {
@@ -29,6 +31,8 @@ public class StompMessageHandler implements StompFrameHandler {
     @Override
     public void handleFrame(@NonNull StompHeaders headers, Object payload) {
         if (headers.containsKey("join-event")) {
+            clearConsole();
+            printBanner();
             System.out.println(headers.getFirst("join-event") + " joined the game\n");
             gameHandler.startGame();
             return;
@@ -54,7 +58,6 @@ public class StompMessageHandler implements StompFrameHandler {
                     stonePlacementIntent.getColumn(),
                     gameHandler.getTurn().getTurnColor()
             );
-            IOUtils.printBoard(gameHandler.getBoard(), gameHandler.getPlayer());
             gameHandler.endTurn();
             gameHandler.playTurnIfSupposedTo();
         }

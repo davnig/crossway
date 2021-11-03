@@ -34,7 +34,6 @@ public class InputOutputTests {
                         "   --------- " + System.lineSeparator() +
                         "     1   2   " + System.lineSeparator() +
                         System.lineSeparator();
-
         ByteArrayOutputStream baos = IOUtils.redirectSystemOutToByteArrayOS();
         Player player = new Player("blackP", PlayerColor.BLACK);
         Board board = new Board();
@@ -67,7 +66,6 @@ public class InputOutputTests {
                         "   ----------------------------------------- " + System.lineSeparator() +
                         "     1   2   3   4   5   6   7   8   9   10  " + System.lineSeparator() +
                         System.lineSeparator();
-
         ByteArrayOutputStream baos = IOUtils.redirectSystemOutToByteArrayOS();
         Player player = new Player("blackP", PlayerColor.BLACK);
         Board board = new Board();
