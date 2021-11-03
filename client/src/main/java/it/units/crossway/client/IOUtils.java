@@ -69,6 +69,12 @@ public class IOUtils {
 		System.out.println(currentPlayer + " has won!!!!");
 	}
 
+	public static void printTurnInfo(Turn turn) {
+		System.out.println("\n===================");
+		System.out.printf("Turn %d: %s plays%n", turn.getTurnNumber(), turn.getTurnColor());
+		System.out.println("===================\n");
+	}
+
 	public static void printBoard(Board board, Player player) {
 		printLegend(player);
 		printRowSeparator();

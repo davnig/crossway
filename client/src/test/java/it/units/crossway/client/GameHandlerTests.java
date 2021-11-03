@@ -135,7 +135,7 @@ public class GameHandlerTests {
         ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
         IOUtils.redirectScannerToSimulatedInput("N" + System.lineSeparator() + "6,6" + System.lineSeparator());
         gameHandler.playTurn();
-        assertTrue(byteArrayOutputStream.toString().contains(IOUtils.INSERT_VALID_PLACEMENT));
+        assertTrue(byteArrayOutputStream.toString().contains(IOUtils.IO_INSERT_VALID_PLACEMENT));
         assertEquals(PlayerColor.WHITE, gameHandler.getPlayer().getColor());
     }
 
@@ -377,7 +377,7 @@ public class GameHandlerTests {
         IOUtils.redirectScannerToSimulatedInput("6,6" + System.lineSeparator());
         wireMockServer.stubFor(post(anyUrl()));
         gameHandler.startGame();
-        assertTrue(byteArrayOutputStream.toString().contains(IOUtils.INSERT_VALID_PLACEMENT));
+        assertTrue(byteArrayOutputStream.toString().contains(IOUtils.IO_INSERT_VALID_PLACEMENT));
     }
 
     @Test
@@ -391,7 +391,7 @@ public class GameHandlerTests {
         gameHandler.setUuid(uuid);
         ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
         gameHandler.startGame();
-        assertTrue(byteArrayOutputStream.toString().contains(IOUtils.WAITING_FOR_OPPONENT_MOVE));
+        assertTrue(byteArrayOutputStream.toString().contains(IOUtils.IO_WAITING_FOR_OPPONENT_MOVE));
     }
 
     @Test
@@ -490,7 +490,7 @@ public class GameHandlerTests {
         stompMessageHandler.handleFrame(stompHeaders, "");
         assertTrue(byteArrayOutputStream.toString().contains("Game start!!"));
         assertEquals(1, gameHandler.getTurn().getTurnNumber());
-        assertTrue(byteArrayOutputStream.toString().contains(IOUtils.INSERT_VALID_PLACEMENT));
+        assertTrue(byteArrayOutputStream.toString().contains(IOUtils.IO_INSERT_VALID_PLACEMENT));
     }
 
     @Test
@@ -549,7 +549,7 @@ public class GameHandlerTests {
         stompMessageHandler.handleFrame(stompHeaders, "");
         assertEquals(2, gameHandler.getTurn().getTurnNumber());
         assertEquals(PlayerColor.WHITE, gameHandler.getTurn().getTurnColor());
-        assertTrue(byteArrayOutputStream.toString().contains(IOUtils.INSERT_VALID_PLACEMENT));
+        assertTrue(byteArrayOutputStream.toString().contains(IOUtils.IO_INSERT_VALID_PLACEMENT));
     }
 
 }

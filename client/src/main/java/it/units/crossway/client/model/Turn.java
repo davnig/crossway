@@ -1,5 +1,6 @@
 package it.units.crossway.client.model;
 
+import it.units.crossway.client.IOUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,13 +18,13 @@ public class Turn {
     public void initFirstTurn() {
         turnNumber = 1;
         turnColor = PlayerColor.BLACK;
-        printTurnInfo();
+        IOUtils.printTurnInfo(this);
     }
 
     public void nextTurn() {
         turnNumber++;
         switchTurnColor();
-        printTurnInfo();
+        IOUtils.printTurnInfo(this);
     }
 
     public void switchTurnColor() {
@@ -41,7 +42,4 @@ public class Turn {
         }
     }
 
-    private void printTurnInfo() {
-        System.out.printf("Turn %d: %s plays%n", turnNumber, turnColor);
-    }
 }
