@@ -29,7 +29,7 @@ public class StompMessageHandler implements StompFrameHandler {
     @Override
     public void handleFrame(@NonNull StompHeaders headers, Object payload) {
         if (headers.containsKey("join-event")) {
-            System.out.println(headers.getFirst("join-event") + " joined the game");
+            System.out.println(headers.getFirst("join-event") + " joined the game\n");
             gameHandler.startGame();
             return;
         }

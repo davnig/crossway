@@ -14,8 +14,9 @@ import java.util.Scanner;
 public class IOUtils {
 
 	public static Scanner scanner = new Scanner(System.in);
-	public static final String WAITING_FOR_OPPONENT_MOVE = "Waiting for opponent move...";
-	public static final String INSERT_VALID_PLACEMENT = "Insert a valid placement for your stone (e.g. 3,4)...";
+	public static final String IO_CHOOSE_NICKNAME = "Enter a nickname: ";
+	public static final String IO_WAITING_FOR_OPPONENT_MOVE = "Waiting for opponent move...";
+	public static final String IO_INSERT_VALID_PLACEMENT = "Insert a valid placement for your stone (e.g. 3,4)...";
 
 	public static void redirectScannerToSimulatedInput(String input) {
 		scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));
@@ -33,7 +34,7 @@ public class IOUtils {
 	}
 
 	public static void printAskNextMove() {
-		System.out.println(IOUtils.INSERT_VALID_PLACEMENT);
+		System.out.println(IOUtils.IO_INSERT_VALID_PLACEMENT);
 	}
 
     public static String getInputLine() {
@@ -42,7 +43,7 @@ public class IOUtils {
 
     public static boolean isPieRuleRequested() {
         while (true) {
-            System.out.println("Do you Want to switch colors? Y-yes N-No");
+			System.out.println("Do you want to claim the pie rule? Y-yes N-No");
             String whiteResponse = scanner.nextLine();
             if (whiteResponse.equalsIgnoreCase("Y"))
                 return true;
@@ -113,7 +114,7 @@ public class IOUtils {
 				System.out.print("  ");
 			}
 		}
-		System.out.println();
+		System.out.println("\n");
 	}
 
 	private static void printRowSeparator() {

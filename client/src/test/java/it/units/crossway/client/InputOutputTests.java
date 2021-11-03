@@ -32,7 +32,8 @@ public class InputOutputTests {
                         "1  |   |   | " + System.lineSeparator() +
                         "2  |   |   | " + System.lineSeparator() +
                         "   --------- " + System.lineSeparator() +
-                        "     1   2   " + System.lineSeparator();
+                        "     1   2   " + System.lineSeparator() +
+                        System.lineSeparator();
 
         ByteArrayOutputStream baos = IOUtils.redirectSystemOutToByteArrayOS();
         Player player = new Player("blackP", PlayerColor.BLACK);
@@ -64,7 +65,8 @@ public class InputOutputTests {
                         "9  |   |   |   |   |   |   |   |   |   |   | " + System.lineSeparator() +
                         "10 |   |   |   |   |   |   |   |   |   |   | " + System.lineSeparator() +
                         "   ----------------------------------------- " + System.lineSeparator() +
-                        "     1   2   3   4   5   6   7   8   9   10  " + System.lineSeparator();
+                        "     1   2   3   4   5   6   7   8   9   10  " + System.lineSeparator() +
+                        System.lineSeparator();
 
         ByteArrayOutputStream baos = IOUtils.redirectSystemOutToByteArrayOS();
         Player player = new Player("blackP", PlayerColor.BLACK);

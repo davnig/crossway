@@ -41,7 +41,7 @@ public class Rules {
         if (board.isIntersectionOccupied(stonePlacementIntent.getRow(), stonePlacementIntent.getColumn()))
             throw new PlacementViolationException("Placement not allowed: intersection already occupied");
         if (board.isPlacementOutOfBoardBoundaries(stonePlacementIntent.getRow(), stonePlacementIntent.getColumn()))
-            throw new PlacementViolationException("Placement not allowed: out of board violation");
+            throw new PlacementViolationException("Placement not allowed: out of board");
         if (isDiagonalViolation(board, stonePlacementIntent))
             throw new PlacementViolationException("Placement not allowed: diagonal violation");
     }

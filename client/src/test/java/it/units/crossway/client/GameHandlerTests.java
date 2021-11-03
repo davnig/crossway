@@ -89,7 +89,7 @@ public class GameHandlerTests {
         IOUtils.scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));
         wireMockServer.stubFor(post(anyUrl()));
         gameHandler.playTurn();
-        assertTrue(byteArrayOutputStream.toString().contains("Do you Want to switch colors? Y-yes N-No"));
+        assertTrue(byteArrayOutputStream.toString().contains("Do you want to claim the pie rule? Y-yes N-No"));
     }
 
     @Test
@@ -471,7 +471,7 @@ public class GameHandlerTests {
         String input = "-6,100" + System.lineSeparator() + "10,1" + System.lineSeparator();
         IOUtils.redirectScannerToSimulatedInput(input);
         gameHandler.playTurn();
-        assertTrue(byteArrayOutputStream.toString().contains("Placement violation exception!"));
+        assertTrue(byteArrayOutputStream.toString().contains("Placement not allowed:"));
     }
 
     @Test

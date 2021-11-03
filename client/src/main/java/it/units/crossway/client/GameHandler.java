@@ -53,7 +53,7 @@ public class GameHandler {
     }
 
     public void init() {
-        System.out.println("Welcome to crossway! \n");
+        System.out.println("Welcome to Crossway!\n");
         chooseNickname();
         chooseGameType();
         subscribeToTopic();
@@ -61,7 +61,7 @@ public class GameHandler {
 
     void chooseNickname() {
         while(true) {
-            System.out.println("choose a nickname!");
+            System.out.println(IOUtils.IO_CHOOSE_NICKNAME);
             String nickname = IOUtils.getInputLine();
             player.setNickname(nickname);
             PlayerDto playerDto = new PlayerDto(nickname);
@@ -78,9 +78,9 @@ public class GameHandler {
 
     void chooseGameType() {
         System.out.println(
-                NEW_GAME_CHOICE + " -> Create a new game...\n" +
-                        JOIN_GAME_CHOICE + " -> Join a game...\n" +
-                        QUIT_GAME_CHOICE + " -> quit..."
+                NEW_GAME_CHOICE + " -> Create a new game\n" +
+                        JOIN_GAME_CHOICE + " -> Join a game\n" +
+                        QUIT_GAME_CHOICE + " -> Quit"
         );
         String choice;
         do {
@@ -109,7 +109,7 @@ public class GameHandler {
         if (Rules.isPieRuleTurn(turn) && Rules.isPieRuleNotAlreadyAccepted() && IOUtils.isPieRuleRequested()) {
             Rules.applyPieRule(player, turn);
             api.acceptPieRule(uuid, new PlayerDto(player.getNickname()));
-            System.out.println(IOUtils.WAITING_FOR_OPPONENT_MOVE);
+            System.out.println(IOUtils.IO_WAITING_FOR_OPPONENT_MOVE);
             return;
         }
         createAndSendStonePlacementIntent();
@@ -120,7 +120,7 @@ public class GameHandler {
         if (isPlayerTurn()) {
             playTurn();
         } else {
-            System.out.println(IOUtils.WAITING_FOR_OPPONENT_MOVE);
+            System.out.println(IOUtils.IO_WAITING_FOR_OPPONENT_MOVE);
         }
     }
 
@@ -151,7 +151,7 @@ public class GameHandler {
 
     private List<GameDto> getAllAvailableGamesDto() {
         List<GameDto> allAvailableGames = api.getAllAvailableGames();
-        System.out.println("choose from the list of available games:");
+        System.out.println("\nChoose from the list of available games:");
         IntStream.range(0, allAvailableGames.size())
                 .forEach(i ->
                         System.out.println(i + " -> opponent is " + allAvailableGames.get(i).getBlackPlayerNickname())
@@ -181,7 +181,7 @@ public class GameHandler {
                 Rules.validatePlacementIntent(board, stonePlacementIntent);
                 return stonePlacementIntent;
             } catch (PlacementViolationException e) {
-                System.out.println("Placement violation exception!");
+                System.out.println(e.getMessage());
             }
         }
     }
