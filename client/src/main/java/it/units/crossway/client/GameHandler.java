@@ -108,7 +108,7 @@ public class GameHandler {
     void playTurn() {
         if (Rules.isPieRuleTurn(turn) && Rules.isPieRuleNotAlreadyAccepted() && IOUtils.isPieRuleRequested()) {
             Rules.applyPieRule(player, turn);
-            api.acceptPieRule(uuid);
+            api.acceptPieRule(uuid, new PlayerDto(player.getNickname()));
             return;
         }
         createAndSendStonePlacementIntent();

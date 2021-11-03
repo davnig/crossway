@@ -38,6 +38,6 @@ public interface Api {
     Response winGame(@PathVariable String uuid, @RequestBody PlayerDto playerDto);
 
     @RequestMapping(method = RequestMethod.POST, value = "/games/{uuid}/events/pie-rule")
-    Response acceptPieRule(@PathVariable String uuid);
+    Response acceptPieRule(@PathVariable String uuid, @RequestBody PlayerDto playerDto);
 
 }

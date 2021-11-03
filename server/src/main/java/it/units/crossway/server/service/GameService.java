@@ -91,9 +91,9 @@ public class GameService {
         simpMessagingTemplate.convertAndSend("/topic/" + uuid, stonePlacementIntent);
     }
 
-    public void handlePieRuleEvent(String uuid) {
+    public void handlePieRuleEvent(String uuid, PlayerDto playerDto) {
         MessageHeaderAccessor accessor = new MessageHeaderAccessor();
-        accessor.setHeader("pie-rule-event", "true");
+        accessor.setHeader("pie-rule-event", playerDto.getNickname());
         simpMessagingTemplate.convertAndSend("/topic/" + uuid, "", accessor.getMessageHeaders());
     }
 

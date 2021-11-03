@@ -53,8 +53,8 @@ public class GameController {
     }
 
     @PostMapping("/{uuid}/events/pie-rule")
-    public ResponseEntity<Void> handlePieRuleEvent(@PathVariable String uuid) {
-        gameService.handlePieRuleEvent(uuid);
+    public ResponseEntity<Void> handlePieRuleEvent(@PathVariable String uuid, @RequestBody PlayerDto playerDto) {
+        gameService.handlePieRuleEvent(uuid, playerDto);
         return ResponseEntity.ok().build();
     }
 

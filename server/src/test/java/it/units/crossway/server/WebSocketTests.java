@@ -108,7 +108,7 @@ public class WebSocketTests {
         };
         stompClient.connect(getWsEndpoint(), stompSessionHandler);
         // block until available or expired timeout
-        StonePlacementIntent event = blockingQueue.poll(2, TimeUnit.SECONDS);
+        StonePlacementIntent event = blockingQueue.poll(5, TimeUnit.SECONDS);
         assertEquals(stonePlacementIntent, event);
         assertEquals(200, mvcResult[0].getResponse().getStatus());
     }
@@ -204,7 +204,7 @@ public class WebSocketTests {
         };
         stompClient.connect(getWsEndpoint(), stompSessionHandler);
         // block until available or expired timeout
-        StompHeaders responseHeaders = blockingQueue.poll(2, TimeUnit.SECONDS);
+        StompHeaders responseHeaders = blockingQueue.poll(5, TimeUnit.SECONDS);
         assertNotNull(responseHeaders);
         assertTrue(responseHeaders.containsKey("win-event"));
         assertEquals(whiteP.getNickname(), responseHeaders.getFirst("win-event"));
@@ -220,6 +220,8 @@ public class WebSocketTests {
         game.setGameStatus(GameStatus.IN_PROGRESS);
         gameRepository.save(game);
         final MvcResult[] mvcResult = new MvcResult[1];
+        ObjectMapper om = new ObjectMapper();
+        PlayerDto playerDto = new PlayerDto("xxx");
         StompSessionHandler stompSessionHandler = new StompSessionHandlerAdapter() {
             @Override
             public void afterConnected(StompSession session, @NonNull StompHeaders connectedHeaders) {
@@ -237,6 +239,7 @@ public class WebSocketTests {
                 });
                 try {
                     mvcResult[0] = mvc.perform(post("/games/{uuid}/events/pie-rule", uuid)
+                                    .content(om.writeValueAsString(playerDto))
                                     .contentType(MediaType.APPLICATION_JSON))
                             .andReturn();
                 } catch (Exception e) {
@@ -246,10 +249,10 @@ public class WebSocketTests {
         };
         stompClient.connect(getWsEndpoint(), stompSessionHandler);
         // block until available or expired timeout
-        StompHeaders responseHeaders = blockingQueue.poll(2, TimeUnit.SECONDS);
+        StompHeaders responseHeaders = blockingQueue.poll(3, TimeUnit.SECONDS);
         assertNotNull(responseHeaders);
         assertTrue(responseHeaders.containsKey("pie-rule-event"));
-        assertEquals("true", responseHeaders.getFirst("pie-rule-event"));
+        assertEquals(playerDto.getNickname(), responseHeaders.getFirst("pie-rule-event"));
         assertEquals(200, mvcResult[0].getResponse().getStatus());
     }
 

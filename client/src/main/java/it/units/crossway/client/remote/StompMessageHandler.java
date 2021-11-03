@@ -1,8 +1,8 @@
 package it.units.crossway.client.remote;
 
 import it.units.crossway.client.GameHandler;
+import it.units.crossway.client.IOUtils;
 import it.units.crossway.client.Rules;
-import it.units.crossway.client.model.PlayerColor;
 import it.units.crossway.client.model.StonePlacementIntent;
 import lombok.NonNull;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -37,18 +37,26 @@ public class StompMessageHandler implements StompFrameHandler {
             System.out.println("You lose :(\n" + headers.getFirst("win-event") + " win");
             return;
         }
-        if (headers.containsKey("pie-rule-event") && gameHandler.getPlayer().getColor().equals(PlayerColor.BLACK)) {
-            Rules.applyPieRule(gameHandler.getPlayer(), gameHandler.getTurn());
-            gameHandler.playTurnIfSupposedTo();
-            return;
+        if (headers.containsKey("pie-rule-event")) {
+            String nickname = headers.getFirst("pie-rule-event");
+            if (!nickname.equals(gameHandler.getPlayer().getNickname())) {
+                System.out.println("The opponent has accepted the pie rule: " +
+                        "now " + nickname + " is the BLACK player and you are the WHITE player.");
+                Rules.applyPieRule(gameHandler.getPlayer(), gameHandler.getTurn());
+                gameHandler.playTurnIfSupposedTo();
+                return;
+            }
         }
-        StonePlacementIntent stonePlacementIntent = (StonePlacementIntent) payload;
-        gameHandler.getBoard().placeStone(
-                stonePlacementIntent.getRow(),
-                stonePlacementIntent.getColumn(),
-                gameHandler.getTurn().getTurnColor()
-        );
-        gameHandler.endTurn();
-        gameHandler.playTurnIfSupposedTo();
+        if (payload instanceof StonePlacementIntent) {
+            StonePlacementIntent stonePlacementIntent = (StonePlacementIntent) payload;
+            gameHandler.getBoard().placeStone(
+                    stonePlacementIntent.getRow(),
+                    stonePlacementIntent.getColumn(),
+                    gameHandler.getTurn().getTurnColor()
+            );
+            IOUtils.printBoard(gameHandler.getBoard(), gameHandler.getPlayer());
+            gameHandler.endTurn();
+            gameHandler.playTurnIfSupposedTo();
+        }
     }
 }

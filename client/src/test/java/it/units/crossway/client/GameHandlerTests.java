@@ -93,7 +93,7 @@ public class GameHandlerTests {
     }
 
     @Test
-    void givenWhitePlayerWhenIsSecondTurnAndPieRuleAcceptedThenPlayerAndTurnColorShouldBecomeBlack() {
+    void whenIsSecondTurnAndPieRuleAcceptedThenPlayerShouldBecomeBlackAndTurnColorStillWhite() {
         Api api = buildAndReturnFeignClient();
         wireMockServer.stubFor(post(anyUrl()));
         Player player = new Player("whiteP", PlayerColor.WHITE);
@@ -103,8 +103,9 @@ public class GameHandlerTests {
         GameHandler gameHandler = new GameHandler(player, board, turn, api);
         IOUtils.redirectScannerToSimulatedInput("Y" + System.lineSeparator());
         gameHandler.playTurn();
-        assertEquals(PlayerColor.BLACK, gameHandler.getTurn().getTurnColor());
+        assertEquals(PlayerColor.WHITE, gameHandler.getTurn().getTurnColor());
         assertEquals(PlayerColor.BLACK, gameHandler.getPlayer().getColor());
+        assertEquals(2, gameHandler.getTurn().getTurnNumber());
     }
 
     @Test
