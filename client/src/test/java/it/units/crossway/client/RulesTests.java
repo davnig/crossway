@@ -73,6 +73,7 @@ public class RulesTests {
     @EnumSource(value = PlayerColor.class, names = {"WHITE", "BLACK"})
     void whenPlayerCreatesLinearConnectedPathShouldWinTheMatch(PlayerColor playerColor) {
         Board presetBoard = new Board();
+        Player player = new Player("nickname", playerColor);
         for (int i = Board.FIRST_ROW; i <= Board.LAST_ROW; i++) {
             if (playerColor == PlayerColor.BLACK) {
                 presetBoard.placeStone(i, 5, playerColor);
@@ -80,7 +81,7 @@ public class RulesTests {
                 presetBoard.placeStone(5, i, playerColor);
             }
         }
-        IOUtils.printBoard(presetBoard);
+        IOUtils.printBoard(presetBoard, player);
         Assertions.assertTrue(Rules.checkWin(presetBoard, playerColor));
     }
 
@@ -88,10 +89,11 @@ public class RulesTests {
     @CsvSource({"2,7", "1,18", "1,15", "8,10", "2,19"})
     void whenWhitePlayerDoesNotHaveConnectedPathBetweenLeftAndRightThenWinConditionShouldFail(int columnStartPath, int columnEndPath) {
         Board presetBoard = new Board();
+        Player player = new Player("nickname", PlayerColor.WHITE);
         for (int i = columnStartPath; i <= columnEndPath; i++) {
             presetBoard.placeStone(5, i, PlayerColor.WHITE);
         }
-        IOUtils.printBoard(presetBoard);
+        IOUtils.printBoard(presetBoard, player);
         Assertions.assertFalse(Rules.checkWin(presetBoard, PlayerColor.WHITE));
         Assertions.assertFalse(Rules.checkWin(presetBoard, PlayerColor.BLACK));
     }
@@ -100,10 +102,11 @@ public class RulesTests {
     @CsvSource({"2,7", "1,18", "1,15", "8,10", "2,19"})
     void whenBlackPlayerDoesNotHaveConnectedPathBetweenTopAndBottomThenWinConditionShouldFail(int rowStartPath, int rowEndPath) {
         Board presetBoard = new Board();
+        Player player = new Player("nickname", PlayerColor.BLACK);
         for (int i = rowStartPath; i <= rowEndPath; i++) {
             presetBoard.placeStone(i, 7, PlayerColor.BLACK);
         }
-        IOUtils.printBoard(presetBoard);
+        IOUtils.printBoard(presetBoard, player);
         Assertions.assertFalse(Rules.checkWin(presetBoard, PlayerColor.WHITE));
         Assertions.assertFalse(Rules.checkWin(presetBoard, PlayerColor.BLACK));
     }
@@ -112,17 +115,19 @@ public class RulesTests {
     @EnumSource(value = PlayerColor.class, names = {"WHITE", "BLACK"})
     void whenPlayerCreatesDiagonalConnectedPathBetweenTopAndBottomShouldWinTheMatch(PlayerColor playerColor) {
         Board presetBoard = new Board();
+        Player player = new Player("nickname", PlayerColor.WHITE);
         for (int i = Board.FIRST_ROW; i <= Board.LAST_ROW; i++) {
             presetBoard.placeStone(i, i, playerColor);
         }
 
-        IOUtils.printBoard(presetBoard);
+        IOUtils.printBoard(presetBoard, player);
         Assertions.assertTrue(Rules.checkWin(presetBoard, playerColor));
     }
 
     @Test
     void whenWhitePlayerCreatesVShapedConnectedPathBetweenLeftAndRightShouldWinTheMatch() {
         Board presetBoard = new Board();
+        Player player = new Player("nickname", PlayerColor.WHITE);
         for (int i = Board.FIRST_ROW; i <= Board.LAST_ROW / 2; i++) {
             presetBoard.placeStone(i, i, PlayerColor.WHITE);
         }
@@ -130,13 +135,14 @@ public class RulesTests {
             presetBoard.placeStone(9, i, PlayerColor.WHITE);
         }
         presetBoard.placeStone(10, 10, PlayerColor.WHITE);
-        IOUtils.printBoard(presetBoard);
+        IOUtils.printBoard(presetBoard, player);
         Assertions.assertTrue(Rules.checkWin(presetBoard, PlayerColor.WHITE));
     }
 
     @Test
     void whenWhitePlayerCreatesConnectedPathBetweenLeftAndRightShouldWinTheMatch() {
         Board presetBoard = new Board();
+        Player player = new Player("nickname", PlayerColor.WHITE);
         // from 3,1 to 3,6
         for (int i = Board.FIRST_COLUMN; i <= 6; i++) {
             presetBoard.placeStone(3, i, PlayerColor.WHITE);
@@ -158,7 +164,7 @@ public class RulesTests {
             presetBoard.placeStone(i, 18, PlayerColor.WHITE);
         }
         presetBoard.placeStone(2, 19, PlayerColor.WHITE);
-        IOUtils.printBoard(presetBoard);
+        IOUtils.printBoard(presetBoard, player);
         Assertions.assertTrue(Rules.checkWin(presetBoard, PlayerColor.WHITE));
     }
 

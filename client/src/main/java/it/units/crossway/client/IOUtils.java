@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Scanner;
 
 @Data
@@ -66,14 +67,14 @@ public class IOUtils {
 		System.out.println(currentPlayer + " has won!!!!");
 	}
 
-	public static void printBoard(Board board) {
+	public static void printBoard(Board board, Player player) {
+		printLegend(player);
 		printRowSeparator();
 		for (int row = Board.FIRST_ROW; row <= Board.LAST_ROW; row++) {
 			System.out.print(row);
 			if (row < 10) {
 				System.out.print("  ");
-			}
-			else {
+			} else {
 				System.out.print(" ");
 			}
 			printRow(board, row);
@@ -82,14 +83,25 @@ public class IOUtils {
 		printColumnEnumeration();
 	}
 
+	private static void printLegend(Player player) {
+		System.out.println();
+		Arrays.stream(PlayerColor.values())
+				.sorted()
+				.filter(color -> !color.equals(PlayerColor.NONE))
+				.forEach(color -> System.out.println(
+						getPrintSymbolByPlayerColor(color) + " --> " + color + " stones" +
+								(player.getColor().equals(color) ? " (you)" : "")
+				));
+		System.out.println();
+	}
+
 	private static void printColumnEnumeration() {
 		System.out.print("     ");
 		for (int col = Board.FIRST_ROW; col <= Board.LAST_ROW; col++) {
 			System.out.print(col);
-			if(col < 10) {
+			if (col < 10) {
 				System.out.print("   ");
-			}
-			else {
+			} else {
 				System.out.print("  ");
 			}
 		}
@@ -115,16 +127,20 @@ public class IOUtils {
 	private static String getPrintSymbolForIntersection(Board board, int row, int column) {
 		PlayerColor playerColorAtIntersection = board.getStoneColorAt(row, column);
 		if (playerColorAtIntersection != null) {
-			switch (playerColorAtIntersection) {
-				case BLACK:
-					return "O";
-				case WHITE:
-					return "x";
-				default:
-					return " ";
-			}
+			return getPrintSymbolByPlayerColor(playerColorAtIntersection);
 		}
 		return " ";
+	}
+
+	private static String getPrintSymbolByPlayerColor(PlayerColor playerColor) {
+		switch (playerColor) {
+			case BLACK:
+				return "O";
+			case WHITE:
+				return "x";
+			default:
+				return " ";
+		}
 	}
 
 	public static StonePlacementIntent getStonePlacementIntentFromInput(Player player) {
