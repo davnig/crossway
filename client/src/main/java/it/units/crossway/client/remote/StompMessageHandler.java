@@ -40,7 +40,7 @@ public class StompMessageHandler implements StompFrameHandler {
         if (headers.containsKey("pie-rule-event")) {
             String nickname = headers.getFirst("pie-rule-event");
             if (!nickname.equals(gameHandler.getPlayer().getNickname())) {
-                System.out.println("The opponent has accepted the pie rule: " +
+                System.out.println("The opponent has claimed the pie rule: " +
                         "now " + nickname + " is the BLACK player and you are the WHITE player.");
                 Rules.applyPieRule(gameHandler.getPlayer(), gameHandler.getTurn());
                 gameHandler.playTurnIfSupposedTo();

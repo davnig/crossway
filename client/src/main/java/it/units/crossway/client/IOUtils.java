@@ -14,6 +14,8 @@ import java.util.Scanner;
 public class IOUtils {
 
 	public static Scanner scanner = new Scanner(System.in);
+	public static final String WAITING_FOR_OPPONENT_MOVE = "Waiting for opponent move...";
+	public static final String INSERT_VALID_PLACEMENT = "Insert a valid placement for your stone (e.g. 3,4)...";
 
 	public static void redirectScannerToSimulatedInput(String input) {
 		scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));
@@ -31,7 +33,7 @@ public class IOUtils {
 	}
 
 	public static void printAskNextMove() {
-		System.out.println("Insert a valid placement for your stone...");
+		System.out.println(IOUtils.INSERT_VALID_PLACEMENT);
 	}
 
     public static String getInputLine() {

@@ -109,6 +109,7 @@ public class GameHandler {
         if (Rules.isPieRuleTurn(turn) && Rules.isPieRuleNotAlreadyAccepted() && IOUtils.isPieRuleRequested()) {
             Rules.applyPieRule(player, turn);
             api.acceptPieRule(uuid, new PlayerDto(player.getNickname()));
+            System.out.println(IOUtils.WAITING_FOR_OPPONENT_MOVE);
             return;
         }
         createAndSendStonePlacementIntent();
@@ -119,7 +120,7 @@ public class GameHandler {
         if (isPlayerTurn()) {
             playTurn();
         } else {
-            System.out.println("Waiting for opponent move...");
+            System.out.println(IOUtils.WAITING_FOR_OPPONENT_MOVE);
         }
     }
 
