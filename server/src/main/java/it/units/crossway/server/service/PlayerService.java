@@ -1,7 +1,6 @@
 package it.units.crossway.server.service;
 
 import it.units.crossway.server.exception.DuplicatePlayerException;
-import it.units.crossway.server.exception.GameNotFoundException;
 import it.units.crossway.server.exception.PlayerNotFoundException;
 import it.units.crossway.server.model.dto.PlayerDto;
 import it.units.crossway.server.model.entity.Player;

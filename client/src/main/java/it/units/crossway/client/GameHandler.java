@@ -1,6 +1,7 @@
 package it.units.crossway.client;
 
 import feign.FeignException;
+import it.units.crossway.client.exception.InvalidUserInputException;
 import it.units.crossway.client.exception.PlacementViolationException;
 import it.units.crossway.client.model.*;
 import it.units.crossway.client.model.dto.GameCreationIntent;
@@ -178,11 +179,11 @@ public class GameHandler {
 
     private StonePlacementIntent getValidStonePlacementIntent() {
         while (true) {
-            StonePlacementIntent stonePlacementIntent = IOUtils.getStonePlacementIntentFromInput(player);
             try {
+                StonePlacementIntent stonePlacementIntent = IOUtils.getStonePlacementIntentFromInput(player);
                 Rules.validatePlacementIntent(board, stonePlacementIntent);
                 return stonePlacementIntent;
-            } catch (PlacementViolationException e) {
+            } catch (PlacementViolationException | InvalidUserInputException e) {
                 System.out.println(e.getMessage());
             }
         }

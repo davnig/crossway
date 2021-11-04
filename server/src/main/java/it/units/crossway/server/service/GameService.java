@@ -26,6 +26,7 @@ public class GameService {
 
     private final GameRepository gameRepository;
     private PlayerRepository playerRepository;
+    private PlayerService playerService;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
     public GameService(GameRepository gameRepository, SimpMessagingTemplate simpMessagingTemplate) {
@@ -67,7 +68,10 @@ public class GameService {
 
     @Transactional
     public void handleWinEvent(String uuid, PlayerDto playerDto) {
+        Game game = gameRepository.findByUuid(uuid).orElseThrow(() -> new GameNotFoundException("Game with {uuid = " + uuid + "} not found"));
         deleteGame(uuid);
+        playerService.deletePlayerByNickname(game.getBlackPlayerNickname());
+        playerService.deletePlayerByNickname(game.getWhitePlayerNickname());
         MessageHeaderAccessor accessor = new MessageHeaderAccessor();
         accessor.setHeader("win-event", playerDto.getNickname());
         simpMessagingTemplate.convertAndSend("/topic/" + uuid, "", accessor.getMessageHeaders());
@@ -127,5 +131,10 @@ public class GameService {
     @Autowired
     public void setPlayerRepository(PlayerRepository playerRepository) {
         this.playerRepository = playerRepository;
+    }
+
+    @Autowired
+    public void setPlayerService(PlayerService playerService) {
+        this.playerService = playerService;
     }
 }

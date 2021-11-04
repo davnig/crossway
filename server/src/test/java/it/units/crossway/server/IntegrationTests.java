@@ -167,19 +167,31 @@ public class IntegrationTests {
     }
 
     @Test
-    void when_handleWinEvent_shouldDeleteGame() throws Exception {
+    void when_handleWinEvent_shouldDeleteGameAndPlayers() throws Exception {
         Game game = new Game();
         String uuid = UUID.randomUUID().toString();
         game.setUuid(uuid);
+        String whitePlayerNickname = "xxx";
+        String blackPlayerNickname = "abc";
+        Player whitePlayer = new Player(whitePlayerNickname);
+        Player blackPlayer = new Player(blackPlayerNickname);
+        game.setWhitePlayerNickname(whitePlayerNickname);
+        game.setBlackPlayerNickname(blackPlayerNickname);
         gameRepository.save(game);
+        playerRepository.save(whitePlayer);
+        playerRepository.save(blackPlayer);
         PlayerDto playerDto = new PlayerDto("xxx");
         ObjectMapper om = new ObjectMapper();
         mvc.perform(post("/games/{uuid}/events/win", uuid)
                         .content(om.writeValueAsString(playerDto))
                         .contentType(MediaType.APPLICATION_JSON))
-//                .andDo(print())
                 .andExpect(status().isOk());
         mvc.perform(get("/games/{uuid}", uuid))
+                .andExpect(status().isNotFound());
+        System.out.println(blackPlayerNickname);
+        mvc.perform(get("/players/{nickname}", blackPlayerNickname))
+                .andExpect(status().isNotFound());
+        mvc.perform(get("/players/{nickname}", whitePlayerNickname))
                 .andExpect(status().isNotFound());
     }
 

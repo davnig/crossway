@@ -4,6 +4,7 @@ import it.units.crossway.client.exception.PlacementViolationException;
 import it.units.crossway.client.model.*;
 import org.javatuples.Pair;
 
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;

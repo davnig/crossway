@@ -473,7 +473,7 @@ public class GameHandlerTests {
         String input = "-6,100" + System.lineSeparator() + "10,1" + System.lineSeparator();
         IOUtils.redirectScannerToSimulatedInput(input);
         gameHandler.playTurn();
-        assertTrue(byteArrayOutputStream.toString().contains("Placement not allowed:"));
+        wireMockServer.verify(1, postRequestedFor(urlPattern).withRequestBody(equalToJson(newJsonBody)));
     }
 
     @Test

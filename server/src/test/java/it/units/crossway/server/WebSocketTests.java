@@ -173,6 +173,8 @@ public class WebSocketTests {
         game.setBlackPlayerNickname(blackP.getNickname());
         game.setGameStatus(GameStatus.IN_PROGRESS);
         gameRepository.save(game);
+        playerRepository.save(whiteP);
+        playerRepository.save(blackP);
         PlayerDto playerDto = new PlayerDto(whiteP.getNickname());
         final MvcResult[] mvcResult = new MvcResult[1];
         StompSessionHandler stompSessionHandler = new StompSessionHandlerAdapter() {

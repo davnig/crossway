@@ -1,5 +1,6 @@
 package it.units.crossway.client;
 
+import it.units.crossway.client.exception.InvalidUserInputException;
 import it.units.crossway.client.model.*;
 import lombok.Data;
 import org.springframework.core.io.ClassPathResource;
@@ -64,10 +65,6 @@ public class IOUtils {
 
     public static boolean isChoiceAValidInteger(String choice) {
         return choice.matches("\\d+");
-    }
-
-    public static void clearCLI() throws IOException, InterruptedException {
-        new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
     }
 
     public static void clearConsole() {
@@ -180,9 +177,12 @@ public class IOUtils {
         }
     }
 
-    public static StonePlacementIntent getStonePlacementIntentFromInput(Player player) {
+    public static StonePlacementIntent getStonePlacementIntentFromInput(Player player) throws InvalidUserInputException {
         printAskNextMove();
         String input = IOUtils.getInputLine();
+        if (!input.matches("\\d+,\\d+")) {
+            throw new InvalidUserInputException("bad input!");
+        }
         int row = IOUtils.getIntRowFromPlayerInput(input);
         int column = IOUtils.getIntColumnFromPlayerInput(input);
         return new StonePlacementIntent(row, column, player);
