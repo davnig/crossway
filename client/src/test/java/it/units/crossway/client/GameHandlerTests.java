@@ -8,6 +8,7 @@ import com.github.tomakehurst.wiremock.stubbing.Scenario;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
+import it.units.crossway.client.exception.InvalidUserInputException;
 import it.units.crossway.client.model.*;
 import it.units.crossway.client.model.dto.GameCreationIntent;
 import it.units.crossway.client.model.dto.GameDto;
@@ -15,10 +16,9 @@ import it.units.crossway.client.model.dto.PlayerDto;
 import it.units.crossway.client.model.dto.StonePlacementIntentDto;
 import it.units.crossway.client.remote.Api;
 import it.units.crossway.client.remote.StompMessageHandler;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -35,8 +35,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static it.units.crossway.client.IOUtils.JOIN_GAME_CHOICE;
 import static it.units.crossway.client.IOUtils.NEW_GAME_CHOICE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GameHandlerTests {
 
@@ -428,13 +427,13 @@ public class GameHandlerTests {
         ObjectMapper om = new ObjectMapper();
         String jsonPlayerDto = om.writeValueAsString(playerDto);
         String newJsonPlayerDto = om.writeValueAsString(NewPlayerDto);
-        ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
-        wireMockServer.stubFor(post(urlEqualTo("/players")).inScenario("fail/success scenario")
+        UrlPattern urlPattern = urlEqualTo("/players");
+        wireMockServer.stubFor(post(urlPattern).inScenario("fail/success scenario")
                 .whenScenarioStateIs(Scenario.STARTED)
                 .withRequestBody(equalToJson(jsonPlayerDto))
                 .willReturn(aResponse()
                         .withStatus(400)).willSetStateTo("success"));
-        wireMockServer.stubFor(post(urlEqualTo("/players")).inScenario("fail/success scenario")
+        wireMockServer.stubFor(post(urlPattern).inScenario("fail/success scenario")
                 .whenScenarioStateIs("success")
                 .withRequestBody(equalToJson(newJsonPlayerDto))
                 .willReturn(aResponse()
@@ -442,7 +441,7 @@ public class GameHandlerTests {
         String input = nickname + System.lineSeparator() + newNickname + System.lineSeparator();
         IOUtils.redirectScannerToSimulatedInput(input);
         gameHandler.chooseNickname();
-        assertTrue(byteArrayOutputStream.toString().contains("A player with that nickname already exists!"));
+        wireMockServer.verify(1, postRequestedFor(urlPattern).withRequestBody(equalToJson(newJsonPlayerDto)));
     }
 
     @Test
@@ -459,7 +458,6 @@ public class GameHandlerTests {
         String jsonBody = new ObjectMapper().writeValueAsString(placementDto);
         StonePlacementIntentDto newPlacementDto = new StonePlacementIntentDto(10, 1, player.getNickname());
         String newJsonBody = new ObjectMapper().writeValueAsString(newPlacementDto);
-        ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
         wireMockServer.stubFor(post(urlPattern).inScenario("fail/success scenario")
                 .whenScenarioStateIs(Scenario.STARTED)
                 .withRequestBody(equalToJson(jsonBody))
@@ -552,6 +550,14 @@ public class GameHandlerTests {
         assertEquals(2, gameHandler.getTurn().getTurnNumber());
         assertEquals(PlayerColor.WHITE, gameHandler.getTurn().getTurnColor());
         assertTrue(byteArrayOutputStream.toString().contains(IOUtils.IO_INSERT_VALID_PLACEMENT));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {".6,6", "4,4,", "  5.6", "", "  ", "...", ",", ".,.", "1000", ",45"})
+    void whenInvalidUserInputStonePlacementShouldThrowInvalidUserInputException(String input) {
+        Player player = new Player("player", PlayerColor.WHITE);
+        IOUtils.redirectScannerToSimulatedInput(".6,6" + System.lineSeparator());
+        assertThrows(InvalidUserInputException.class, () -> IOUtils.getStonePlacementIntentFromInput(player));
     }
 
 }

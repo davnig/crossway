@@ -180,12 +180,16 @@ public class IOUtils {
     public static StonePlacementIntent getStonePlacementIntentFromInput(Player player) throws InvalidUserInputException {
         printAskNextMove();
         String input = IOUtils.getInputLine();
-        if (!input.matches("\\d+,\\d+")) {
-            throw new InvalidUserInputException("bad input!");
-        }
+        isValidStonePlacementInput(input);
         int row = IOUtils.getIntRowFromPlayerInput(input);
         int column = IOUtils.getIntColumnFromPlayerInput(input);
         return new StonePlacementIntent(row, column, player);
+    }
+
+    private static void isValidStonePlacementInput(String input) throws InvalidUserInputException {
+        if (!input.matches("\\d+,\\d+")) {
+            throw new InvalidUserInputException(input + "is an invalid input!");
+        }
     }
 
     public static int getIntColumnFromPlayerInput(String input) {
