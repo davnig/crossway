@@ -5,23 +5,16 @@ import it.units.crossway.client.model.Board;
 import it.units.crossway.client.model.Player;
 import it.units.crossway.client.model.PlayerColor;
 import it.units.crossway.client.model.StonePlacementIntent;
-import it.units.crossway.client.remote.Api;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.mockito.Mock;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RulesTests {
 
-    @Mock
-    private Api api;
-
-
-    //test south-west violation
     @ParameterizedTest
     @CsvSource({"BLACK,WHITE", "WHITE,BLACK"})
     void whenSouthWestDiagonalViolationShouldThrowException(PlayerColor player1, PlayerColor player2) {
@@ -33,7 +26,6 @@ public class RulesTests {
         assertThrows(PlacementViolationException.class, () -> Rules.validatePlacementIntent(presetBoard, stonePlacementIntent));
     }
 
-    //test north-west violation
     @ParameterizedTest
     @CsvSource({"BLACK,WHITE", "WHITE,BLACK"})
     void whenNorthWestDiagonalViolationShouldThrowException(PlayerColor player1, PlayerColor player2) {
@@ -45,7 +37,6 @@ public class RulesTests {
         assertThrows(PlacementViolationException.class, () -> Rules.validatePlacementIntent(presetBoard, stonePlacementIntent));
     }
 
-    //test north-east violation
     @ParameterizedTest
     @CsvSource({"BLACK,WHITE", "WHITE,BLACK"})
     void whenNorthEstDiagonalViolationShouldThrowException(PlayerColor player1, PlayerColor player2) {
@@ -57,7 +48,6 @@ public class RulesTests {
         assertThrows(PlacementViolationException.class, () -> Rules.validatePlacementIntent(presetBoard, stonePlacementIntent));
     }
 
-    //test south-east violation
     @ParameterizedTest
     @CsvSource({"BLACK,WHITE", "WHITE,BLACK"})
     void whenSouthEstDiagonalViolationShouldThrowException(PlayerColor player1, PlayerColor player2) {

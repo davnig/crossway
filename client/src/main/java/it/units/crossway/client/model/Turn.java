@@ -28,18 +28,7 @@ public class Turn {
     }
 
     public void switchTurnColor() {
-        turnColor = getCurrentPlayerOpponent();
-    }
-
-    public PlayerColor getCurrentPlayerOpponent() {
-        switch (turnColor) {
-            case BLACK:
-                return PlayerColor.WHITE;
-            case WHITE:
-                return PlayerColor.BLACK;
-            default:
-                return PlayerColor.NONE;
-        }
+        turnColor = turnColor.getOpposite();
     }
 
 }

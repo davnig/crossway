@@ -81,10 +81,11 @@ public class Rules {
     private static BiFunction<Board, StonePlacementIntent, Boolean> isSouthWestDiagonalViolation() {
         return (((board, stonePlacementIntent) -> {
             PlayerColor playerColor = stonePlacementIntent.getPlayer().getColor();
+            PlayerColor oppositeColor = playerColor.getOpposite();
             int row = stonePlacementIntent.getRow();
             int column = stonePlacementIntent.getColumn();
-            return board.getStoneColorAt(row + 1, column) != playerColor &&
-                    board.getStoneColorAt(row, column - 1) != playerColor &&
+            return board.getStoneColorAt(row + 1, column) == oppositeColor &&
+                    board.getStoneColorAt(row, column - 1) == oppositeColor &&
                     board.getStoneColorAt(row + 1, column - 1) == playerColor;
         }));
     }
@@ -92,10 +93,11 @@ public class Rules {
     private static BiFunction<Board, StonePlacementIntent, Boolean> isNorthWestDiagonalViolation() {
         return (((board, stonePlacementIntent) -> {
             PlayerColor playerColor = stonePlacementIntent.getPlayer().getColor();
+            PlayerColor oppositeColor = playerColor.getOpposite();
             int row = stonePlacementIntent.getRow();
             int column = stonePlacementIntent.getColumn();
-            return board.getStoneColorAt(row - 1, column) != playerColor &&
-                    board.getStoneColorAt(row, column - 1) != playerColor &&
+            return board.getStoneColorAt(row - 1, column) == oppositeColor &&
+                    board.getStoneColorAt(row, column - 1) == oppositeColor &&
                     board.getStoneColorAt(row - 1, column - 1) == playerColor;
         }));
     }
@@ -103,10 +105,11 @@ public class Rules {
     private static BiFunction<Board, StonePlacementIntent, Boolean> isNorthEastDiagonalViolation() {
         return (((board, stonePlacementIntent) -> {
             PlayerColor playerColor = stonePlacementIntent.getPlayer().getColor();
+            PlayerColor oppositeColor = playerColor.getOpposite();
             int row = stonePlacementIntent.getRow();
             int column = stonePlacementIntent.getColumn();
-            return board.getStoneColorAt(row - 1, column) != playerColor &&
-                    board.getStoneColorAt(row, column + 1) != playerColor &&
+            return board.getStoneColorAt(row - 1, column) == oppositeColor &&
+                    board.getStoneColorAt(row, column + 1) == oppositeColor &&
                     board.getStoneColorAt(row - 1, column + 1) == playerColor;
         }));
     }
@@ -114,10 +117,11 @@ public class Rules {
     private static BiFunction<Board, StonePlacementIntent, Boolean> isSouthEastDiagonalViolation() {
         return ((board, stonePlacementIntent) -> {
             PlayerColor playerColor = stonePlacementIntent.getPlayer().getColor();
+            PlayerColor oppositeColor = playerColor.getOpposite();
             int row = stonePlacementIntent.getRow();
             int column = stonePlacementIntent.getColumn();
-            return board.getStoneColorAt(row + 1, column) != playerColor &&
-                    board.getStoneColorAt(row, column + 1) != playerColor &&
+            return board.getStoneColorAt(row + 1, column) == oppositeColor &&
+                    board.getStoneColorAt(row, column + 1) == oppositeColor &&
                     board.getStoneColorAt(row + 1, column + 1) == playerColor;
         });
     }

@@ -206,7 +206,7 @@ public class WebSocketTests {
         };
         stompClient.connect(getWsEndpoint(), stompSessionHandler);
         // block until available or expired timeout
-        StompHeaders responseHeaders = blockingQueue.poll(5, TimeUnit.SECONDS);
+        StompHeaders responseHeaders = blockingQueue.poll(10, TimeUnit.SECONDS);
         assertNotNull(responseHeaders);
         assertTrue(responseHeaders.containsKey("win-event"));
         assertEquals(whiteP.getNickname(), responseHeaders.getFirst("win-event"));
@@ -251,7 +251,7 @@ public class WebSocketTests {
         };
         stompClient.connect(getWsEndpoint(), stompSessionHandler);
         // block until available or expired timeout
-        StompHeaders responseHeaders = blockingQueue.poll(3, TimeUnit.SECONDS);
+        StompHeaders responseHeaders = blockingQueue.poll(10, TimeUnit.SECONDS);
         assertNotNull(responseHeaders);
         assertTrue(responseHeaders.containsKey("pie-rule-event"));
         assertEquals(playerDto.getNickname(), responseHeaders.getFirst("pie-rule-event"));
