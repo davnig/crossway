@@ -24,6 +24,7 @@ import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.stream.IntStream;
 
 import static it.units.crossway.client.IOUtils.*;
@@ -58,28 +59,22 @@ public class GameHandler {
     }
 
     void chooseNickname() {
-        while(true) {
-            System.out.println(IOUtils.IO_CHOOSE_NICKNAME);
+        while (true) {
+            IOUtils.printNicknameMenu();
             String nickname = IOUtils.getInputLine();
             player.setNickname(nickname);
             PlayerDto playerDto = new PlayerDto(nickname);
             try {
                 api.addPlayer(playerDto);
-                clearConsole();
-                printBanner();
                 return;
             } catch (FeignException.BadRequest e) {
-                System.out.println("A player with that nickname already exists!");
+                IOUtils.setHeader("A player with that nickname already exists!");
             }
         }
     }
 
     void chooseGameType() {
-        System.out.println(
-                NEW_GAME_CHOICE + " -> Create a new game\n" +
-                        JOIN_GAME_CHOICE + " -> Join a game\n" +
-                        QUIT_GAME_CHOICE + " -> Quit"
-        );
+        IOUtils.printGameTypeMenu();
         String choice;
         do {
             choice = IOUtils.getInputLine();
@@ -90,46 +85,49 @@ public class GameHandler {
         } while ((!choice.equals(NEW_GAME_CHOICE)) && (!choice.equals(JOIN_GAME_CHOICE)));
         if (choice.equals(NEW_GAME_CHOICE)) {
             createNewGame();
-            System.out.println("Waiting for an opponent...");
+            IOUtils.refreshHeader("Waiting for an opponent...");
+            // post-join actions in StompMessageHandler
         } else {
             joinExistingGame();
-            clearConsole();
-            printBanner();
             startGame();
         }
     }
 
     public void startGame() {
-        System.out.println("Game start!!");
-        System.out.println("You play as " + player.getColor());
+        IOUtils.appendHeader("Game start!!\nYou play as " + player.getColor());
         turn.initFirstTurn();
+        IOUtils.appendBody(board.getAsString(player));
         playTurnIfSupposedTo();
     }
 
+    public void startTurn() {
+        turn.nextTurn();
+        IOUtils.setBody(turn.getTurnInfoAsString());
+        IOUtils.appendBody(board.getAsString(player));
+        playTurnIfSupposedTo();
+    }
+
+    public void playTurnIfSupposedTo() {
+        if (isPlayerTurn()) {
+            playTurn();
+        } else {
+            IOUtils.appendFooterAndRefresh(IO_WAITING_FOR_OPPONENT_MOVE);
+        }
+    }
+
     void playTurn() {
-        if (Rules.isPieRuleTurn(turn) && Rules.isPieRuleNotAlreadyAccepted() && IOUtils.isPieRuleRequested()) {
+        if (Rules.isPieRuleTurn(turn) && Rules.isPieRuleNotAlreadyAccepted() && isPieRuleRequested()) {
             Rules.applyPieRule(player, turn);
             api.acceptPieRule(uuid, new PlayerDto(player.getNickname()));
-            System.out.println(IOUtils.IO_WAITING_FOR_OPPONENT_MOVE);
+            IOUtils.appendFooterAndRefresh(IOUtils.IO_WAITING_FOR_OPPONENT_MOVE);
             return;
         }
         createAndSendStonePlacementIntent();
     }
 
-    public void playTurnIfSupposedTo() {
-        printBoard(board, player);
-        if (isPlayerTurn()) {
-            playTurn();
-        } else {
-            System.out.println(IOUtils.IO_WAITING_FOR_OPPONENT_MOVE);
-        }
-    }
-
     public void endTurn() {
-        clearConsole();
-        printBanner();
+        IOUtils.reset();
         checkWinnerIfCouldExist();
-        turn.nextTurn();
     }
 
     private void createNewGame() {
@@ -140,7 +138,8 @@ public class GameHandler {
 
     private void joinExistingGame() {
         String choice;
-        List<GameDto> allAvailableGames = getAllAvailableGamesDto();
+        List<GameDto> allAvailableGames = api.getAllAvailableGames();
+        IOUtils.refreshHeader(constructAvailableGamesMenu(allAvailableGames));
         do {
             choice = IOUtils.getInputLine();
             if (IOUtils.isChoiceToQuit(choice, QUIT_GAME_CHOICE)) {
@@ -152,16 +151,17 @@ public class GameHandler {
         GameDto gameDto = api.joinGame(uuid, new PlayerDto(player.getNickname()));
         this.uuid = gameDto.getUuid();
         player.setColor(PlayerColor.WHITE);
+        IOUtils.resetHeader();
     }
 
-    private List<GameDto> getAllAvailableGamesDto() {
-        List<GameDto> allAvailableGames = api.getAllAvailableGames();
-        System.out.println("\nChoose from the list of available games:");
-        IntStream.range(0, allAvailableGames.size())
+    private String constructAvailableGamesMenu(List<GameDto> availableGames) {
+        StringJoiner sj = new StringJoiner("");
+        IntStream.range(0, availableGames.size())
                 .forEach(i ->
-                        System.out.println(i + 1 + " -> opponent is " + allAvailableGames.get(i).getBlackPlayerNickname())
+                        sj.add(i + 1 + " -> opponent is " + availableGames.get(i).getBlackPlayerNickname()
+                                + System.lineSeparator())
                 );
-        return allAvailableGames;
+        return sj.toString();
     }
 
     private void subscribeToTopic() {
@@ -181,12 +181,13 @@ public class GameHandler {
 
     private StonePlacementIntent getValidStonePlacementIntent() {
         while (true) {
+            IOUtils.appendFooterAndRefresh(IOUtils.IO_INSERT_VALID_PLACEMENT);
             try {
                 StonePlacementIntent stonePlacementIntent = IOUtils.getStonePlacementIntentFromInput(player);
                 Rules.validatePlacementIntent(board, stonePlacementIntent);
                 return stonePlacementIntent;
             } catch (PlacementViolationException | InvalidUserInputException e) {
-                System.out.println(e.getMessage());
+                IOUtils.setFooter(e.getMessage());
             }
         }
     }
@@ -205,6 +206,18 @@ public class GameHandler {
 
     private boolean isPlayerTurn() {
         return player.getColor().equals(turn.getTurnColor());
+    }
+
+    public boolean isPieRuleRequested() {
+        while (true) {
+            IOUtils.appendFooterAndRefresh("Do you want to claim the pie rule? Y-yes N-No");
+            String whiteResponse = scanner.nextLine();
+            if (whiteResponse.equalsIgnoreCase("Y"))
+                return true;
+            if (whiteResponse.equalsIgnoreCase("N"))
+                return false;
+            IOUtils.setFooter("Input not allowed, insert either Y or N");
+        }
     }
 
 }

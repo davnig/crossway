@@ -18,17 +18,22 @@ public class Turn {
     public void initFirstTurn() {
         turnNumber = 1;
         turnColor = PlayerColor.BLACK;
-        IOUtils.printTurnInfo(this);
+        IOUtils.setBody(getTurnInfoAsString());
     }
 
     public void nextTurn() {
         turnNumber++;
         switchTurnColor();
-        IOUtils.printTurnInfo(this);
     }
 
     public void switchTurnColor() {
         turnColor = turnColor.getOpposite();
+    }
+
+    public String getTurnInfoAsString() {
+        return "\n===================\n" +
+                String.format("Turn %d: %s plays%n", turnNumber, turnColor) +
+                "===================\n";
     }
 
 }

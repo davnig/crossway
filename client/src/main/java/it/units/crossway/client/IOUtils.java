@@ -17,12 +17,133 @@ import java.util.Scanner;
 public class IOUtils {
 
     public static Scanner scanner = new Scanner(System.in);
+    private static Resource banner = new ClassPathResource("banner.txt");
+    private static String frameHeader = "";
+    private static String frameBody = "";
+    private static String frameFooter = "";
     public static final String IO_CHOOSE_NICKNAME = "Enter a nickname: ";
     public static final String IO_WAITING_FOR_OPPONENT_MOVE = "Waiting for opponent move...";
     public static final String IO_INSERT_VALID_PLACEMENT = "Insert a valid placement for your stone (e.g. 3,4)...";
     public static final String NEW_GAME_CHOICE = "1";
     public static final String JOIN_GAME_CHOICE = "2";
     public static final String QUIT_GAME_CHOICE = "q";
+
+    public static void refresh() {
+        clearConsole();
+        printBanner();
+        printHeader();
+        printBody();
+        printFooter();
+    }
+
+    public static void printBanner() {
+        Resource bannerResource = new ClassPathResource("banner.txt");
+        try (Scanner scanner = new Scanner(bannerResource.getInputStream())) {
+            while (scanner.hasNextLine()) {
+                System.out.println(scanner.nextLine());
+            }
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public static void printHeader() {
+        System.out.println(frameHeader);
+    }
+
+    public static void printBody() {
+        System.out.println(frameBody);
+    }
+
+    public static void printFooter() {
+        System.out.println(frameFooter);
+    }
+
+    public static void reset() {
+        resetHeader();
+        resetBody();
+        resetFooter();
+    }
+
+    public static void resetHeader() {
+        frameHeader = "";
+    }
+
+    public static void resetBody() {
+        frameBody = "";
+    }
+
+    public static void resetFooter() {
+        frameFooter = "";
+    }
+
+    public static void clearConsole() {
+        try {
+            String operatingSystem = System.getProperty("os.name"); //Check the current operating system
+            if (operatingSystem.contains("Windows"))
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            else
+                new ProcessBuilder("clear").inheritIO().start().waitFor();
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public static void refreshHeader(String input) {
+        setHeader(input);
+        refresh();
+    }
+
+    public static void appendHeader(String input) {
+        setHeader(frameHeader + System.lineSeparator() + input);
+    }
+
+    public static void appendBody(String input) {
+        setBody(frameBody + System.lineSeparator() + input);
+    }
+
+    public static void appendFooter(String input) {
+        setFooter(frameFooter + System.lineSeparator() + input);
+    }
+
+    public static void appendHeaderAndRefresh(String input) {
+        appendHeader(input);
+        refresh();
+    }
+
+    public static void appendBodyAndRefresh(String input) {
+        appendBody(input);
+        refresh();
+    }
+
+    public static void appendFooterAndRefresh(String input) {
+        appendFooter(input);
+        refresh();
+    }
+
+    public static void setHeader(String input) {
+        frameHeader = input;
+    }
+
+    public static void setBody(String input) {
+        frameBody = input;
+    }
+
+    public static void setFooter(String input) {
+        frameFooter = input;
+    }
+
+    public static void printNicknameMenu() {
+        appendHeaderAndRefresh(IO_CHOOSE_NICKNAME);
+    }
+
+    public static void printGameTypeMenu() {
+        String gameTypeMenu = NEW_GAME_CHOICE + " -> Create a new game\n" +
+                JOIN_GAME_CHOICE + " -> Join a game\n" +
+                QUIT_GAME_CHOICE + " -> Quit";
+        refreshHeader(gameTypeMenu);
+    }
+
 
     public static void redirectScannerToSimulatedInput(String input) {
         scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));
@@ -177,8 +298,7 @@ public class IOUtils {
         }
     }
 
-    public static StonePlacementIntent getStonePlacementIntentFromInput(Player player) throws InvalidUserInputException {
-        printAskNextMove();
+    public static StonePlacementIntent getStonePlacementIntentFromInput(Player player) throws InvalidUserInputException  {
         String input = IOUtils.getInputLine();
         isValidStonePlacementInput(input);
         int row = IOUtils.getIntRowFromPlayerInput(input);

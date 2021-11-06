@@ -3,11 +3,9 @@ package it.units.crossway.client.model;
 import org.javatuples.Pair;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Component
 public class Board {
@@ -170,5 +168,66 @@ public class Board {
 
     public boolean isIntersectionOccupied(int row, int column) {
         return !getStoneColorAt(row, column).equals(PlayerColor.NONE);
+    }
+
+    public String getAsString(Player player) {
+        StringJoiner sj = new StringJoiner("");
+        sj.add(constructBoardLegend(player));
+        String rowSeparator = constructRowSeparator();
+        sj.add(rowSeparator);
+        IntStream.range(Board.FIRST_ROW, Board.LAST_ROW)
+                .forEach(row -> {
+                    sj.add(String.valueOf(row));
+                    if (row < 10) {
+                        sj.add("  ");
+                    } else {
+                        sj.add(" ");
+                    }
+                    sj.add(constructRow(row));
+                });
+        sj.add(rowSeparator);
+        sj.add(constructColumnEnumeration());
+        return sj.toString();
+    }
+
+    private String constructColumnEnumeration() {
+        StringJoiner sj = new StringJoiner("");
+        sj.add("     ");
+        IntStream.range(Board.FIRST_COLUMN, Board.LAST_COLUMN)
+                .forEach(col -> {
+                    sj.add(String.valueOf(col));
+                    if (col < 10) {
+                        sj.add("   ");
+                    } else {
+                        sj.add("  ");
+                    }
+                });
+        sj.add("\n\n");
+        return sj.toString();
+    }
+
+    private String constructRow(int row) {
+        return IntStream.range(Board.FIRST_COLUMN, Board.LAST_COLUMN)
+                .mapToObj(col -> "| " + getStoneColorAt(row, col).asSymbol() + " ")
+                .collect(Collectors.joining()) +
+                "| \n";
+    }
+
+    private String constructBoardLegend(Player player) {
+        return Arrays.stream(PlayerColor.values())
+                .sorted()
+                .filter(color -> !color.equals(PlayerColor.NONE))
+                .map(color -> color.asSymbol() + " --> " + color + " stones" +
+                        (player.getColor().equals(color) ? " (you)\n" : "\n"))
+                .collect(Collectors.joining());
+    }
+
+    private String constructRowSeparator() {
+        StringJoiner sj = new StringJoiner("");
+        sj.add("   -");
+        IntStream.range(Board.FIRST_ROW, Board.LAST_ROW)
+                .forEach(i -> sj.add("----"));
+        sj.add(" \n");
+        return sj.toString();
     }
 }
