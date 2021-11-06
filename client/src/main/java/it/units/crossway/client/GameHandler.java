@@ -144,6 +144,7 @@ public class GameHandler {
         do {
             choice = IOUtils.getInputLine();
             if (IOUtils.isChoiceToQuit(choice, QUIT_GAME_CHOICE)) {
+                api.deletePlayer(new PlayerDto(player.getNickname()));
                 System.exit(0);
             }
         } while (!IOUtils.isChoiceAValidInteger(choice) && (Integer.parseInt(choice) > allAvailableGames.size()));

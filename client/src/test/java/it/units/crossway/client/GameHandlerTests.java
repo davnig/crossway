@@ -2,6 +2,7 @@ package it.units.crossway.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.stefanbirkner.systemlambda.SystemLambda;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.Scenario;
@@ -556,8 +557,35 @@ public class GameHandlerTests {
     @ValueSource(strings = {".6,6", "4,4,", "  5.6", "", "  ", "...", ",", ".,.", "1000", ",45"})
     void whenInvalidUserInputStonePlacementShouldThrowInvalidUserInputException(String input) {
         Player player = new Player("player", PlayerColor.WHITE);
-        IOUtils.redirectScannerToSimulatedInput(".6,6" + System.lineSeparator());
+        IOUtils.redirectScannerToSimulatedInput(input + System.lineSeparator());
         assertThrows(InvalidUserInputException.class, () -> IOUtils.getStonePlacementIntentFromInput(player));
+    }
+
+    @Test
+    void whenPlayerChooseGameTypeAndQuitShouldSendDeletePlayerRequest() throws Exception {
+        Api api = buildAndReturnFeignClient();
+        Board board = new Board();
+        Player player = new Player("playerXYZ", PlayerColor.BLACK);
+        Turn turn = new Turn();
+        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        UrlPattern urlPattern = urlEqualTo("/players");
+        PlayerDto playerDto = new PlayerDto(player.getNickname());
+        ObjectMapper om = new ObjectMapper();
+        String jsonPlayerDto = om.writeValueAsString(playerDto);
+        wireMockServer.stubFor(post(urlPattern)
+                .withRequestBody(equalToJson(jsonPlayerDto))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withBody(jsonPlayerDto)));
+        wireMockServer.stubFor(delete(urlPattern)
+                .withRequestBody(equalToJson(jsonPlayerDto))
+                .willReturn(aResponse()
+                        .withStatus(200)));
+        IOUtils.redirectScannerToSimulatedInput(player.getNickname() + System.lineSeparator());
+        gameHandler.chooseNickname();
+        IOUtils.redirectScannerToSimulatedInput(IOUtils.QUIT_GAME_CHOICE + System.lineSeparator());
+        SystemLambda.catchSystemExit(gameHandler::chooseGameType);
+        wireMockServer.verify(1, deleteRequestedFor(urlPattern).withRequestBody(equalToJson(jsonPlayerDto)));
     }
 
 }
