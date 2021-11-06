@@ -71,7 +71,7 @@ public class RulesTests {
                 presetBoard.placeStone(5, i, playerColor);
             }
         }
-        IOUtils.printBoard(presetBoard, player);
+        System.out.println(presetBoard.getAsString(player));
         Assertions.assertTrue(Rules.checkWin(presetBoard, playerColor));
     }
 
@@ -83,7 +83,7 @@ public class RulesTests {
         for (int i = columnStartPath; i <= columnEndPath; i++) {
             presetBoard.placeStone(5, i, PlayerColor.WHITE);
         }
-        IOUtils.printBoard(presetBoard, player);
+        System.out.println(presetBoard.getAsString(player));
         Assertions.assertFalse(Rules.checkWin(presetBoard, PlayerColor.WHITE));
         Assertions.assertFalse(Rules.checkWin(presetBoard, PlayerColor.BLACK));
     }
@@ -96,7 +96,7 @@ public class RulesTests {
         for (int i = rowStartPath; i <= rowEndPath; i++) {
             presetBoard.placeStone(i, 7, PlayerColor.BLACK);
         }
-        IOUtils.printBoard(presetBoard, player);
+        System.out.println(presetBoard.getAsString(player));
         Assertions.assertFalse(Rules.checkWin(presetBoard, PlayerColor.WHITE));
         Assertions.assertFalse(Rules.checkWin(presetBoard, PlayerColor.BLACK));
     }
@@ -110,7 +110,7 @@ public class RulesTests {
             presetBoard.placeStone(i, i, playerColor);
         }
 
-        IOUtils.printBoard(presetBoard, player);
+        System.out.println(presetBoard.getAsString(player));
         Assertions.assertTrue(Rules.checkWin(presetBoard, playerColor));
     }
 
@@ -125,7 +125,7 @@ public class RulesTests {
             presetBoard.placeStone(9, i, PlayerColor.WHITE);
         }
         presetBoard.placeStone(10, 10, PlayerColor.WHITE);
-        IOUtils.printBoard(presetBoard, player);
+        System.out.println(presetBoard.getAsString(player));
         Assertions.assertTrue(Rules.checkWin(presetBoard, PlayerColor.WHITE));
     }
 
@@ -154,7 +154,7 @@ public class RulesTests {
             presetBoard.placeStone(i, 18, PlayerColor.WHITE);
         }
         presetBoard.placeStone(2, 19, PlayerColor.WHITE);
-        IOUtils.printBoard(presetBoard, player);
+        System.out.println(presetBoard.getAsString(player));
         Assertions.assertTrue(Rules.checkWin(presetBoard, PlayerColor.WHITE));
     }
 

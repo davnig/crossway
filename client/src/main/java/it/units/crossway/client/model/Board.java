@@ -175,7 +175,7 @@ public class Board {
         sj.add(constructBoardLegend(player));
         String rowSeparator = constructRowSeparator();
         sj.add(rowSeparator);
-        IntStream.range(Board.FIRST_ROW, Board.LAST_ROW)
+        IntStream.range(Board.FIRST_ROW, Board.LAST_ROW + 1)
                 .forEach(row -> {
                     sj.add(String.valueOf(row));
                     if (row < 10) {
@@ -193,7 +193,7 @@ public class Board {
     private String constructColumnEnumeration() {
         StringJoiner sj = new StringJoiner("");
         sj.add("     ");
-        IntStream.range(Board.FIRST_COLUMN, Board.LAST_COLUMN)
+        IntStream.range(Board.FIRST_COLUMN, Board.LAST_COLUMN + 1)
                 .forEach(col -> {
                     sj.add(String.valueOf(col));
                     if (col < 10) {
@@ -207,7 +207,7 @@ public class Board {
     }
 
     private String constructRow(int row) {
-        return IntStream.range(Board.FIRST_COLUMN, Board.LAST_COLUMN)
+        return IntStream.range(Board.FIRST_COLUMN, Board.LAST_COLUMN + 1)
                 .mapToObj(col -> "| " + getStoneColorAt(row, col).asSymbol() + " ")
                 .collect(Collectors.joining()) +
                 "| \n";
@@ -225,7 +225,7 @@ public class Board {
     private String constructRowSeparator() {
         StringJoiner sj = new StringJoiner("");
         sj.add("   -");
-        IntStream.range(Board.FIRST_ROW, Board.LAST_ROW)
+        IntStream.range(Board.FIRST_ROW, Board.LAST_ROW + 1)
                 .forEach(i -> sj.add("----"));
         sj.add(" \n");
         return sj.toString();
