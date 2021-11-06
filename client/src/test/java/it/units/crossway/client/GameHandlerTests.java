@@ -495,7 +495,7 @@ public class GameHandlerTests {
     }
 
     @Test
-    void whenPlayerWinsShouldSendWinGameReq() throws JsonProcessingException {
+    void whenPlayerWinsShouldSendWinGameReq() throws Exception {
         Api api = buildAndReturnFeignClient();
         Player player = new Player("playerB", PlayerColor.BLACK);
         Board board = new Board();
@@ -515,6 +515,7 @@ public class GameHandlerTests {
                         .withStatus(200)));
         IOUtils.redirectScannerToSimulatedInput(Board.LAST_ROW + ",4" + System.lineSeparator());
         gameHandler.playTurnIfSupposedTo();
+        SystemLambda.catchSystemExit(gameHandler::endTurn);
         wireMockServer.verify(1, postRequestedFor(urlEqualTo("/games/" + uuid + "/events/win"))
                 .withRequestBody(equalToJson(om.writeValueAsString(playerDto))));
     }

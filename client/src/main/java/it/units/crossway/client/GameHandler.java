@@ -114,7 +114,6 @@ public class GameHandler {
             return;
         }
         createAndSendStonePlacementIntent();
-        checkWinnerIfCouldExist();
     }
 
     public void playTurnIfSupposedTo() {
@@ -129,6 +128,7 @@ public class GameHandler {
     public void endTurn() {
         clearConsole();
         printBanner();
+        checkWinnerIfCouldExist();
         turn.nextTurn();
     }
 
@@ -200,7 +200,7 @@ public class GameHandler {
     private void endGame() {
         api.winGame(uuid, new PlayerDto(player.getNickname()));
         System.out.println("YOU WIN!!!");
-//        System.exit(0);
+        System.exit(0);
     }
 
     private boolean isPlayerTurn() {
