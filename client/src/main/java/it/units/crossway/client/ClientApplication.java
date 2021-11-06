@@ -1,5 +1,6 @@
 package it.units.crossway.client;
 
+import it.units.crossway.client.model.Frame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,8 +9,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 
-import static it.units.crossway.client.IOUtils.clearConsole;
-
 @SpringBootApplication
 @EnableFeignClients
 public class ClientApplication {
@@ -17,7 +16,7 @@ public class ClientApplication {
     private ApplicationContext context;
 
     public static void main(String[] args) {
-        clearConsole();
+        Frame.clearConsole();
         SpringApplication.run(ClientApplication.class, args);
     }
 

@@ -1,8 +1,8 @@
 package it.units.crossway.client.remote;
 
 import it.units.crossway.client.GameHandler;
-import it.units.crossway.client.IOUtils;
 import it.units.crossway.client.Rules;
+import it.units.crossway.client.model.Frame;
 import it.units.crossway.client.model.StonePlacementIntent;
 import lombok.NonNull;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -15,9 +15,11 @@ import java.lang.reflect.Type;
 public class StompMessageHandler implements StompFrameHandler {
 
     private final GameHandler gameHandler;
+    private final Frame frame;
 
-    public StompMessageHandler(GameHandler gameHandler) {
+    public StompMessageHandler(GameHandler gameHandler, Frame frame) {
         this.gameHandler = gameHandler;
+        this.frame = frame;
     }
 
     @Override
@@ -29,19 +31,19 @@ public class StompMessageHandler implements StompFrameHandler {
     @Override
     public void handleFrame(@NonNull StompHeaders headers, Object payload) {
         if (headers.containsKey("join-event")) {
-            IOUtils.setHeader(headers.getFirst("join-event") + " joined the game\n");
+            frame.setHeader(headers.getFirst("join-event") + " joined the game\n");
             gameHandler.startGame();
             return;
         }
         if (headers.containsKey("win-event")) {
-            IOUtils.appendFooterAndRefresh("You lose :(\n" + headers.getFirst("win-event") + " win");
+            frame.appendFooterAndRefresh("You lose :(\n" + headers.getFirst("win-event") + " win");
             return;
         }
         if (headers.containsKey("pie-rule-event")) {
             String nickname = headers.getFirst("pie-rule-event");
             if (!nickname.equals(gameHandler.getPlayer().getNickname())) {
                 Rules.applyPieRule(gameHandler.getPlayer(), gameHandler.getTurn());
-                IOUtils.appendFooterAndRefresh("The opponent has claimed the pie rule: " +
+                frame.appendFooterAndRefresh("The opponent has claimed the pie rule: " +
                         "now " + nickname + " is the BLACK player and you are the WHITE player.");
                 gameHandler.playTurnIfSupposedTo();
                 return;

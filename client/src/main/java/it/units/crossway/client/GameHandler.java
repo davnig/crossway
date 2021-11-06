@@ -41,12 +41,14 @@ public class GameHandler {
     @Value("${ws-endpoint}")
     private String WS_ENDPOINT;
     private String uuid;
+    private Frame frame;
 
-    public GameHandler(Player player, Board board, Turn turn, Api api) {
+    public GameHandler(Player player, Board board, Turn turn, Api api, Frame frame) {
         this.player = player;
         this.board = board;
         this.turn = turn;
         this.api = api;
+        this.frame = frame;
         stompClient = new WebSocketStompClient(new SockJsClient(
                 List.of(new WebSocketTransport(new StandardWebSocketClient()))));
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
@@ -60,7 +62,7 @@ public class GameHandler {
 
     void chooseNickname() {
         while (true) {
-            IOUtils.printNicknameMenu();
+            frame.printNicknameMenu();
             String nickname = IOUtils.getInputLine();
             player.setNickname(nickname);
             PlayerDto playerDto = new PlayerDto(nickname);
@@ -68,13 +70,13 @@ public class GameHandler {
                 api.addPlayer(playerDto);
                 return;
             } catch (FeignException.BadRequest e) {
-                IOUtils.setHeader("A player with that nickname already exists!");
+                frame.setHeader("A player with that nickname already exists!");
             }
         }
     }
 
     void chooseGameType() {
-        IOUtils.printGameTypeMenu();
+        frame.printGameTypeMenu();
         String choice;
         do {
             choice = IOUtils.getInputLine();
@@ -85,7 +87,7 @@ public class GameHandler {
         } while ((!choice.equals(NEW_GAME_CHOICE)) && (!choice.equals(JOIN_GAME_CHOICE)));
         if (choice.equals(NEW_GAME_CHOICE)) {
             createNewGame();
-            IOUtils.refreshHeader("Waiting for an opponent...");
+            frame.refreshHeader("Waiting for an opponent...");
             // post-join actions in StompMessageHandler
         } else {
             joinExistingGame();
@@ -94,16 +96,17 @@ public class GameHandler {
     }
 
     public void startGame() {
-        IOUtils.appendHeader("Game start!!\nYou play as " + player.getColor());
+        frame.appendHeader("Game start!!\nYou play as " + player.getColor());
         turn.initFirstTurn();
-        IOUtils.appendBody(board.getAsString(player));
+        frame.setBody(turn.getTurnInfoAsString());
+        frame.appendBody(board.getAsString(player));
         playTurnIfSupposedTo();
     }
 
     public void startTurn() {
         turn.nextTurn();
-        IOUtils.setBody(turn.getTurnInfoAsString());
-        IOUtils.appendBody(board.getAsString(player));
+        frame.setBody(turn.getTurnInfoAsString());
+        frame.appendBody(board.getAsString(player));
         playTurnIfSupposedTo();
     }
 
@@ -111,7 +114,7 @@ public class GameHandler {
         if (isPlayerTurn()) {
             playTurn();
         } else {
-            IOUtils.appendFooterAndRefresh(IO_WAITING_FOR_OPPONENT_MOVE);
+            frame.appendFooterAndRefresh(IO_WAITING_FOR_OPPONENT_MOVE);
         }
     }
 
@@ -119,14 +122,14 @@ public class GameHandler {
         if (Rules.isPieRuleTurn(turn) && Rules.isPieRuleNotAlreadyAccepted() && isPieRuleRequested()) {
             Rules.applyPieRule(player, turn);
             api.acceptPieRule(uuid, new PlayerDto(player.getNickname()));
-            IOUtils.appendFooterAndRefresh(IOUtils.IO_WAITING_FOR_OPPONENT_MOVE);
+            frame.appendFooterAndRefresh(IOUtils.IO_WAITING_FOR_OPPONENT_MOVE);
             return;
         }
         createAndSendStonePlacementIntent();
     }
 
     public void endTurn() {
-        IOUtils.reset();
+        frame.reset();
         checkWinnerIfCouldExist();
     }
 
@@ -139,7 +142,7 @@ public class GameHandler {
     private void joinExistingGame() {
         String choice;
         List<GameDto> allAvailableGames = api.getAllAvailableGames();
-        IOUtils.refreshHeader(constructAvailableGamesMenu(allAvailableGames));
+        frame.refreshHeader(constructAvailableGamesMenu(allAvailableGames));
         do {
             choice = IOUtils.getInputLine();
             if (IOUtils.isChoiceToQuit(choice, QUIT_GAME_CHOICE)) {
@@ -151,7 +154,7 @@ public class GameHandler {
         GameDto gameDto = api.joinGame(uuid, new PlayerDto(player.getNickname()));
         this.uuid = gameDto.getUuid();
         player.setColor(PlayerColor.WHITE);
-        IOUtils.resetHeader();
+        frame.resetHeader();
     }
 
     private String constructAvailableGamesMenu(List<GameDto> availableGames) {
@@ -181,13 +184,13 @@ public class GameHandler {
 
     private StonePlacementIntent getValidStonePlacementIntent() {
         while (true) {
-            IOUtils.appendFooterAndRefresh(IOUtils.IO_INSERT_VALID_PLACEMENT);
+            frame.appendFooterAndRefresh(IOUtils.IO_INSERT_VALID_PLACEMENT);
             try {
                 StonePlacementIntent stonePlacementIntent = IOUtils.getStonePlacementIntentFromInput(player);
                 Rules.validatePlacementIntent(board, stonePlacementIntent);
                 return stonePlacementIntent;
             } catch (PlacementViolationException | InvalidUserInputException e) {
-                IOUtils.setFooter(e.getMessage());
+                frame.setFooter(e.getMessage());
             }
         }
     }
@@ -210,13 +213,13 @@ public class GameHandler {
 
     public boolean isPieRuleRequested() {
         while (true) {
-            IOUtils.appendFooterAndRefresh("Do you want to claim the pie rule? Y-yes N-No");
+            frame.appendFooterAndRefresh("Do you want to claim the pie rule? Y-yes N-No");
             String whiteResponse = scanner.nextLine();
             if (whiteResponse.equalsIgnoreCase("Y"))
                 return true;
             if (whiteResponse.equalsIgnoreCase("N"))
                 return false;
-            IOUtils.setFooter("Input not allowed, insert either Y or N");
+            frame.setFooter("Input not allowed, insert either Y or N");
         }
     }
 

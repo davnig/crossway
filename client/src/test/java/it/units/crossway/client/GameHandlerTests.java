@@ -21,6 +21,8 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
@@ -38,10 +40,13 @@ import static it.units.crossway.client.IOUtils.JOIN_GAME_CHOICE;
 import static it.units.crossway.client.IOUtils.NEW_GAME_CHOICE;
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest(classes = Frame.class)
 public class GameHandlerTests {
 
     @Mock
     private Api api;
+    @Autowired
+    private Frame frame;
     private static WireMockServer wireMockServer;
 
     @BeforeAll
@@ -74,7 +79,7 @@ public class GameHandlerTests {
         Board board = new Board();
         Turn turn = new Turn();
         Player player = new Player("whiteP", PlayerColor.WHITE);
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         gameHandler.startGame();
         assertEquals(gameHandler.getTurn(), new Turn(1, PlayerColor.BLACK));
     }
@@ -85,7 +90,7 @@ public class GameHandlerTests {
         Player player = new Player("whiteP", PlayerColor.WHITE);
         Board board = new Board();
         Turn turn = new Turn(2, PlayerColor.WHITE);
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
         String input = "N" + System.lineSeparator() + "6,6" + System.lineSeparator();
         IOUtils.scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));
@@ -102,7 +107,7 @@ public class GameHandlerTests {
         Board board = new Board();
         board.placeStone(1, 4, PlayerColor.BLACK);
         Turn turn = new Turn(2, PlayerColor.WHITE);
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         IOUtils.redirectScannerToSimulatedInput("Y" + System.lineSeparator());
         gameHandler.playTurn();
         assertEquals(PlayerColor.WHITE, gameHandler.getTurn().getTurnColor());
@@ -117,7 +122,7 @@ public class GameHandlerTests {
         Board board = new Board();
         Turn turn = new Turn(2, PlayerColor.WHITE);
         String uuid = UUID.randomUUID().toString();
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         gameHandler.setUuid(uuid);
         wireMockServer.stubFor(post(urlEqualTo("/games/" + uuid + "/events/pie-rule")));
         IOUtils.redirectScannerToSimulatedInput("Y" + System.lineSeparator());
@@ -133,7 +138,7 @@ public class GameHandlerTests {
         Player player = new Player("whiteP", PlayerColor.WHITE);
         Board board = new Board();
         Turn turn = new Turn(2, PlayerColor.WHITE);
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
         IOUtils.redirectScannerToSimulatedInput("N" + System.lineSeparator() + "6,6" + System.lineSeparator());
         gameHandler.playTurn();
@@ -148,7 +153,7 @@ public class GameHandlerTests {
         Player player = new Player(nickname, null);
         Board board = new Board();
         Turn turn = new Turn();
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         PlayerDto playerDto = new PlayerDto(nickname);
         ObjectMapper om = new ObjectMapper();
         String jsonPlayerDto = om.writeValueAsString(playerDto);
@@ -173,7 +178,7 @@ public class GameHandlerTests {
         Player player = new Player(nickname, null);
         Board board = new Board();
         Turn turn = new Turn();
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         gameHandler.getPlayer().setNickname(nickname);
         GameCreationIntent gameCreationIntent = new GameCreationIntent(nickname);
         ObjectMapper om = new ObjectMapper();
@@ -199,7 +204,7 @@ public class GameHandlerTests {
         Player player = new Player(nickname, null);
         Board board = new Board();
         Turn turn = new Turn();
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         gameHandler.getPlayer().setNickname(nickname);
         GameCreationIntent gameCreationIntent = new GameCreationIntent(nickname);
         ObjectMapper om = new ObjectMapper();
@@ -223,7 +228,7 @@ public class GameHandlerTests {
         Player player = new Player();
         Board board = new Board();
         Turn turn = new Turn();
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         ObjectMapper om = new ObjectMapper();
         List<GameDto> availableGames = new ArrayList<>();
         String uuid1 = UUID.randomUUID().toString();
@@ -253,7 +258,7 @@ public class GameHandlerTests {
         Player player = new Player();
         Board board = new Board();
         Turn turn = new Turn();
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         ObjectMapper om = new ObjectMapper();
         List<GameDto> availableGames = new ArrayList<>();
         String uuid1 = UUID.randomUUID().toString();
@@ -286,7 +291,7 @@ public class GameHandlerTests {
         Player player = new Player();
         Board board = new Board();
         Turn turn = new Turn();
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         ObjectMapper om = new ObjectMapper();
         List<GameDto> availableGames = new ArrayList<>();
         String uuid1 = UUID.randomUUID().toString();
@@ -316,7 +321,7 @@ public class GameHandlerTests {
         Player player = new Player();
         Board board = new Board();
         Turn turn = new Turn();
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         ObjectMapper om = new ObjectMapper();
         List<GameDto> availableGames = new ArrayList<>();
         String uuid1 = UUID.randomUUID().toString();
@@ -346,8 +351,8 @@ public class GameHandlerTests {
         Board board = new Board();
         Player player = new Player("playerB", PlayerColor.BLACK);
         Turn turn = new Turn(3, PlayerColor.BLACK);
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
-        StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
+        StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler, frame);
         StonePlacementIntent stonePlacementIntent = new StonePlacementIntent();
         stompMessageHandler.handleFrame(new StompHeaders(), stonePlacementIntent);
         assertEquals(PlayerColor.BLACK,
@@ -360,8 +365,8 @@ public class GameHandlerTests {
         Board board = new Board();
         Player player = new Player("playerW", PlayerColor.WHITE);
         Turn turn = new Turn(4, PlayerColor.WHITE);
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
-        StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
+        StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler, frame);
         StonePlacementIntent stonePlacementIntent = new StonePlacementIntent();
         stompMessageHandler.handleFrame(new StompHeaders(), stonePlacementIntent);
         assertEquals(5, gameHandler.getTurn().getTurnNumber());
@@ -374,7 +379,7 @@ public class GameHandlerTests {
         Board board = new Board();
         Player player = new Player("playerB", PlayerColor.BLACK);
         Turn turn = new Turn(3, PlayerColor.BLACK);
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
         IOUtils.redirectScannerToSimulatedInput("6,6" + System.lineSeparator());
         wireMockServer.stubFor(post(anyUrl()));
@@ -388,7 +393,7 @@ public class GameHandlerTests {
         Board board = new Board();
         Player player = new Player("playerW", PlayerColor.WHITE);
         Turn turn = new Turn(3, PlayerColor.BLACK);
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         String uuid = UUID.randomUUID().toString();
         gameHandler.setUuid(uuid);
         ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
@@ -402,7 +407,7 @@ public class GameHandlerTests {
         Board board = new Board();
         Player player = new Player("playerB", PlayerColor.BLACK);
         Turn turn = new Turn(3, PlayerColor.BLACK);
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         String uuid = UUID.randomUUID().toString();
         gameHandler.setUuid(uuid);
         IOUtils.redirectScannerToSimulatedInput("6,6" + System.lineSeparator());
@@ -422,7 +427,7 @@ public class GameHandlerTests {
         Player player = new Player(nickname, null);
         Board board = new Board();
         Turn turn = new Turn();
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         PlayerDto playerDto = new PlayerDto(nickname);
         PlayerDto NewPlayerDto = new PlayerDto(newNickname);
         ObjectMapper om = new ObjectMapper();
@@ -451,7 +456,7 @@ public class GameHandlerTests {
         Board board = new Board();
         Player player = new Player("playerB", PlayerColor.BLACK);
         Turn turn = new Turn(3, PlayerColor.BLACK);
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         String uuid = UUID.randomUUID().toString();
         gameHandler.setUuid(uuid);
         UrlPattern urlPattern = urlEqualTo("/games/" + uuid + "/events/placement");
@@ -481,8 +486,8 @@ public class GameHandlerTests {
         Board board = new Board();
         Player player = new Player("playerB", PlayerColor.BLACK);
         Turn turn = new Turn(1, PlayerColor.BLACK);
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
-        StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
+        StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler, frame);
         StompHeaders stompHeaders = new StompHeaders();
         stompHeaders.set("join-event", "playerW");
         wireMockServer.stubFor(post(anyUrl()));
@@ -504,7 +509,7 @@ public class GameHandlerTests {
         }
         Turn turn = new Turn(20, PlayerColor.BLACK);
         String uuid = UUID.randomUUID().toString();
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         gameHandler.setUuid(uuid);
         PlayerDto playerDto = new PlayerDto(player.getNickname());
         ObjectMapper om = new ObjectMapper();
@@ -526,8 +531,8 @@ public class GameHandlerTests {
         Board board = new Board();
         Player player = new Player("playerB", PlayerColor.BLACK);
         Turn turn = new Turn(20, PlayerColor.WHITE);
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
-        StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
+        StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler, frame);
         StompHeaders stompHeaders = new StompHeaders();
         stompHeaders.set("win-event", "playerW");
         ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
@@ -541,11 +546,11 @@ public class GameHandlerTests {
         Board board = new Board();
         Player player = new Player("playerB", PlayerColor.BLACK);
         Turn turn = new Turn(2, PlayerColor.WHITE);
-        GameHandler gameHandler = new GameHandler(player, board, turn, api);
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         wireMockServer.stubFor(post(anyUrl()));
         ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
         IOUtils.redirectScannerToSimulatedInput("6,6" + System.lineSeparator());
-        StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler);
+        StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler, frame);
         StompHeaders stompHeaders = new StompHeaders();
         stompHeaders.set("pie-rule-event", "true");
         stompMessageHandler.handleFrame(stompHeaders, "");
