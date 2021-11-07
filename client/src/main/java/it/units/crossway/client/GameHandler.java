@@ -8,6 +8,10 @@ import it.units.crossway.client.model.dto.GameCreationIntent;
 import it.units.crossway.client.model.dto.GameDto;
 import it.units.crossway.client.model.dto.PlayerDto;
 import it.units.crossway.client.model.dto.StonePlacementIntentDto;
+import it.units.crossway.client.model.event.OnJoinEventListener;
+import it.units.crossway.client.model.event.OnPieRuleEventListener;
+import it.units.crossway.client.model.event.OnPlacementEventListener;
+import it.units.crossway.client.model.event.OnWinEventListener;
 import it.units.crossway.client.remote.Api;
 import it.units.crossway.client.remote.StompMessageHandler;
 import lombok.Data;
@@ -31,17 +35,16 @@ import static it.units.crossway.client.IOUtils.*;
 
 @Component
 @Data
-public class GameHandler {
+public class GameHandler implements OnJoinEventListener, OnPlacementEventListener, OnPieRuleEventListener, OnWinEventListener {
 
     private Player player;
     private Board board;
     private Turn turn;
-    private WebSocketStompClient stompClient;
+    private Frame frame;
     private Api api;
+    private String uuid;
     @Value("${ws-endpoint}")
     private String WS_ENDPOINT;
-    private String uuid;
-    private Frame frame;
 
     public GameHandler(Player player, Board board, Turn turn, Api api, Frame frame) {
         this.player = player;
@@ -49,9 +52,6 @@ public class GameHandler {
         this.turn = turn;
         this.api = api;
         this.frame = frame;
-        stompClient = new WebSocketStompClient(new SockJsClient(
-                List.of(new WebSocketTransport(new StandardWebSocketClient()))));
-        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
     }
 
     public void init() {
@@ -88,7 +88,6 @@ public class GameHandler {
         if (choice.equals(NEW_GAME_CHOICE)) {
             createNewGame();
             frame.refreshHeader("Waiting for an opponent...");
-            // post-join actions in StompMessageHandler
         } else {
             joinExistingGame();
             startGame();
@@ -168,7 +167,15 @@ public class GameHandler {
     }
 
     private void subscribeToTopic() {
-        StompMessageHandler stompMessageHandler = (StompMessageHandler) ApplicationContextUtils.getContext().getBean("stompMessageHandler");
+        WebSocketStompClient stompClient = new WebSocketStompClient(new SockJsClient(
+                List.of(new WebSocketTransport(new StandardWebSocketClient()))));
+        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+//        StompMessageHandler stompMessageHandler = (StompMessageHandler) ApplicationContextUtils.getContext().getBean("stompMessageHandler");
+        StompMessageHandler stompMessageHandler = new StompMessageHandler();
+        stompMessageHandler.setJoinEventListener(this);
+        stompMessageHandler.setPlacementEventListener(this);
+        stompMessageHandler.setPieRuleEventListener(this);
+        stompMessageHandler.setWinEventListener(this);
         stompClient.connect(WS_ENDPOINT, new StompSessionHandlerAdapter() {
             @Override
             public void afterConnected(@NonNull StompSession session, @NonNull StompHeaders connectedHeaders) {
@@ -223,5 +230,36 @@ public class GameHandler {
         }
     }
 
+    @Override
+    public void onJoinEvent(String nickname) {
+        frame.setHeader(nickname + " joined the game\n");
+        startGame();
+    }
+
+    @Override
+    public void onPieRuleEvent(String claimer) {
+        if (!claimer.equals(player.getNickname())) {
+            Rules.applyPieRule(player, turn);
+            frame.appendFooterAndRefresh("The opponent has claimed the pie rule: " +
+                    "now " + claimer + " is the BLACK player and you are the WHITE player.");
+            playTurnIfSupposedTo();
+        }
+    }
+
+    @Override
+    public void onPlacementEvent(StonePlacementIntent stonePlacementIntent) {
+        board.placeStone(
+                stonePlacementIntent.getRow(),
+                stonePlacementIntent.getColumn(),
+                turn.getTurnColor()
+        );
+        endTurn();
+        startTurn();
+    }
+
+    @Override
+    public void onWinEvent(String winner) {
+        frame.appendFooterAndRefresh("You lose :(\n" + winner + " win");
+    }
 }
 

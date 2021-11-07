@@ -352,7 +352,8 @@ public class GameHandlerTests {
         Player player = new Player("playerB", PlayerColor.BLACK);
         Turn turn = new Turn(3, PlayerColor.BLACK);
         GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
-        StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler, frame);
+        StompMessageHandler stompMessageHandler = new StompMessageHandler();
+        stompMessageHandler.setPlacementEventListener(gameHandler);
         StonePlacementIntent stonePlacementIntent = new StonePlacementIntent();
         stompMessageHandler.handleFrame(new StompHeaders(), stonePlacementIntent);
         assertEquals(PlayerColor.BLACK,
@@ -366,7 +367,8 @@ public class GameHandlerTests {
         Player player = new Player("playerW", PlayerColor.WHITE);
         Turn turn = new Turn(4, PlayerColor.WHITE);
         GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
-        StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler, frame);
+        StompMessageHandler stompMessageHandler = new StompMessageHandler();
+        stompMessageHandler.setPlacementEventListener(gameHandler);
         StonePlacementIntent stonePlacementIntent = new StonePlacementIntent();
         stompMessageHandler.handleFrame(new StompHeaders(), stonePlacementIntent);
         assertEquals(5, gameHandler.getTurn().getTurnNumber());
@@ -487,7 +489,8 @@ public class GameHandlerTests {
         Player player = new Player("playerB", PlayerColor.BLACK);
         Turn turn = new Turn(1, PlayerColor.BLACK);
         GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
-        StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler, frame);
+        StompMessageHandler stompMessageHandler = new StompMessageHandler();
+        stompMessageHandler.setJoinEventListener(gameHandler);
         StompHeaders stompHeaders = new StompHeaders();
         stompHeaders.set("join-event", "playerW");
         wireMockServer.stubFor(post(anyUrl()));
@@ -532,7 +535,8 @@ public class GameHandlerTests {
         Player player = new Player("playerB", PlayerColor.BLACK);
         Turn turn = new Turn(20, PlayerColor.WHITE);
         GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
-        StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler, frame);
+        StompMessageHandler stompMessageHandler = new StompMessageHandler();
+        stompMessageHandler.setWinEventListener(gameHandler);
         StompHeaders stompHeaders = new StompHeaders();
         stompHeaders.set("win-event", "playerW");
         ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
@@ -550,7 +554,8 @@ public class GameHandlerTests {
         wireMockServer.stubFor(post(anyUrl()));
         ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
         IOUtils.redirectScannerToSimulatedInput("6,6" + System.lineSeparator());
-        StompMessageHandler stompMessageHandler = new StompMessageHandler(gameHandler, frame);
+        StompMessageHandler stompMessageHandler = new StompMessageHandler();
+        stompMessageHandler.setPieRuleEventListener(gameHandler);
         StompHeaders stompHeaders = new StompHeaders();
         stompHeaders.set("pie-rule-event", "true");
         stompMessageHandler.handleFrame(stompHeaders, "");
