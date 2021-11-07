@@ -380,7 +380,7 @@ public class GameHandlerTests {
         Api api = buildAndReturnFeignClient();
         Board board = new Board();
         Player player = new Player("playerB", PlayerColor.BLACK);
-        Turn turn = new Turn(3, PlayerColor.BLACK);
+        Turn turn = new Turn(2, PlayerColor.WHITE);
         GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
         IOUtils.redirectScannerToSimulatedInput("6,6" + System.lineSeparator());
@@ -394,7 +394,7 @@ public class GameHandlerTests {
         Api api = buildAndReturnFeignClient();
         Board board = new Board();
         Player player = new Player("playerW", PlayerColor.WHITE);
-        Turn turn = new Turn(3, PlayerColor.BLACK);
+        Turn turn = new Turn(2, PlayerColor.WHITE);
         GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         String uuid = UUID.randomUUID().toString();
         gameHandler.setUuid(uuid);
@@ -408,7 +408,7 @@ public class GameHandlerTests {
         Api api = buildAndReturnFeignClient();
         Board board = new Board();
         Player player = new Player("playerB", PlayerColor.BLACK);
-        Turn turn = new Turn(3, PlayerColor.BLACK);
+        Turn turn = new Turn(2, PlayerColor.WHITE);
         GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         String uuid = UUID.randomUUID().toString();
         gameHandler.setUuid(uuid);
@@ -487,7 +487,7 @@ public class GameHandlerTests {
         Api api = buildAndReturnFeignClient();
         Board board = new Board();
         Player player = new Player("playerB", PlayerColor.BLACK);
-        Turn turn = new Turn(1, PlayerColor.BLACK);
+        Turn turn = new Turn();
         GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         StompMessageHandler stompMessageHandler = new StompMessageHandler();
         stompMessageHandler.setJoinEventListener(gameHandler);

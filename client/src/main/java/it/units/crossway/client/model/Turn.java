@@ -14,14 +14,26 @@ public class Turn {
     private int turnNumber;
     private PlayerColor turnColor;
 
-    public void initFirstTurn() {
+    public void setFirstTurn() {
         turnNumber = 1;
         turnColor = PlayerColor.BLACK;
     }
 
     public void nextTurn() {
+        if (isFirstTurn()) {
+            setFirstTurn();
+        } else {
+            incrementTurnNumber();
+            switchTurnColor();
+        }
+    }
+
+    public boolean isFirstTurn() {
+        return turnNumber == 0;
+    }
+
+    private void incrementTurnNumber() {
         turnNumber++;
-        switchTurnColor();
     }
 
     public void switchTurnColor() {

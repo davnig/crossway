@@ -96,13 +96,10 @@ public class GameHandler implements OnJoinEventListener, OnPlacementEventListene
 
     public void startGame() {
         frame.appendHeader("Game start!!\nYou play as " + player.getColor());
-        turn.initFirstTurn();
-        frame.setBody(turn.getTurnInfoAsString());
-        frame.appendBody(board.getAsString(player));
-        playTurnIfSupposedTo();
+        startAndPlayTurnIfSupposed();
     }
 
-    public void startTurn() {
+    public void startAndPlayTurnIfSupposed() {
         turn.nextTurn();
         frame.setBody(turn.getTurnInfoAsString());
         frame.appendBody(board.getAsString(player));
@@ -254,7 +251,7 @@ public class GameHandler implements OnJoinEventListener, OnPlacementEventListene
                 turn.getTurnColor()
         );
         endTurn();
-        startTurn();
+        startAndPlayTurnIfSupposed();
     }
 
     @Override
