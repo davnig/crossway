@@ -43,8 +43,9 @@ public class IOUtils {
         return choice.matches("\\d+");
     }
 
-    public static StonePlacementIntent getStonePlacementIntentFromInput(Player player) {
+    public static StonePlacementIntent getStonePlacementIntentFromInput(Player player) throws InvalidUserInputException {
         String input = IOUtils.getInputLine();
+        isValidStonePlacementInput(input);
         int row = IOUtils.getIntRowFromPlayerInput(input);
         int column = IOUtils.getIntColumnFromPlayerInput(input);
         return new StonePlacementIntent(row, column, player);
