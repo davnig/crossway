@@ -81,7 +81,7 @@ public class GameHandler implements OnJoinEventListener, OnPlacementEventListene
         do {
             choice = IOUtils.getInputLine();
             if (IOUtils.isChoiceToQuit(choice, QUIT_GAME_CHOICE)) {
-                api.deletePlayer(new PlayerDto(player.getNickname()));
+                api.deletePlayerByNickname(player.getNickname());
                 System.exit(0);
             }
         } while ((!choice.equals(NEW_GAME_CHOICE)) && (!choice.equals(JOIN_GAME_CHOICE)));
@@ -142,7 +142,7 @@ public class GameHandler implements OnJoinEventListener, OnPlacementEventListene
         do {
             choice = IOUtils.getInputLine();
             if (IOUtils.isChoiceToQuit(choice, QUIT_GAME_CHOICE)) {
-                api.deletePlayer(new PlayerDto(player.getNickname()));
+                api.deletePlayerByNickname(player.getNickname());
                 System.exit(0);
             }
         } while (!IOUtils.isChoiceAValidInteger(choice) && (Integer.parseInt(choice) > allAvailableGames.size()));
@@ -154,20 +154,19 @@ public class GameHandler implements OnJoinEventListener, OnPlacementEventListene
     }
 
     private String constructAvailableGamesMenu(List<GameDto> availableGames) {
-        StringJoiner sj = new StringJoiner("");
+        StringJoiner stringJoiner = new StringJoiner("");
         IntStream.range(0, availableGames.size())
                 .forEach(i ->
-                        sj.add(i + 1 + " -> opponent is " + availableGames.get(i).getBlackPlayerNickname()
+                        stringJoiner.add(i + 1 + " -> opponent is " + availableGames.get(i).getBlackPlayerNickname()
                                 + System.lineSeparator())
                 );
-        return sj.toString();
+        return stringJoiner.toString();
     }
 
     private void subscribeToTopic() {
         WebSocketStompClient stompClient = new WebSocketStompClient(new SockJsClient(
                 List.of(new WebSocketTransport(new StandardWebSocketClient()))));
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-//        StompMessageHandler stompMessageHandler = (StompMessageHandler) ApplicationContextUtils.getContext().getBean("stompMessageHandler");
         StompMessageHandler stompMessageHandler = new StompMessageHandler();
         stompMessageHandler.setJoinEventListener(this);
         stompMessageHandler.setPlacementEventListener(this);
