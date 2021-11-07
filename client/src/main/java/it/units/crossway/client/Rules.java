@@ -3,10 +3,8 @@ package it.units.crossway.client;
 import it.units.crossway.client.exception.PlacementViolationException;
 import it.units.crossway.client.model.*;
 import org.javatuples.Pair;
-
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.stream.IntStream;
 
 public class Rules {
 
