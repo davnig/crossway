@@ -31,6 +31,7 @@ import java.util.StringJoiner;
 import java.util.stream.IntStream;
 
 import static it.units.crossway.client.IOUtils.*;
+import static it.units.crossway.client.model.Frame.*;
 
 @Component
 @Data
@@ -117,7 +118,7 @@ public class GameHandler implements OnJoinEventListener, OnPlacementEventListene
         if (Rules.isPieRuleTurn(turn) && Rules.isPieRuleNotAlreadyAccepted() && isPieRuleRequested()) {
             Rules.applyPieRule(player, turn);
             api.acceptPieRule(uuid, new PlayerDto(player.getNickname()));
-            frame.appendFooterAndRefresh(IOUtils.IO_WAITING_FOR_OPPONENT_MOVE);
+            frame.appendFooterAndRefresh(IO_WAITING_FOR_OPPONENT_MOVE);
             return;
         }
         if (Rules.areThereEmptyAndValidIntersections(player, board)) {
@@ -190,7 +191,7 @@ public class GameHandler implements OnJoinEventListener, OnPlacementEventListene
 
     private StonePlacementIntent getValidStonePlacementIntent() {
         while (true) {
-            frame.appendFooterAndRefresh(IOUtils.IO_INSERT_VALID_PLACEMENT);
+            frame.appendFooterAndRefresh(IO_INSERT_VALID_PLACEMENT);
             try {
                 StonePlacementIntent stonePlacementIntent = IOUtils.getStonePlacementIntentFromInput(player);
                 Rules.validatePlacementIntent(board, stonePlacementIntent);
