@@ -46,7 +46,7 @@ public class IntegrationTests {
     }
 
     @Test
-    void when_postPlayerAndDuplicateNickname_then_401() throws Exception {
+    void given_alreadyUsedNickname_when_postPlayer_then_401() throws Exception {
         Player player1 = new Player("playerX");
         playerRepository.save(player1);
         PlayerDto user = new PlayerDto("playerX");
@@ -88,7 +88,7 @@ public class IntegrationTests {
     }
 
     @Test
-    void when_handlePlacementEventAndGameDoesNotExists_then_401() throws Exception {
+    void given_nonExistingGame_when_handlePlacementEvent_then_401() throws Exception {
         String uuid = "fake-uuid";
         PlayerDto player0 = new PlayerDto("player0");
         ObjectMapper om = new ObjectMapper();
@@ -100,7 +100,7 @@ public class IntegrationTests {
     }
 
     @Test
-    void when_getAvailableGames_then_200() throws Exception {
+    void given_existingGames_when_getAvailableGames_then_200() throws Exception {
         Game game = new Game();
         game.setUuid(UUID.randomUUID().toString());
         game.setWhitePlayerNickname("whiteP");
@@ -115,7 +115,7 @@ public class IntegrationTests {
     }
 
     @Test
-    void when_getGameByUuid_then_200() throws Exception {
+    void given_existingGame_when_getGameByUuid_then_200() throws Exception {
         Game game = new Game();
         String uuid = UUID.randomUUID().toString();
         game.setUuid(uuid);
@@ -126,13 +126,13 @@ public class IntegrationTests {
     }
 
     @Test
-    void when_getGameByUuidAndGameDoesNotExist_then_404() throws Exception {
+    void given_nonExistingGame_when_getGameByUuid_then_404() throws Exception {
         mvc.perform(get("/games/{uuid}", UUID.randomUUID().toString()))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    void when_deleteGame_then_200() throws Exception {
+    void given_existingGame_when_deleteGameByUuid_then_200() throws Exception {
         Game game = new Game();
         String uuid = UUID.randomUUID().toString();
         game.setUuid(uuid);
@@ -144,54 +144,25 @@ public class IntegrationTests {
     }
 
     @Test
-    void when_deleteGameAndGameDoesNotExist_then_404() throws Exception {
+    void given_nonExistingGame_when_deleteGameByUuid_then_404() throws Exception {
         mvc.perform(delete("/games/{uuid}", UUID.randomUUID().toString()))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    void when_deletePlayer_then_200() throws Exception {
+    void given_existingPlayer_when_deletePlayerByNickname_then_200() throws Exception {
         String nickname = "PlayerXYZ";
         Player player = new Player(nickname);
         playerRepository.save(player);
         mvc.perform(delete("/players/{nickname}", nickname))
-                        .andExpect(status().isOk());
-        mvc.perform(get("/players/{nickname}", nickname))
-                        .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void when_deletePlayerAndPlayerDoesNotExist_then_404() throws Exception {
-        mvc.perform(delete("/players/{nickname}", "PlayerXYZ"))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void when_handleWinEvent_shouldDeleteGameAndPlayers() throws Exception {
-        Game game = new Game();
-        String uuid = UUID.randomUUID().toString();
-        game.setUuid(uuid);
-        String whitePlayerNickname = "xxx";
-        String blackPlayerNickname = "abc";
-        Player whitePlayer = new Player(whitePlayerNickname);
-        Player blackPlayer = new Player(blackPlayerNickname);
-        game.setWhitePlayerNickname(whitePlayerNickname);
-        game.setBlackPlayerNickname(blackPlayerNickname);
-        gameRepository.save(game);
-        playerRepository.save(whitePlayer);
-        playerRepository.save(blackPlayer);
-        PlayerDto playerDto = new PlayerDto("xxx");
-        ObjectMapper om = new ObjectMapper();
-        mvc.perform(post("/games/{uuid}/events/win", uuid)
-                        .content(om.writeValueAsString(playerDto))
-                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        mvc.perform(get("/games/{uuid}", uuid))
+        mvc.perform(get("/players/{nickname}", nickname))
                 .andExpect(status().isNotFound());
-        System.out.println(blackPlayerNickname);
-        mvc.perform(get("/players/{nickname}", blackPlayerNickname))
-                .andExpect(status().isNotFound());
-        mvc.perform(get("/players/{nickname}", whitePlayerNickname))
+    }
+
+    @Test
+    void given_nonExistingPlayer_when_deletePlayerByNickname_then_404() throws Exception {
+        mvc.perform(delete("/players/{nickname}", "PlayerXYZ"))
                 .andExpect(status().isNotFound());
     }
 

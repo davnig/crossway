@@ -106,7 +106,7 @@ public class GameHandler implements OnJoinEventListener, OnPlacementEventListene
     }
 
     public void playTurnIfSupposedTo() {
-        if (isPlayerTurn()) {
+        if (turn.isPlayerTurn(player)) {
             playTurn();
         } else {
             frame.appendFooterAndRefresh(IO_WAITING_FOR_OPPONENT_MOVE);
@@ -203,17 +203,22 @@ public class GameHandler implements OnJoinEventListener, OnPlacementEventListene
     }
 
     private void endGame() {
-        if (turn.getTurnColor() == player.getColor()) {
-            frame.appendFooterAndRefresh(WIN_MESSAGE);
-            api.winGame(uuid, new PlayerDto(player.getNickname()));
+        if (turn.isPlayerTurn(player)) {
+            handleWin();
         } else {
-            frame.appendFooterAndRefresh(LOSE_MESSAGE);
+            handleLose();
         }
+        api.deletePlayerByNickname(player.getNickname());
         System.exit(0);
     }
 
-    private boolean isPlayerTurn() {
-        return player.getColor().equals(turn.getTurnColor());
+    private void handleLose() {
+        frame.appendFooterAndRefresh(LOSE_MESSAGE);
+    }
+
+    private void handleWin() {
+        frame.appendFooterAndRefresh(WIN_MESSAGE);
+        api.deleteGameByUuid(uuid);
     }
 
     public boolean isPieRuleRequested() {

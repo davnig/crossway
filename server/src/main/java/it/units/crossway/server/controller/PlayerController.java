@@ -15,6 +15,11 @@ public class PlayerController {
         this.playerService = playerService;
     }
 
+    @GetMapping("/{nickname}")
+    public ResponseEntity<PlayerDto> getPlayerByNickname(@PathVariable String nickname) {
+        return ResponseEntity.ok(playerService.getPlayerByNickname(nickname));
+    }
+
     @PostMapping
     public ResponseEntity<PlayerDto> addPlayer(@RequestBody PlayerDto playerDto) {
         return ResponseEntity.ok(playerService.addPlayer(playerDto));
@@ -24,11 +29,6 @@ public class PlayerController {
     public ResponseEntity<Void> deletePlayerByNickname(@PathVariable String nickname) {
         playerService.deletePlayerByNickname(nickname);
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/{nickname}")
-    public ResponseEntity<PlayerDto> getPlayerByNickname(@PathVariable String nickname) {
-        return ResponseEntity.ok(playerService.getPlayerByNickname(nickname));
     }
 
 }

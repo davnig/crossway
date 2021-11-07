@@ -518,18 +518,14 @@ public class GameHandlerTests {
         String uuid = UUID.randomUUID().toString();
         GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         gameHandler.setUuid(uuid);
-        PlayerDto playerDto = new PlayerDto(player.getNickname());
-        ObjectMapper om = new ObjectMapper();
         wireMockServer.stubFor(post(urlEqualTo("/games/" + uuid + "/play")));
-        wireMockServer.stubFor(post(urlEqualTo("/games/" + uuid + "/events/win"))
-                .withRequestBody(equalToJson(om.writeValueAsString(playerDto)))
-                .willReturn(aResponse()
-                        .withStatus(200)));
+        wireMockServer.stubFor(delete(urlEqualTo("/games/" + uuid)));
+        wireMockServer.stubFor(delete(urlEqualTo("/players/" + player.getNickname())));
         IOUtils.redirectScannerToSimulatedInput(Board.LAST_ROW + ",4" + System.lineSeparator());
         gameHandler.playTurnIfSupposedTo();
         SystemLambda.catchSystemExit(gameHandler::endTurn);
-        wireMockServer.verify(1, postRequestedFor(urlEqualTo("/games/" + uuid + "/events/win"))
-                .withRequestBody(equalToJson(om.writeValueAsString(playerDto))));
+        wireMockServer.verify(1, deleteRequestedFor(urlEqualTo("/games/" + uuid)));
+        wireMockServer.verify(1, deleteRequestedFor(urlEqualTo("/players/" + player.getNickname())));
     }
 
     @Test
@@ -541,6 +537,7 @@ public class GameHandlerTests {
                 .forEach(row -> board.placeStone(row, 5, player.getColor()));
         Turn turn = new Turn(20, player.getColor());
         GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
+        wireMockServer.stubFor(delete(anyUrl()));
         ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
         SystemLambda.catchSystemExit(gameHandler::endTurn);
         assertTrue(byteArrayOutputStream.toString().contains(IOUtils.WIN_MESSAGE));
@@ -555,6 +552,7 @@ public class GameHandlerTests {
                 .forEach(row -> board.placeStone(row, 5, player.getColor().getOpposite()));
         Turn turn = new Turn(20, player.getColor().getOpposite());
         GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
+        wireMockServer.stubFor(delete(anyUrl()));
         ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
         SystemLambda.catchSystemExit(gameHandler::endTurn);
         assertTrue(byteArrayOutputStream.toString().contains(IOUtils.LOSE_MESSAGE));

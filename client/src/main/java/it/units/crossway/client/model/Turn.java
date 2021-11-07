@@ -46,4 +46,7 @@ public class Turn {
                 "===================\n";
     }
 
+    public boolean isPlayerTurn(Player player) {
+        return turnColor == player.getColor();
+    }
 }

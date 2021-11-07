@@ -35,6 +35,12 @@ public class GameController {
         return ResponseEntity.ok(gameService.createGame(gameCreationIntent));
     }
 
+    @DeleteMapping("/{uuid}")
+    public ResponseEntity<Void> deleteGameByUuid(@PathVariable String uuid) {
+        gameService.deleteGameByUuid(uuid);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/{uuid}/events/joining")
     public ResponseEntity<GameDto> handleJoiningEvent(@PathVariable String uuid, @RequestBody PlayerDto playerDto) {
         return ResponseEntity.ok(gameService.handleJoiningEvent(uuid, playerDto));
@@ -46,21 +52,9 @@ public class GameController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{uuid}/events/win")
-    public ResponseEntity<Void> handleWinEvent(@PathVariable String uuid, @RequestBody PlayerDto playerDto) {
-        gameService.handleWinEvent(uuid, playerDto);
-        return ResponseEntity.ok().build();
-    }
-
     @PostMapping("/{uuid}/events/pie-rule")
     public ResponseEntity<Void> handlePieRuleEvent(@PathVariable String uuid, @RequestBody PlayerDto playerDto) {
         gameService.handlePieRuleEvent(uuid, playerDto);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/{uuid}")
-    public ResponseEntity<Void> deleteGame(@PathVariable String uuid) {
-        gameService.deleteGame(uuid);
         return ResponseEntity.ok().build();
     }
 

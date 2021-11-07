@@ -67,18 +67,7 @@ public class GameService {
     }
 
     @Transactional
-    public void handleWinEvent(String uuid, PlayerDto playerDto) {
-        Game game = gameRepository.findByUuid(uuid).orElseThrow(() -> new GameNotFoundException("Game with {uuid = " + uuid + "} not found"));
-        deleteGame(uuid);
-        playerService.deletePlayerByNickname(game.getBlackPlayerNickname());
-        playerService.deletePlayerByNickname(game.getWhitePlayerNickname());
-        MessageHeaderAccessor accessor = new MessageHeaderAccessor();
-        accessor.setHeader("win-event", playerDto.getNickname());
-        simpMessagingTemplate.convertAndSend("/topic/" + uuid, "", accessor.getMessageHeaders());
-    }
-
-    @Transactional
-    public void deleteGame(String uuid) {
+    public void deleteGameByUuid(String uuid) {
         if (!gameRepository.existsByUuid(uuid))
             throw new GameNotFoundException("Game with {uuid = " + uuid + "} not found");
         gameRepository.deleteByUuid(uuid);
