@@ -11,7 +11,6 @@ import it.units.crossway.client.model.dto.StonePlacementIntentDto;
 import it.units.crossway.client.model.event.OnJoinEventListener;
 import it.units.crossway.client.model.event.OnPieRuleEventListener;
 import it.units.crossway.client.model.event.OnPlacementEventListener;
-import it.units.crossway.client.model.event.OnWinEventListener;
 import it.units.crossway.client.remote.Api;
 import it.units.crossway.client.remote.StompMessageHandler;
 import lombok.Data;
@@ -35,7 +34,7 @@ import static it.units.crossway.client.IOUtils.*;
 
 @Component
 @Data
-public class GameHandler implements OnJoinEventListener, OnPlacementEventListener, OnPieRuleEventListener, OnWinEventListener {
+public class GameHandler implements OnJoinEventListener, OnPlacementEventListener, OnPieRuleEventListener {
 
     private Player player;
     private Board board;
@@ -125,8 +124,8 @@ public class GameHandler implements OnJoinEventListener, OnPlacementEventListene
     }
 
     public void endTurn() {
-        frame.reset();
         checkWinnerIfCouldExist();
+        frame.reset();
     }
 
     private void createNewGame() {
@@ -171,7 +170,6 @@ public class GameHandler implements OnJoinEventListener, OnPlacementEventListene
         stompMessageHandler.setJoinEventListener(this);
         stompMessageHandler.setPlacementEventListener(this);
         stompMessageHandler.setPieRuleEventListener(this);
-        stompMessageHandler.setWinEventListener(this);
         stompClient.connect(WS_ENDPOINT, new StompSessionHandlerAdapter() {
             @Override
             public void afterConnected(@NonNull StompSession session, @NonNull StompHeaders connectedHeaders) {
@@ -199,14 +197,18 @@ public class GameHandler implements OnJoinEventListener, OnPlacementEventListene
     }
 
     private void checkWinnerIfCouldExist() {
-        if (Rules.couldExistsWinner(turn) && Rules.checkWin(board, player.getColor())) {
+        if (Rules.couldExistsWinner(turn) && Rules.checkWin(board, turn.getTurnColor())) {
             endGame();
         }
     }
 
     private void endGame() {
-        api.winGame(uuid, new PlayerDto(player.getNickname()));
-        System.out.println("YOU WIN!!!");
+        if (turn.getTurnColor() == player.getColor()) {
+            frame.appendFooterAndRefresh("YOU WIN!!!");
+            api.winGame(uuid, new PlayerDto(player.getNickname()));
+        } else {
+            frame.appendFooterAndRefresh("YOU LOSE :(");
+        }
         System.exit(0);
     }
 
@@ -251,11 +253,6 @@ public class GameHandler implements OnJoinEventListener, OnPlacementEventListene
         );
         endTurn();
         startAndPlayTurnIfSupposed();
-    }
-
-    @Override
-    public void onWinEvent(String winner) {
-        frame.appendFooterAndRefresh("You lose :(\n" + winner + " win");
     }
 }
 

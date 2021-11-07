@@ -539,7 +539,6 @@ public class GameHandlerTests {
         Turn turn = new Turn(20, PlayerColor.WHITE);
         GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
         StompMessageHandler stompMessageHandler = new StompMessageHandler();
-        stompMessageHandler.setWinEventListener(gameHandler);
         StompHeaders stompHeaders = new StompHeaders();
         stompHeaders.set("win-event", "playerW");
         ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
