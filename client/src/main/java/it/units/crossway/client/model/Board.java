@@ -142,7 +142,7 @@ public class Board {
         return row == FIRST_ROW;
     }
 
-    public void resetBoard() {
+    public static void resetBoard() {
         FIRST_ROW = 1;
         FIRST_COLUMN = 1;
         LAST_ROW = 19;

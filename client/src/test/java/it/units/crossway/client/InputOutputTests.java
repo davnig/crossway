@@ -41,7 +41,7 @@ public class InputOutputTests {
         System.out.println(board.getAsString(player));
         String printedBoard = baos.toString();
         assertEquals(board2x2, printedBoard);
-        board.resetBoard();
+        Board.resetBoard();
     }
 
     @Test
@@ -72,7 +72,7 @@ public class InputOutputTests {
         System.out.println(board.getAsString(player));
         String printedBoard = baos.toString();
         assertEquals(expectedBoard10x10, printedBoard);
-        board.resetBoard();
+        Board.resetBoard();
     }
 
 }
