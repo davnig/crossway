@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
@@ -532,18 +533,31 @@ public class GameHandlerTests {
     }
 
     @Test
-    void whenWinGameEventIsReceivedShouldShowMessageAndEndGame() {
+    void givenWinningBoardForPlayerWhenEndTurnShouldShowWinMessageAndEndGame() throws Exception {
         Api api = buildAndReturnFeignClient();
-        Board board = new Board();
         Player player = new Player("playerB", PlayerColor.BLACK);
-        Turn turn = new Turn(20, PlayerColor.WHITE);
+        Board board = new Board();
+        IntStream.range(Board.FIRST_ROW, Board.LAST_ROW + 1)
+                .forEach(row -> board.placeStone(row, 5, player.getColor()));
+        Turn turn = new Turn(20, player.getColor());
         GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
-        StompMessageHandler stompMessageHandler = new StompMessageHandler();
-        StompHeaders stompHeaders = new StompHeaders();
-        stompHeaders.set("win-event", "playerW");
         ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
-        stompMessageHandler.handleFrame(stompHeaders, "");
-        assertTrue(byteArrayOutputStream.toString().contains("You lose :(\nplayerW win"));
+        SystemLambda.catchSystemExit(gameHandler::endTurn);
+        assertTrue(byteArrayOutputStream.toString().contains(IOUtils.WIN_MESSAGE));
+    }
+
+    @Test
+    void givenWinningBoardForOpponentWhenEndTurnShouldShowLoseMessageAndEndGame() throws Exception {
+        Api api = buildAndReturnFeignClient();
+        Player player = new Player("playerW", PlayerColor.WHITE);
+        Board board = new Board();
+        IntStream.range(Board.FIRST_ROW, Board.LAST_ROW + 1)
+                .forEach(row -> board.placeStone(row, 5, player.getColor().getOpposite()));
+        Turn turn = new Turn(20, player.getColor().getOpposite());
+        GameHandler gameHandler = new GameHandler(player, board, turn, api, frame);
+        ByteArrayOutputStream byteArrayOutputStream = IOUtils.redirectSystemOutToByteArrayOS();
+        SystemLambda.catchSystemExit(gameHandler::endTurn);
+        assertTrue(byteArrayOutputStream.toString().contains(IOUtils.LOSE_MESSAGE));
     }
 
     @Test

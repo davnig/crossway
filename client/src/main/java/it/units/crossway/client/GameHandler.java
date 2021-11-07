@@ -204,10 +204,10 @@ public class GameHandler implements OnJoinEventListener, OnPlacementEventListene
 
     private void endGame() {
         if (turn.getTurnColor() == player.getColor()) {
-            frame.appendFooterAndRefresh("YOU WIN!!!");
+            frame.appendFooterAndRefresh(WIN_MESSAGE);
             api.winGame(uuid, new PlayerDto(player.getNickname()));
         } else {
-            frame.appendFooterAndRefresh("YOU LOSE :(");
+            frame.appendFooterAndRefresh(LOSE_MESSAGE);
         }
         System.exit(0);
     }

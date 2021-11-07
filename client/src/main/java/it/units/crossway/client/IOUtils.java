@@ -17,6 +17,8 @@ public class IOUtils {
     public static final String IO_CHOOSE_NICKNAME = "Enter a nickname: ";
     public static final String IO_WAITING_FOR_OPPONENT_MOVE = "Waiting for opponent move...";
     public static final String IO_INSERT_VALID_PLACEMENT = "Insert a valid placement for your stone (e.g. 3,4)...";
+    public static final String WIN_MESSAGE = "YOU WIN!!!";
+    public static final String LOSE_MESSAGE = "YOU LOSE :(";
     public static final String NEW_GAME_CHOICE = "1";
     public static final String JOIN_GAME_CHOICE = "2";
     public static final String QUIT_GAME_CHOICE = "q";
