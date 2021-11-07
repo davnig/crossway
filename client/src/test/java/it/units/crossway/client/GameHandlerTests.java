@@ -604,15 +604,14 @@ public class GameHandlerTests {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withBody(jsonPlayerDto)));
-        wireMockServer.stubFor(delete(urlPattern)
-                .withRequestBody(equalToJson(jsonPlayerDto))
+        wireMockServer.stubFor(delete(urlEqualTo("/players/" + player.getNickname()))
                 .willReturn(aResponse()
                         .withStatus(200)));
         IOUtils.redirectScannerToSimulatedInput(player.getNickname() + System.lineSeparator());
         gameHandler.chooseNickname();
         IOUtils.redirectScannerToSimulatedInput(IOUtils.QUIT_GAME_CHOICE + System.lineSeparator());
         SystemLambda.catchSystemExit(gameHandler::chooseGameType);
-        wireMockServer.verify(1, deleteRequestedFor(urlPattern).withRequestBody(equalToJson(jsonPlayerDto)));
+        wireMockServer.verify(1, deleteRequestedFor(urlEqualTo("/players/" + player.getNickname())));
     }
 
 }
