@@ -16,7 +16,6 @@ public class Board {
     public static int LAST_COLUMN = 19;
     private Map<Pair<Integer, Integer>, PlayerColor> boardState;
 
-
     public Board() {
         initIntersections();
     }
@@ -25,14 +24,6 @@ public class Board {
         this.boardState = new HashMap<>();
     }
 
-    /**
-     * Gets the color of the stone located at the intersection identified by the
-     * given row and column numbers.
-     *
-     * @param row    the row number of the intersection
-     * @param column the column number of the intersection
-     * @return a {@link PlayerColor}
-     */
     public PlayerColor getStoneColorAt(int row, int column) {
         Pair<Integer, Integer> intersection = new Pair<>(row, column);
         if (boardState.containsKey(intersection)) {
@@ -48,14 +39,6 @@ public class Board {
         return PlayerColor.NONE;
     }
 
-    /**
-     * Places a stone of the given player color on the board in the intersection identified
-     * by the given row and column numbers.
-     *
-     * @param row         the row number of the intersection
-     * @param column      the column number of the intersection
-     * @param playerColor the {@link PlayerColor} of the stone
-     */
     public void placeStone(int row, int column, PlayerColor playerColor) {
         if (playerColor != PlayerColor.NONE) {
             boardState.put(new Pair<>(row, column), playerColor);
@@ -171,39 +154,40 @@ public class Board {
     }
 
     public String getAsString(Player player) {
-        StringJoiner sj = new StringJoiner("");
-        sj.add(constructBoardLegend(player));
+        StringJoiner stringJoiner = new StringJoiner("");
+        stringJoiner.add(constructBoardLegend(player));
+        stringJoiner.add(System.lineSeparator());
         String rowSeparator = constructRowSeparator();
-        sj.add(rowSeparator);
+        stringJoiner.add(rowSeparator);
         IntStream.range(Board.FIRST_ROW, Board.LAST_ROW + 1)
                 .forEach(row -> {
-                    sj.add(String.valueOf(row));
+                    stringJoiner.add(String.valueOf(row));
                     if (row < 10) {
-                        sj.add("  ");
+                        stringJoiner.add("  ");
                     } else {
-                        sj.add(" ");
+                        stringJoiner.add(" ");
                     }
-                    sj.add(constructRow(row));
+                    stringJoiner.add(constructRow(row));
                 });
-        sj.add(rowSeparator);
-        sj.add(constructColumnEnumeration());
-        return sj.toString();
+        stringJoiner.add(rowSeparator);
+        stringJoiner.add(constructColumnEnumeration());
+        return stringJoiner.toString();
     }
 
     private String constructColumnEnumeration() {
-        StringJoiner sj = new StringJoiner("");
-        sj.add("     ");
+        StringJoiner stringJoiner = new StringJoiner("");
+        stringJoiner.add("     ");
         IntStream.range(Board.FIRST_COLUMN, Board.LAST_COLUMN + 1)
                 .forEach(col -> {
-                    sj.add(String.valueOf(col));
+                    stringJoiner.add(String.valueOf(col));
                     if (col < 10) {
-                        sj.add("   ");
+                        stringJoiner.add("   ");
                     } else {
-                        sj.add("  ");
+                        stringJoiner.add("  ");
                     }
                 });
-        sj.add("\n\n");
-        return sj.toString();
+        stringJoiner.add("\n\n");
+        return stringJoiner.toString();
     }
 
     private String constructRow(int row) {
@@ -223,11 +207,11 @@ public class Board {
     }
 
     private String constructRowSeparator() {
-        StringJoiner sj = new StringJoiner("");
-        sj.add("   -");
+        StringJoiner stringJoiner = new StringJoiner("");
+        stringJoiner.add("   -");
         IntStream.range(Board.FIRST_ROW, Board.LAST_ROW + 1)
-                .forEach(i -> sj.add("----"));
-        sj.add(" \n");
-        return sj.toString();
+                .forEach(i -> stringJoiner.add("----"));
+        stringJoiner.add(" \n");
+        return stringJoiner.toString();
     }
 }

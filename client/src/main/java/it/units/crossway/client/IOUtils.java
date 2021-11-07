@@ -53,7 +53,7 @@ public class IOUtils {
 
     private static void isValidStonePlacementInput(String input) throws InvalidUserInputException {
         if (!input.matches("\\d+,\\d+")) {
-            throw new InvalidUserInputException(input + "is an invalid input!");
+            throw new InvalidUserInputException(input + " is an invalid input!");
         }
     }
 
