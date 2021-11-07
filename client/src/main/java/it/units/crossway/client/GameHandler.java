@@ -120,7 +120,12 @@ public class GameHandler implements OnJoinEventListener, OnPlacementEventListene
             frame.appendFooterAndRefresh(IOUtils.IO_WAITING_FOR_OPPONENT_MOVE);
             return;
         }
-        createAndSendStonePlacementIntent();
+        if (Rules.areThereEmptyAndValidIntersections(player, board)) {
+            createAndSendStonePlacementIntent();
+        } else {
+            endTurn();
+        }
+
     }
 
     public void endTurn() {

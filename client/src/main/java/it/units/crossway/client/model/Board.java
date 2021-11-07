@@ -174,6 +174,16 @@ public class Board {
         return stringJoiner.toString();
     }
 
+    public Collection<Pair<Integer, Integer>> getEmptyIntersections() {
+        Collection<Pair<Integer, Integer>> emptyIntersections = new ArrayList<>();
+        IntStream.range(Board.FIRST_ROW, Board.LAST_ROW + 1)
+                .forEach((row) -> IntStream.range(Board.FIRST_COLUMN, Board.LAST_COLUMN + 1)
+                        .filter((column) -> !isIntersectionOccupied(row, column))
+                        .forEach((column) -> emptyIntersections.add(new Pair<>(row, column))));
+
+        return emptyIntersections;
+    }
+
     private String constructColumnEnumeration() {
         StringJoiner stringJoiner = new StringJoiner("");
         stringJoiner.add("     ");

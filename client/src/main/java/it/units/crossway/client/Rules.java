@@ -4,10 +4,9 @@ import it.units.crossway.client.exception.PlacementViolationException;
 import it.units.crossway.client.model.*;
 import org.javatuples.Pair;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiFunction;
+import java.util.stream.IntStream;
 
 public class Rules {
 
@@ -204,4 +203,15 @@ public class Rules {
         return firstRowCount < lastRowCount ? Board.FIRST_ROW : Board.LAST_ROW;
     }
 
+    public static boolean areThereEmptyAndValidIntersections(Player player, Board board) {
+        for (Pair<Integer, Integer> intersection: board.getEmptyIntersections()) {
+            int row = intersection.getValue0();
+            int column = intersection.getValue1();
+            StonePlacementIntent stonePlacementIntent = new StonePlacementIntent(row, column, player);
+            if (!isDiagonalViolation(board, stonePlacementIntent)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

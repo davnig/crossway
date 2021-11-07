@@ -11,7 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RulesTests {
 
@@ -175,6 +175,22 @@ public class RulesTests {
                 new StonePlacementIntent(row, column, new Player("whiteP", PlayerColor.WHITE));
         assertThrows(PlacementViolationException.class, () ->
                 Rules.validatePlacementIntent(board, stonePlacementIntent));
+    }
+
+    @Test
+    void whenPlayerHasNoMoreValidPlacementsShouldReturnFalse() {
+        Board board = new Board();
+        Player player = new Player("nickname", PlayerColor.BLACK);
+        Board.LAST_COLUMN = 2;
+        Board.LAST_ROW = 2;
+
+        board.placeStone(2, 1, PlayerColor.BLACK);
+        board.placeStone(1, 1, PlayerColor.WHITE);
+        board.placeStone(2, 2, PlayerColor.WHITE);
+
+
+        assertFalse(Rules.areThereEmptyAndValidIntersections(player, board));
+        Board.resetBoard();
     }
 
 }
