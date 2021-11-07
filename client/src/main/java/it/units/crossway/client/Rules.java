@@ -4,7 +4,6 @@ import it.units.crossway.client.exception.PlacementViolationException;
 import it.units.crossway.client.model.*;
 import org.javatuples.Pair;
 
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -133,11 +132,6 @@ public class Rules {
         return hasWhiteWon(board);
     }
 
-    /**
-     * Check if white has won the match
-     *
-     * @return a boolean indicating if white has won
-     */
     private static boolean hasWhiteWon(Board board) {
         int startingColumn = getColumnWithLeastAmountOfWhiteStonesBetweenFirstAndLast(board);
         int targetColumn = getTargetColumnFromStartingColumn(startingColumn);
@@ -156,11 +150,6 @@ public class Rules {
         return Board.FIRST_COLUMN;
     }
 
-    /**
-     * Check if black has won the match
-     *
-     * @return a boolean indicating if black has won
-     */
     private static boolean hasBlackWon(Board board) {
         int startingRow = getRowWithLeastAmountOfBlackStonesBetweenFirstAndLast(board);
         int targetRow = getTargetRowFromStartingRow(startingRow);
@@ -179,14 +168,6 @@ public class Rules {
         return Board.FIRST_ROW;
     }
 
-    /**
-     * Recursively searches for a path of white stones connecting the vertical edges of the board
-     *
-     * @param currentIntersection a {@code Pair<Integer, Integer>} representing the current intersection analyzed
-     * @param visited             the {@code Set} of already visited intersections
-     * @param targetColumn        the column where the path should end for the method to be successful
-     * @return a boolean indicating if white has won
-     */
     private static boolean hasWhiteWonRecursive(Board board, Pair<Integer, Integer> currentIntersection, Set<Pair<Integer, Integer>> visited, int targetColumn) {
         visited.add(currentIntersection);
         if (currentIntersection.getValue1() == targetColumn)
@@ -199,14 +180,6 @@ public class Rules {
         return false;
     }
 
-    /**
-     * Recursively searches for a path of black stones connecting the horizontal edges of the board
-     *
-     * @param currentIntersection a {@code Pair<Integer, Integer>} representing the current intersection analyzed
-     * @param visited             the {@code Set} of already visited intersections
-     * @param targetRow           the row where the path should end for the method to be successful
-     * @return a boolean indicating if black has won
-     */
     private static boolean hasBlackWonRecursive(Board board, Pair<Integer, Integer> currentIntersection, Set<Pair<Integer, Integer>> visited, int targetRow) {
         visited.add(currentIntersection);
         if (currentIntersection.getValue0() == targetRow)
