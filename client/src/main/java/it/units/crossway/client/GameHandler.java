@@ -209,6 +209,8 @@ public class GameHandler implements OnJoinEventListener, OnPlacementEventListene
     }
 
     private void endGame() {
+        frame.setBody(turn.getTurnInfoAsString());
+        frame.appendBody(board.getAsString(player));
         if (turn.isPlayerTurn(player)) {
             handleWin();
         } else {
