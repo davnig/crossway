@@ -25,11 +25,15 @@ A player must never complete the formation shown in figure or a 90 degree rotati
 Black makes the first placement. White then has the option of switching colors with Black, and claiming Black’s first move as his own. If White chooses to exercise the Pie rule, Black then becomes White and now makes the second move of the game. <b>The Pie rule can only be used once and only on the second move of the game.</b>
 
 ## Setup
-
-## Notes
+- Go to the release page
+  - Download the zip file
+  - Extract the server and client jars
+- Launch the server jar -> "java -jar server.jar"
+- Launch the client jar -> "java -jar client.jar" (first player)
+- Launch the client jar -> "java -jar client.jar" (second player)
+- Have fun :)
 
 ## Devs
-
 <a href="https://github.com/cecia234"> Ceschia Eugenio </a>
 
 <a href="https://github.com/heapify00"> Nigri Davide </a>
